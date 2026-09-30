@@ -1,0 +1,45 @@
+name: Deploy to Beget
+
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', 'scripts/build-dist.sh', '.github/workflows/deploy-beget.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-beget
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check secrets
+        id: secrets
+        env:
+          HOST: ${{ secrets.BEGET_FTP_HOST }}
+          USER: ${{ secrets.BEGET_FTP_USER }}
+          PASS: ${{ secrets.BEGET_FTP_PASSWORD }}
+          DIR: ${{ secrets.BEGET_FTP_DIR }}
+        run: |
+          if [ -z "$HOST" ] || [ -z "$USER" ] || [ -z "$PASS" ] || [ -z "$DIR" ]; then
+            echo "::warning::Деплой пропущен: задайте секреты BEGET_FTP_HOST, BEGET_FTP_USER, BEGET_FTP_PASSWORD, BEGET_FTP_DIR (Settings → Secrets and variables → Actions)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build dist
+        run: ./scripts/build-dist.sh
+
+      - name: Upload via FTP
+        if: steps.secrets.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.BEGET_FTP_HOST }}
+          username: ${{ secrets.BEGET_FTP_USER }}
+          password: ${{ secrets.BEGET_FTP_PASSWORD }}
+          server-dir: ${{ secrets.BEGET_FTP_DIR }}
+          local-dir: ./dist/

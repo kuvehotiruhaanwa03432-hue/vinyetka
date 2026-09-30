@@ -2,3 +2,4 @@ node_modules/
 .__preview_*
 *.bak
 shots/
+dist/

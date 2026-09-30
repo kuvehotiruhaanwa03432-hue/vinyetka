@@ -28,6 +28,21 @@ NODE_PATH=$(npm root -g) node tools/shot.js site/report.html docs/screenshots/re
 `site/index.html` написан без `<!doctype>`/`<head>`: так его ожидает публикатор Artifact на claude.ai.
 Для обычного хостинга оберните содержимое в стандартный HTML-скелет.
 
+## Деплой на Beget
+
+`scripts/build-dist.sh` собирает `dist/` (лендинг в обычном HTML-скелете + отчёт, карта идей, движок).
+Workflow `.github/workflows/deploy-beget.yml` заливает `dist/` по FTP при каждом push в `main`, который меняет `site/`,
+и вручную из вкладки Actions (Run workflow). Нужны секреты репозитория (Settings → Secrets and variables → Actions):
+
+| Секрет | Пример |
+|---|---|
+| `BEGET_FTP_HOST` | FTP-сервер из панели Beget (раздел FTP) |
+| `BEGET_FTP_USER` | логин FTP-аккаунта |
+| `BEGET_FTP_PASSWORD` | пароль FTP-аккаунта |
+| `BEGET_FTP_DIR` | папка сайта, например `/vinyetka.ru/public_html/` (со слешем в конце) |
+
+Без секретов workflow только собирает `dist/` и пропускает загрузку с предупреждением.
+
 ## Движок стилей (`site/vignette.js`)
 
 ```html
