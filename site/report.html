@@ -1,0 +1,1675 @@
+<!doctype html>
+<html lang="ru" data-mode="client">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Виньетка Т-000417</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:FLAR,VOLM,wght@0..100,0..100,100..900&family=Handjet:ELGR,ELSH,wght@1..2,0..16,100..900&family=Martian+Mono:wdth,wght@75..112.5,100..800&family=Onest:wght@100..900&display=swap">
+<style>
+/* Сетка «VIN-17»: 17 колонок, 1 колонка — VIN-рельс (корешок), контент 16 = 8·8 / 8·5·3 / 13·3.
+   Ширины — числа Фибоначчи, кегли 13/17/21/34/55/89/144, отступы 8/13/21/34/55/89.
+   Цвета мастера (--spec-*, --rosette-*) красят только рамку; данные — системными токенами. */
+:root{
+  --paper:#EDF3EE; --paper-raised:#F9FCF9; --paper-sunken:#DCE7DF;
+  --ink:#111111; --ink-soft:#3F5B5B; --ink-ghost:#11111177;
+  --guilloche:#779999; --action:#226688; --on-action:#FFFFFF; --marker:#CBCA6A; --on-marker:#111111;
+  --ok:#246A0F; --clean:#1A6B40; --doubt:#0A6590; --danger:#BD0D09; --remark:#855000;
+  --calque:#CBCA6A99;
+  --l-ecoat:#5F7F7F; --l-primer:#B7C6BC; --l-base:#3F5B5B; --l-clear:#F9FCF9; --l-putty:#E9B9AE;
+  /* стиль мастера: Подборкин по умолчанию, перезаписывается Vignette.apply */
+  --spec-a-l:#AECEAE; --spec-a-d:#003631; --spec-a-text-l:#00736A; --spec-a-text-d:#3BC2B4;
+  --spec-b-l:#EDACDE; --spec-b-d:#48183F; --spec-b-text-l:#9B418B; --spec-b-text-d:#E484D0;
+  --rosette-1-l:#779999; --rosette-1-d:#779999; --rosette-2-l:#009488; --rosette-2-d:#42C2B4; --rosette-3-l:#EB4060; --rosette-3-d:#E781D2;
+  --flar:68; --volm:89; --elsh:13; --elgr:1; --rake-angle:275.294deg;
+  --spec-a:var(--spec-a-l); --spec-b:var(--spec-b-l); --spec-a-text:var(--spec-a-text-l); --spec-b-text:var(--spec-b-text-l);
+  --rosette-1:var(--rosette-1-l); --rosette-2:var(--rosette-2-l); --rosette-3:var(--rosette-3-l);
+  --f-display:"Commissioner","Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"Martian Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --f-dot:"Handjet","Martian Mono",ui-monospace,monospace;
+  --s8:8px; --s13:13px; --s21:21px; --s34:34px; --s55:55px; --s89:89px;
+  --bar-h:0px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E171B; --paper-raised:#15232A; --paper-sunken:#0A1114;
+    --ink:#E4EFE6; --ink-soft:#9DB6B6; --ink-ghost:#E4EFE677;
+    --guilloche:#779999; --action:#6FB4D8; --on-action:#0E171B; --marker:#CBCA6A; --on-marker:#0E171B;
+    --ok:#72C95A; --clean:#4FC48C; --doubt:#4CC3EE; --danger:#FF6152; --remark:#E3AE55;
+    --calque:#CBCA6A30;
+    --l-ecoat:#5F7F7F; --l-primer:#2E4448; --l-base:#9DB6B6; --l-clear:#15232A; --l-putty:#6B2A22;
+    --spec-a:var(--spec-a-d); --spec-b:var(--spec-b-d); --spec-a-text:var(--spec-a-text-d); --spec-b-text:var(--spec-b-text-d);
+    --rosette-1:var(--rosette-1-d); --rosette-2:var(--rosette-2-d); --rosette-3:var(--rosette-3-d);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E171B; --paper-raised:#15232A; --paper-sunken:#0A1114;
+  --ink:#E4EFE6; --ink-soft:#9DB6B6; --ink-ghost:#E4EFE677;
+  --guilloche:#779999; --action:#6FB4D8; --on-action:#0E171B; --marker:#CBCA6A; --on-marker:#0E171B;
+  --ok:#72C95A; --clean:#4FC48C; --doubt:#4CC3EE; --danger:#FF6152; --remark:#E3AE55;
+  --calque:#CBCA6A30;
+  --l-ecoat:#5F7F7F; --l-primer:#2E4448; --l-base:#9DB6B6; --l-clear:#15232A; --l-putty:#6B2A22;
+  --spec-a:var(--spec-a-d); --spec-b:var(--spec-b-d); --spec-a-text:var(--spec-a-text-d); --spec-b-text:var(--spec-b-text-d);
+  --rosette-1:var(--rosette-1-d); --rosette-2:var(--rosette-2-d); --rosette-3:var(--rosette-3-d);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--bar-h) + 13px)}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/25px var(--f-body);font-variant-numeric:tabular-nums}
+[hidden]{display:none!important}
+img,svg{max-width:100%}
+a{color:var(--action)}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-variation-settings:"wdth" 100}
+.wide{font-family:var(--f-mono);font-variation-settings:"wdth" 112.5}
+.soft{color:var(--ink-soft)}
+.small{font-size:13px;line-height:21px}
+.lede{font-size:21px;line-height:29px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:16px;top:-60px;background:var(--action);color:var(--on-action);padding:8px 13px;z-index:50}
+.skip:focus{top:8px}
+.nowrap{white-space:nowrap}
+
+/* режимы чтения и лист продавца */
+:root[data-mode="client"] [data-m]:not([data-m~="client"]),
+:root[data-mode="pro"] [data-m]:not([data-m~="pro"]),
+:root[data-mode="family"] [data-m]:not([data-m~="family"]){display:none!important}
+:root[data-seller] .budget{display:none!important}
+:root:not([data-seller]) .seller-only{display:none!important}
+
+/* демо-лента */
+.demo-band{background:var(--marker);color:var(--on-marker);font:600 13px/21px var(--f-mono);letter-spacing:.04em;text-align:center;padding:4px 16px}
+
+/* верхняя полоса */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--guilloche)}
+.bar-in{max-width:1280px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:8px 13px;flex-wrap:wrap}
+.brand{font:600 17px/1 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;color:var(--ink);text-decoration:none;display:flex;align-items:baseline;gap:1px}
+.brand b{font:700 15px/1 var(--f-mono);font-variation-settings:"wdth" 112.5;letter-spacing:.04em}
+.bar-no{font:500 13px/1 var(--f-mono);color:var(--ink-soft)}
+.bar-sec{display:none;font:500 13px/21px var(--f-mono);color:var(--ink-soft);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modes{display:inline-flex;border:1px solid var(--ink-soft);margin-left:auto}
+.modes button{border:0;background:transparent;padding:6px 10px;font:500 13px/21px var(--f-body);cursor:pointer;color:var(--ink)}
+.modes button+button{border-left:1px solid var(--ink-soft)}
+.modes button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--action);background:transparent;color:var(--action);padding:8px 13px;font:500 15px/21px var(--f-body);cursor:pointer;text-decoration:none}
+.btn.solid{background:var(--action);color:var(--on-action)}
+.btn[aria-pressed="true"]{background:var(--action);color:var(--on-action)}
+.bar .btn{padding:5px 10px;font-size:13px}
+.rail-h{display:grid;grid-template-columns:repeat(17,minmax(0,1fr));gap:2px;max-width:1280px;margin:0 auto;padding:0 16px 8px}
+.rail-h a{display:block;text-align:center;font:600 13px/24px var(--f-mono);color:var(--ink-soft);background:var(--paper-sunken);text-decoration:none;border-bottom:3px solid transparent}
+.rail-h a.on{background:var(--spec-a);color:var(--ink);border-bottom-color:var(--spec-b-text)}
+@media (max-width:959px){
+  .bar-in .brand,.bar-in .bar-no,.bar-in .seller-btn{display:none}
+  .bar-sec{display:block;flex:1}
+  .modes{margin-left:0}
+}
+@media (min-width:960px){ .rail-h{display:none} }
+@media (max-width:439px){ .bar-sec{display:none!important} .modes{flex:1} .modes button{flex:1;padding:6px 4px} }
+
+/* каркас */
+.shell{max-width:1280px;margin:0 auto;padding-inline:16px;padding-block:0 55px}
+.rail-v{display:none}
+main{min-width:0}
+@media (min-width:960px){
+  .shell{display:grid;grid-template-columns:repeat(17,minmax(0,1fr));column-gap:13px}
+  .rail-v{display:block;grid-column:1;grid-row:1}
+  main{grid-column:2 / 18;grid-row:1}
+  :root[data-rail="right"] .rail-v{grid-column:17}
+  :root[data-rail="right"] main{grid-column:1 / 17}
+  .rail-v nav{position:sticky;top:calc(var(--bar-h) + 13px);display:flex;flex-direction:column;gap:2px;padding-top:21px}
+  .rail-v a{display:grid;grid-template-columns:1fr;justify-items:center;text-decoration:none;background:var(--paper-sunken);color:var(--ink-soft);padding:2px 0;border-left:3px solid transparent}
+  .rail-v a .c{font:700 14px/17px var(--f-mono);font-variation-settings:"wdth" 112.5}
+  .rail-v a .p{font:500 10px/12px var(--f-mono)}
+  .rail-v a.on{background:var(--spec-a);color:var(--ink);border-left-color:var(--spec-b-text)}
+  .rail-v .vert{writing-mode:vertical-rl;transform:rotate(180deg);font:600 13px/1 var(--f-mono);letter-spacing:.3em;color:var(--ink-soft);margin:13px auto 0}
+}
+
+/* разделители: гильош и перфорация */
+.act{margin-top:55px}
+.act-head{display:flex;align-items:baseline;gap:13px;flex-wrap:wrap;padding-bottom:8px}
+.act-head .n{font:700 13px/21px var(--f-mono);letter-spacing:.12em;color:var(--spec-b-text)}
+.act-head .t{font:600 21px/29px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.gband{display:block;width:100%;height:21px}
+.gw{fill:none;stroke:var(--guilloche);stroke-width:.7}
+.perf{height:13px;background:radial-gradient(circle at 6.5px 6.5px,var(--guilloche) 2.5px,transparent 3px) 0 0/13px 13px repeat-x;opacity:.8}
+.sec{padding-block:34px 21px;position:relative}
+.sec + .sec{border-top:0}
+.sec-sep{margin-top:21px}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,16fr);gap:0 8px;align-items:start;margin-bottom:21px}
+.sec-pos{font:700 13px/21px var(--f-mono);color:var(--ink-soft);text-align:left;padding-top:8px}
+.sec-pos b{display:block;font-size:21px;line-height:29px;color:var(--spec-b-text)}
+.sec-title{font:650 34px/39px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;color:var(--spec-a-text);letter-spacing:-.01em}
+.sec-kicker{font:600 13px/21px var(--f-mono);letter-spacing:.08em;color:var(--ink-soft);text-transform:uppercase}
+.sec-lede{margin-top:8px;max-width:62ch}
+@media (max-width:599px){
+  .sec-head{grid-template-columns:34px minmax(0,1fr)}
+  .sec-title{font-size:27px;line-height:33px}
+}
+.cols{display:grid;gap:34px}
+.cols > *{min-width:0}
+@media (min-width:760px){
+  .c-8-8{grid-template-columns:8fr 8fr}
+  .c-13-3{grid-template-columns:13fr 3fr}
+  .c-8-5-3{grid-template-columns:8fr 5fr 3fr}
+  .c-5-11{grid-template-columns:5fr 11fr}
+  .c-11-5{grid-template-columns:11fr 5fr}
+}
+.note{font-size:13px;line-height:21px;color:var(--ink-soft)}
+.tag{display:inline-flex;align-items:center;gap:5px;font:600 12px/21px var(--f-mono);letter-spacing:.03em;padding:0 8px;border:1px solid currentColor;white-space:nowrap}
+.hl{background:linear-gradient(transparent 55%,var(--marker) 55%);color:var(--ink)}
+.ico{width:21px;height:21px;flex:none;vertical-align:middle}
+.c-ok{color:var(--ok)} .c-clean{color:var(--clean)} .c-doubt{color:var(--doubt)} .c-danger{color:var(--danger)} .c-remark{color:var(--remark)} .c-soft{color:var(--ink-soft)}
+
+/* ---------- 1. обложка ---------- */
+.cover{padding-top:21px}
+.cover-top{display:flex;flex-wrap:wrap;gap:8px 21px;align-items:flex-start;justify-content:space-between}
+.serial{font-family:var(--f-mono);font-weight:700;color:var(--spec-b-text);display:flex;align-items:baseline;gap:1px;line-height:1}
+.serial span{display:inline-block}
+.meta-line{font:500 13px/21px var(--f-mono);color:var(--ink-soft)}
+.tryon{font-size:13px;line-height:21px}
+.tryon summary{cursor:pointer;color:var(--ink-soft);font:500 13px/21px var(--f-body);text-decoration:underline dotted;text-underline-offset:3px;list-style:none}
+.tryon summary::-webkit-details-marker{display:none}
+.tryon[open] summary{color:var(--ink)}
+.tryon-body{display:grid;gap:8px;margin-top:8px;padding:13px;background:var(--paper-raised);border:1px solid var(--guilloche);max-width:420px}
+.tryon-body label{font-weight:600}
+.tryon-body select,.tryon-body input{width:100%;padding:8px;background:var(--paper);border:1px solid var(--ink-soft);border-radius:0}
+.tryon-row{display:flex;gap:8px;flex-wrap:wrap}
+.cover-grid{display:grid;gap:34px;margin-top:21px}
+.cover-grid > *{min-width:0}
+@media (min-width:900px){ .cover-grid{grid-template-columns:8fr 8fr;align-items:start} }
+.car-name{font:700 55px/55px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm);letter-spacing:-.02em}
+.car-sub{margin-top:8px}
+.odo-wrap{margin-top:21px}
+.odo{font-size:min(144px,18.5vw);color:var(--ink)}
+.odo .unit{font:600 21px/1 var(--f-mono);color:var(--ink-soft);align-self:flex-end;margin-left:8px;padding-bottom:.25em}
+.verdict-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:21px;border:1px solid var(--ink)}
+.verdict-pick div{padding:8px 8px;text-align:center;font:600 15px/21px var(--f-mono);letter-spacing:.06em;color:var(--ink-soft)}
+.verdict-pick div+div{border-left:1px solid var(--ink)}
+.verdict-pick .on{background:var(--ink);color:var(--paper)}
+.verdict-pick .on::before{content:"▸ "}
+@media (max-width:599px){.verdict-pick div{font-size:12px;letter-spacing:.02em;padding:8px 2px}.verdict-pick .on::before{content:none}}
+.verdict-text{margin-top:13px;font-size:21px;line-height:29px;max-width:34ch}
+.price-line{margin-top:13px;display:flex;flex-wrap:wrap;gap:4px 21px}
+.price-line .mono{font-size:15px}
+
+.plate-wrap{position:relative;padding:21px 0}
+.raskat{position:absolute;inset:0;background:linear-gradient(var(--rake-angle),var(--spec-a),var(--spec-b));opacity:.55}
+.plate-stage{position:relative;display:grid;place-items:center;min-height:300px}
+.plate-stage .rose{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.plate-stage .rose svg{width:min(300px,86%);height:auto}
+.plate{position:relative;display:grid;grid-template-columns:repeat(17,minmax(0,1fr));width:min(100%,520px);border:1px solid var(--ink);background:var(--paper-raised)}
+.plate span{display:grid;place-items:center;aspect-ratio:3/4;font:700 clamp(12px,3.4vw,19px)/1 var(--f-mono);font-variation-settings:"wdth" 112.5;border-right:1px solid var(--guilloche);border-bottom:1px solid var(--guilloche)}
+.plate span:nth-child(17n){border-right:0}
+.plate span:nth-last-child(-n+17){border-bottom:0}
+.plate .gap{color:var(--guilloche)}
+.plate-cap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:13px;position:relative}
+.master{font:600 17px/25px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;color:var(--spec-a-text)}
+.code{font:600 13px/21px var(--f-mono);font-variation-settings:"wdth" 112.5;letter-spacing:.04em;word-break:break-all}
+.code b{color:var(--spec-b-text)}
+
+/* суфлёр торга */
+.prompter{margin-top:34px;display:grid;gap:21px}
+.prompter h3,.fam h3,.seller-sheet h3{font:650 21px/29px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.pscale{overflow-x:auto}
+.pscale svg{display:block;width:100%;height:auto;min-width:320px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.three > div{border-top:3px solid var(--ink);padding-top:8px;min-width:0}
+.three .k{font:600 13px/21px var(--f-mono);letter-spacing:.05em;color:var(--ink-soft);text-transform:uppercase}
+.three .v{font:700 clamp(14px,4.2vw,21px)/29px var(--f-mono);letter-spacing:-.02em;white-space:nowrap}
+.three .d{font-size:13px;line-height:18px;color:var(--ink-soft)}
+.three .walk{border-top-style:dashed}
+.args{display:grid;gap:0;counter-reset:arg}
+.arg{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:4px 13px;padding:13px 0;border-top:1px solid var(--guilloche);align-items:baseline}
+.arg::before{counter-increment:arg;content:counter(arg);font:700 21px/25px var(--f-mono);color:var(--spec-b-text)}
+.arg h4{font:600 17px/25px var(--f-body)}
+.arg .sum{font:700 17px/25px var(--f-mono);white-space:nowrap}
+.arg .say{grid-column:2 / 4;font-size:15px;line-height:23px}
+.arg .say i{font-style:normal;color:var(--ink-soft)}
+.payback{font:600 17px/25px var(--f-body)}
+.args-total{display:flex;justify-content:space-between;gap:13px;flex-wrap:wrap;padding:13px 0 0 47px;border-top:2px solid var(--ink);font-weight:600}
+.args-total .sum{font:700 21px/29px var(--f-mono)}
+.seller-sheet{margin-top:21px;padding:21px;border:2px solid var(--ink);background:var(--paper-raised);display:grid;gap:13px}
+.seller-sheet .big{font:700 clamp(27px,8vw,34px)/39px var(--f-mono)}
+.seller-verdict{margin-top:21px;font-size:21px;line-height:29px;max-width:34ch}
+
+/* семья */
+.fam{margin-top:34px;padding:21px;background:var(--paper-raised);border:1px solid var(--guilloche);display:grid;gap:21px}
+.fam-grid{display:grid;gap:21px}
+@media (min-width:760px){ .fam-grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
+.fam-grid h4{font:600 15px/21px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
+.fam-grid ul{margin:0;padding-left:18px}
+.money-table{width:100%;border-collapse:collapse;font-size:15px}
+.money-table td{padding:3px 0;border-bottom:1px dotted var(--guilloche)}
+.money-table td:last-child{text-align:right;font-family:var(--f-mono);white-space:nowrap;padding-left:8px}
+.money-table tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:700;padding-top:8px}
+.vote{display:flex;flex-wrap:wrap;gap:8px}
+.vote button{border:1px solid var(--ink);background:transparent;padding:8px 13px;cursor:pointer;font:500 15px/21px var(--f-body);display:inline-flex;align-items:center;gap:8px}
+.vote button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.vote button svg{width:17px;height:17px}
+.vote-q{display:grid;gap:8px;max-width:520px}
+.vote-q textarea{width:100%;min-height:76px;padding:8px;background:var(--paper);border:1px solid var(--ink-soft)}
+
+/* ---------- 2. пробег ---------- */
+.vscale{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:34px}
+.vcell{display:grid;justify-items:center;gap:4px;text-align:center;padding:8px 4px;min-width:0}
+.vcell svg{width:64px;height:64px}
+.vcell .l{font:600 12px/16px var(--f-body)}
+.vcell .s{font:500 11px/15px var(--f-mono);color:var(--ink-soft)}
+.vcell.on{background:var(--paper-raised);outline:2px solid var(--doubt);outline-offset:-2px}
+.vcell.on svg{width:80px;height:80px}
+.vcell.on .l{font-size:15px}
+.vcell.on .now{font:700 11px/15px var(--f-mono);letter-spacing:.08em;color:var(--doubt)}
+.witness{display:grid;gap:0}
+.wrow{display:grid;grid-template-columns:minmax(0,5fr) auto minmax(0,4fr);gap:8px 21px;align-items:center;padding:13px 0;border-top:1px solid var(--guilloche)}
+.wrow .who{font-weight:600}
+.wrow .who small{display:block;font:400 13px/19px var(--f-body);color:var(--ink-soft)}
+.wrow .drums{font-size:34px}
+.wrow .ev{font-size:13px;line-height:19px}
+.wrow.bad{background:linear-gradient(90deg,transparent,var(--paper-raised) 30%,var(--paper-raised) 70%,transparent)}
+@media (max-width:699px){
+  .wrow{grid-template-columns:minmax(0,1fr) auto}
+  .wrow .ev{grid-column:1 / -1}
+}
+.drums{display:inline-flex;gap:2px;font-family:var(--f-dot);font-variation-settings:"ELSH" var(--elsh),"ELGR" var(--elgr);font-weight:400;line-height:1;align-items:stretch}
+.drum{display:block;height:1.1em;overflow:hidden;background:var(--paper-sunken);padding-inline:.05em;position:relative}
+.drum.sp{background:transparent;width:.18em;padding:0}
+.reel{display:flex;flex-direction:column;transform:translateY(calc(var(--pos) * -1.1em))}
+.reel span{display:block;height:1.1em;line-height:1.1em;text-align:center}
+.drum.off{box-shadow:inset 0 0 0 2px var(--doubt)}
+.drums.spin .reel{animation:perekrut 1.5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 70ms)}
+@keyframes perekrut{from{transform:translateY(calc((var(--pos) - 10) * -1.1em))}}
+.bio{margin-top:34px}
+.bio-chart{overflow-x:auto}
+.bio-chart svg{display:block}
+.bio-chart text{paint-order:stroke;stroke:var(--paper);stroke-width:3px;stroke-linejoin:round}
+.verdict-box{display:grid;gap:13px;grid-template-columns:auto minmax(0,1fr);align-items:center;margin-top:21px;padding:21px;background:var(--paper-raised);border-left:4px dotted var(--doubt)}
+.verdict-box svg{width:89px;height:89px}
+.verdict-box .v{font:700 21px/29px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;color:var(--doubt)}
+
+/* ---------- 3. заявления ---------- */
+.claims{display:grid;gap:0}
+.claim{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:4px 13px;padding:13px 0;border-top:1px solid var(--guilloche);align-items:start}
+.claim q{font:600 17px/25px var(--f-body);quotes:"«" "»"}
+.claim .chk{grid-column:2 / -1;font-size:15px;line-height:23px;color:var(--ink-soft)}
+.claim .st{font:600 12px/21px var(--f-mono);white-space:nowrap}
+.claim svg{width:28px;height:28px}
+.claims-sum{display:flex;gap:21px;flex-wrap:wrap;align-items:baseline;margin-bottom:13px}
+.claims-sum .big{font:700 55px/55px var(--f-mono);letter-spacing:-.04em}
+@media (max-width:599px){ .claim{grid-template-columns:28px minmax(0,1fr)} .claim .st{grid-column:2} }
+
+/* ---------- 4. кузов ---------- */
+.counters{display:flex;flex-wrap:wrap;gap:13px 34px;align-items:flex-end}
+.counter .n{font:700 89px/80px var(--f-mono);letter-spacing:-.06em}
+.counter .k{font:600 15px/21px var(--f-body);max-width:14ch}
+.counter.paint .n{color:var(--ink)}
+.counter.need .n{color:var(--remark)}
+.sheets{margin-top:13px}
+.pattern-full{display:none}
+.pattern-fold{display:block}
+@media (min-width:760px){ .pattern-full{display:block} .pattern-fold{display:none} }
+.pattern svg{display:block;width:100%;height:auto}
+.pattern-full svg{max-width:560px;margin:0 auto}
+.fold{perspective:1400px}
+.fold-card{position:relative;display:grid;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.fold-card > div{grid-area:1 / 1;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.fold-card .back{transform:rotateY(180deg)}
+.fold.flipped .fold-card{transform:rotateY(180deg)}
+.fold-btn{margin-top:13px;width:100%;justify-content:center}
+.unfold .left-half{animation:unfold .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes unfold{from{transform:scaleX(-1)}}
+/* пока половина вывернута изнанкой, подписи не видны: изнанка бумаги чистая */
+.unfold .left-half text{animation:backside .9s linear both}
+@keyframes backside{0%,22%{fill-opacity:0;stroke-opacity:0}23%,100%{fill-opacity:1;stroke-opacity:1}}
+.left-half{transform-box:view-box}
+.pnl-txt{font-family:var(--f-body)}
+.kerns{display:flex;gap:21px;align-items:flex-end;flex-wrap:wrap;margin-top:13px}
+.kern{display:grid;justify-items:center;gap:4px}
+.kern .col{width:34px;display:flex;flex-direction:column-reverse;border:1px solid var(--ink)}
+.kern .col span{display:block;width:100%}
+.kern .lbl{font:600 13px/17px var(--f-mono)}
+.kern .nm{font-size:12px;line-height:15px;color:var(--ink-soft);text-align:center;max-width:9ch}
+.klegend{display:flex;flex-wrap:wrap;gap:4px 13px;font-size:13px;line-height:21px}
+.klegend i{display:inline-block;width:13px;height:13px;border:1px solid var(--ink);vertical-align:-2px;margin-right:4px}
+.um-table{width:100%;border-collapse:collapse;font-size:13px;line-height:19px}
+.um-table th,.um-table td{text-align:left;padding:4px 8px 4px 0;border-bottom:1px solid var(--guilloche)}
+.um-table td.n{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.um-table th.n{text-align:right}
+.tbl-scroll{overflow-x:auto}
+.scale170{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:13px}
+.scale170 div{font-size:12px;line-height:16px;display:grid;gap:4px}
+.scale170 svg{width:100%;height:34px;display:block}
+
+/* ---------- 5. ходовая ---------- */
+.under svg{display:block;width:100%;max-width:340px;height:auto;margin:0 auto}
+.pins{display:grid}
+.pin{display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 13px;padding:13px 0;border-top:1px solid var(--guilloche)}
+.pin .no{font:700 17px/25px var(--f-mono);width:28px;height:28px;display:grid;place-items:center;border:2px solid currentColor;border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
+.pin .no span{transform:rotate(45deg)}
+.pin h4{font:600 17px/25px var(--f-body)}
+.sev{font:400 17px/1 var(--f-mono);letter-spacing:.1em;white-space:nowrap}
+.pin .pr{font:600 13px/21px var(--f-mono);display:flex;flex-wrap:wrap;gap:0 13px}
+
+/* ---------- 6. двигатель ---------- */
+.pass-head{display:flex;flex-wrap:wrap;gap:8px 21px;align-items:baseline;margin-bottom:13px}
+.pass-head .code{font-size:21px;line-height:29px}
+.pass{position:relative}
+.prow{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 13px;padding:13px 8px;border-top:1px solid var(--guilloche);align-items:start;isolation:auto}
+.prow h4{font:600 17px/25px var(--f-body)}
+.prow .d{grid-column:2 / -1;font-size:15px;line-height:23px}
+.prow .typ{font:500 12px/21px var(--f-mono);color:var(--ink-soft);white-space:nowrap}
+.prow.warn{background:var(--paper-raised)}
+.calque-on .prow.t::after{content:"";position:absolute;inset:0;background:var(--calque);mix-blend-mode:multiply;pointer-events:none}
+.calque-on .prow.t.warn::after{background:var(--calque);box-shadow:inset 0 0 0 999px var(--calque)}
+.calque-on .prow.t .motif{opacity:1}
+.motif{position:absolute;left:6px;bottom:8px;width:32px;height:32px;opacity:0;pointer-events:none;color:var(--ink-soft)}
+.prow.t.warn .typ{color:var(--ink);font-weight:700}
+@media (max-width:599px){ .prow .typ{grid-column:2 / -1;grid-row:2;white-space:normal} .prow .d{grid-row:3} }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .calque-on .prow.t::after{mix-blend-mode:screen} }
+:root[data-theme="dark"] .calque-on .prow.t::after{mix-blend-mode:screen}
+.sw-line{font:500 13px/21px var(--f-mono);padding:13px 8px;border-top:1px solid var(--guilloche);display:flex;gap:8px;align-items:center}
+.legend-icons{display:flex;flex-wrap:wrap;gap:4px 21px;font-size:13px;line-height:21px;margin:8px 0 13px}
+.legend-icons span{display:inline-flex;gap:6px;align-items:center}
+.legend-icons svg{width:17px;height:17px}
+
+/* ---------- 7. электрика ---------- */
+.tablo{background:var(--paper-sunken);padding:21px;display:grid;gap:21px;border:1px solid var(--ink)}
+@media (min-width:760px){ .tablo{grid-template-columns:repeat(3,minmax(0,1fr))} }
+.tgrp{min-width:0}
+.tgrp .gh{font:600 13px/21px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--spec-a-text);border-bottom:1px solid var(--guilloche);padding-bottom:4px;margin-bottom:8px}
+.dot{font-family:var(--f-dot);font-variation-settings:"ELSH" var(--elsh),"ELGR" var(--elgr);font-size:44px;line-height:44px;letter-spacing:.02em}
+.tgrp .dsc{font-size:15px;line-height:21px}
+.tgrp .st{font:600 12px/21px var(--f-mono)}
+.tgrp.noise .dot{color:var(--ink-soft);text-decoration:line-through;text-decoration-thickness:2px}
+.funcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0;margin-top:21px;border-top:1px solid var(--guilloche);border-left:1px solid var(--guilloche)}
+.func{display:grid;grid-template-columns:21px minmax(0,1fr);gap:8px;padding:8px;border-right:1px solid var(--guilloche);border-bottom:1px solid var(--guilloche);font-size:13px;line-height:18px;align-items:start}
+.func.fault{background:var(--paper-raised)}
+.func svg{width:19px;height:19px}
+.func b{display:block;font-weight:600}
+
+/* ---------- 8. две столицы ---------- */
+.axis-grid{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);gap:0 13px}
+.city{font:700 clamp(17px,4.6vw,21px)/25px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.city.l{text-align:right}
+.axis{background:var(--ink)}
+.receipt{background:var(--paper-raised);padding:0 13px}
+.rgroup{grid-column:1 / -1;text-align:center;font:600 13px/21px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;padding:13px 0 4px;color:var(--ink-soft)}
+.rgroup.urgent{color:var(--danger)}
+.ritem{grid-column:1 / -1;text-align:center;font:600 15px/21px var(--f-body);padding-top:8px;border-top:1px dashed var(--guilloche)}
+.rv{font:500 13px/21px var(--f-mono);padding-bottom:8px}
+.rv span{white-space:nowrap}
+.rv.l{text-align:right}
+.rv div{display:flex;gap:8px;justify-content:space-between}
+.rv.l div{flex-direction:row-reverse}
+.rv i{font-style:normal;color:var(--ink-soft);font-family:var(--f-body)}
+.rsub{font:700 13px/21px var(--f-mono);padding:8px 13px;border-top:2px solid var(--ink)}
+.rsub.l{text-align:right}
+.rtotal{font:700 15px/23px var(--f-mono);padding:13px;border-top:3px double var(--ink)}
+.rsub i,.rtotal i{font-weight:500}
+@media (max-width:599px){ .rtotal div{display:block} .rtotal i{display:block;font-size:12px;line-height:17px} .rtotal{font-size:14px} }
+.rtotal.l{text-align:right}
+.tape{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);gap:0 13px;margin-top:13px;align-items:center}
+.tape .bar-l,.tape .bar-r{height:21px;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 5px)}
+.tape .bar-l{justify-self:end}
+.tape .cap{font:600 13px/21px var(--f-mono)}
+.zig{height:8px;background:linear-gradient(135deg,var(--paper-raised) 4px,transparent 0) 0 0/8px 8px repeat-x,linear-gradient(225deg,var(--paper-raised) 4px,transparent 0) 0 0/8px 8px repeat-x}
+#s8 .axis-grid,#s8 .tape{max-width:820px;margin-inline:auto}
+.caps-sum{display:grid;gap:8px;margin-top:21px;text-align:center}
+.caps-sum .big{font:700 clamp(15px,4.2vw,21px)/1.4 var(--f-mono)}
+.caps-sum .big span{display:block}
+.caps-sum .big .k{display:block;font:600 13px/21px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.rv .sub-h{justify-content:flex-start;font-weight:700;color:var(--ink)}
+.rv.l .sub-h{justify-content:flex-start}
+@media (min-width:760px){ .ritem{padding-inline:21%} }
+
+/* ---------- 9. ИИ-обзор ---------- */
+.ai-plate{display:inline-flex;gap:8px;align-items:center;font:600 13px/21px var(--f-mono);padding:4px 13px;border:1px dashed var(--ink-soft);margin-bottom:13px}
+.ai-text p+p{margin-top:13px}
+.ai-text sup a{font:700 12px/1 var(--f-mono);text-decoration:none;padding:0 2px}
+.kb{margin:0;padding:0;list-style:none;counter-reset:kb;font-size:13px;line-height:19px}
+.kb li{padding:8px 0;border-top:1px solid var(--guilloche);display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px}
+.kb li:target{background:var(--paper-raised)}
+.kb .n{font:700 13px/19px var(--f-mono);color:var(--spec-b-text)}
+.syn{margin-top:34px}
+.syn-track{display:grid;gap:0;border:1px solid var(--ink)}
+@media (min-width:760px){ .syn-track{grid-template-columns:repeat(4,minmax(0,1fr))} }
+.season{padding:13px;display:grid;gap:8px;align-content:start;min-width:0}
+.season + .season{border-top:1px solid var(--guilloche)}
+@media (min-width:760px){ .season + .season{border-top:0;border-left:1px solid var(--guilloche)} }
+.season .when{font:600 13px/21px var(--f-mono);color:var(--ink-soft)}
+.season .wx{display:flex;align-items:center;gap:8px}
+.season .wx svg{width:44px;height:44px;color:var(--ink)}
+.season .p{font:700 34px/34px var(--f-mono)}
+.season .it{font-size:15px;line-height:21px}
+.season .it + .it{padding-top:8px;border-top:1px dotted var(--guilloche)}
+.season .rub{font:600 13px/21px var(--f-mono)}
+.reserve{display:flex;flex-wrap:wrap;gap:8px 21px;align-items:baseline;margin-top:21px}
+.reserve .big{font:700 55px/55px var(--f-mono);letter-spacing:-.04em}
+
+/* ---------- 10. охота и печать ---------- */
+.funnel{display:grid;gap:4px}
+.frow{display:grid;grid-template-columns:minmax(0,1fr) 124px;gap:13px;align-items:center}
+.frow .b{height:34px;background:var(--ink);min-width:6px}
+.frow .b.last{background:var(--spec-a);border:2px solid var(--ink)}
+.frow .t{font:600 13px/17px var(--f-mono)}
+.obits{display:grid;gap:13px;margin-top:21px}
+@media (min-width:760px){ .obits{grid-template-columns:repeat(3,minmax(0,1fr))} }
+.obit{border:3px double var(--ink);padding:13px;display:grid;gap:4px;font-size:15px;line-height:21px}
+.obit .h{font:600 13px/19px var(--f-mono)}
+.obit .why{font-weight:600}
+.blackbox{background:var(--paper-sunken);padding:21px;display:grid;gap:13px}
+.bb-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+@media (min-width:760px){ .bb-stats{grid-template-columns:repeat(4,minmax(0,1fr))} }
+.bb-stats div{font-size:13px;line-height:19px}
+.bb-stats b{display:block;font:700 34px/39px var(--f-mono)}
+.notchk{margin:0;padding:0;list-style:none}
+.notchk li{display:grid;grid-template-columns:21px minmax(0,1fr);gap:8px;padding:6px 0;font-size:15px;line-height:21px}
+.notchk svg{width:19px;height:19px}
+.ack{display:flex;gap:8px;align-items:flex-start;font-size:15px;line-height:21px}
+.ack input{width:21px;height:21px;margin:0;flex:none;accent-color:var(--action)}
+.seal-grid{display:grid;gap:34px;margin-top:34px}
+@media (min-width:760px){ .seal-grid{grid-template-columns:8fr 8fr} }
+.seal{display:grid;justify-items:center;align-content:start;gap:13px;text-align:center}
+.seal-btn{border:0;background:transparent;padding:0;cursor:pointer;border-radius:50%}
+.seal-btn > span > svg{width:220px;height:220px;display:block}
+.seal .sig{font:italic 600 21px/29px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;color:var(--spec-a-text)}
+.auth{background:var(--paper-raised);border:1px solid var(--ink);padding:13px;font:500 13px/21px var(--f-mono);text-align:left;width:100%;max-width:420px}
+.qr{display:flex;gap:13px;align-items:center;justify-content:center}
+.qr svg{width:89px;height:89px}
+.chev{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chev .tag{color:var(--spec-a-text)}
+.trophy{aspect-ratio:9 / 16;width:min(100%,300px);margin:0 auto;border:1px solid var(--ink);background:linear-gradient(var(--rake-angle),var(--spec-a),var(--spec-b));padding:13px;display:grid;grid-template-rows:auto 1fr auto;gap:8px;position:relative;overflow:hidden}
+.trophy .inner{background:var(--paper-raised);padding:13px;display:grid;gap:8px;align-content:start;position:relative}
+.trophy .rt{display:flex;align-items:flex-end;gap:13px}
+.trophy .rt b{font:700 55px/50px var(--f-mono);letter-spacing:-.04em}
+.trophy .rt span{font:600 13px/17px var(--f-mono)}
+.attrs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 13px;font:600 13px/21px var(--f-mono)}
+.attrs div{display:flex;justify-content:space-between;border-bottom:1px solid var(--guilloche)}
+.trophy .rose-s{display:grid;place-items:center}
+.trophy .rose-s svg{width:150px;height:150px}
+.trophy .foot{background:var(--paper-raised);padding:8px 13px;font:600 13px/19px var(--f-mono)}
+.pass-on{display:grid;gap:8px;justify-items:start;margin-top:21px}
+
+footer{border-top:1px solid var(--guilloche);margin-top:34px;padding-block:21px}
+.micro{font:500 9px/13px var(--f-mono);letter-spacing:.2em;color:var(--ink-soft);white-space:nowrap;overflow:hidden}
+.foot-row{display:flex;flex-wrap:wrap;gap:8px 21px;justify-content:space-between;margin-top:13px;font-size:13px;line-height:21px}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">К отчёту</a>
+
+<!-- спрайт иконок: формы кодируют смысл, цвет только дублирует -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="gwave" width="144" height="21" patternUnits="userSpaceOnUse">
+      <path class="gw" d="M0 10.5 C18 1 36 1 54 10.5 S90 20 108 10.5 S126 1 144 10.5"/>
+      <path class="gw" d="M0 10.5 C18 20 36 20 54 10.5 S90 1 108 10.5 S126 20 144 10.5"/>
+      <path class="gw" d="M0 6 C24 16 48 16 72 6 S120 -4 144 6"/>
+      <path class="gw" d="M0 15 C24 5 48 5 72 15 S120 25 144 15"/>
+    </pattern>
+  </defs>
+  <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 2.5L22.5 21h-21z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v5.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17.8" r="1.4" fill="currentColor"/></symbol>
+  <symbol id="i-none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"/><path d="M9.3 9.4a2.8 2.8 0 1 1 3.6 2.7c-.6.2-.9.7-.9 1.3v.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-no" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-half" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></symbol>
+  <symbol id="i-flick" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 12l3-4 3 8 3-8 3 8 2-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+  <symbol id="i-okbox" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 8l8 8M16 8l-8 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="w-sun" viewBox="0 0 48 48"><circle cx="24" cy="24" r="8" fill="none" stroke="currentColor" stroke-width="2.5"/><g stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.6 10.6l4.2 4.2M33.2 33.2l4.2 4.2M10.6 37.4l4.2-4.2M33.2 14.8l4.2-4.2"/></g></symbol>
+  <symbol id="w-cloud" viewBox="0 0 48 48"><path d="M14 34h21a8 8 0 0 0 0-16 11 11 0 0 0-21 3 6.5 6.5 0 0 0 0 13z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M17 40h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 4"/></symbol>
+  <symbol id="w-rain" viewBox="0 0 48 48"><path d="M14 28h21a8 8 0 0 0 0-16 11 11 0 0 0-21 3 6.5 6.5 0 0 0 0 13z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M16 33l-2 6M24 33l-2 6M32 33l-2 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></symbol>
+  <symbol id="w-storm" viewBox="0 0 48 48"><path d="M14 26h21a8 8 0 0 0 0-16 11 11 0 0 0-21 3 6.5 6.5 0 0 0 0 13z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M25 28l-5 8h6l-4 9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+  <symbol id="i-thumb" viewBox="0 0 24 24"><path d="M3 11h4v10H3zM7 11l4-8c1.7 0 2.6 1.2 2.2 2.8L12.5 9H19a2 2 0 0 1 2 2.3l-1.3 7.5A2.5 2.5 0 0 1 17.2 21H7" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-q" viewBox="0 0 24 24"><path d="M3 4h18v13H10l-5 4v-4H3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.6a2 2 0 1 1 2.6 1.9c-.4.1-.6.5-.6.9v.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="14.2" r="1" fill="currentColor"/></symbol>
+</svg>
+
+<div class="demo-band">ДЕМО-ВИНЬЕТКА · машина, продавец и цифры вымышлены для примера</div>
+
+<header class="bar" id="bar">
+  <div class="bar-in">
+    <a class="brand" href="./" aria-label="Виньетка, на главную"><b>ВИН</b>ЬЕТКА</a>
+    <span class="bar-no">№ Т-000417</span>
+    <span class="bar-sec" id="barSec" aria-live="polite">10 · Обложка</span>
+    <div class="modes" role="group" aria-label="Режим чтения">
+      <button type="button" data-mode-btn="client" aria-pressed="true">Для клиента</button>
+      <button type="button" data-mode-btn="pro" aria-pressed="false">Для профи</button>
+      <button type="button" data-mode-btn="family" aria-pressed="false">Для своих</button>
+    </div>
+    <button type="button" class="btn seller-btn" data-seller-btn aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-eye"/></svg>Показать продавцу</button>
+  </div>
+  <nav class="rail-h" id="railH" aria-label="Разделы по позициям VIN"></nav>
+</header>
+
+<div class="shell">
+  <aside class="rail-v" aria-label="VIN-рельс">
+    <nav id="railV" aria-label="Разделы по позициям VIN, вертикально"></nav>
+  </aside>
+
+  <main id="main">
+
+  <div class="seller-only seller-sheet" role="note">
+    <h3>Лист для продавца</h3>
+    <p>Это версия виньетки без бюджета покупателя. Здесь только факты осмотра и сметы ремонта. Суфлёр торга и расчёты семьи скрыты.</p>
+    <p class="big" id="sellerSum">301 700 ₽</p>
+    <p class="note">Столько стоит привести машину в порядок в Москве с оригинальными запчастями. Подробности в разделе «Две столицы».</p>
+    <p><button type="button" class="btn solid" data-seller-btn aria-pressed="true">Вернуть полную версию</button></p>
+  </div>
+
+  <!-- ================= АКТ I ================= -->
+  <div class="act">
+    <div class="act-head"><span class="n">АКТ I</span><span class="t">Решение</span><span class="note">обложка, пробег, слова продавца</span></div>
+    <svg class="gband" aria-hidden="true" preserveAspectRatio="none"><rect width="100%" height="21" fill="url(#gwave)"/></svg>
+  </div>
+
+  <!-- 1. Обложка -->
+  <section class="sec cover" id="s1" data-sec="1" aria-labelledby="h-s1">
+    <div class="cover-top">
+      <div>
+        <div class="serial" aria-label="Виньетка номер Т-000417" id="serial"></div>
+        <p class="meta-line">осмотр 28.09.2026 · Химки · выпущена 30.09.2026</p>
+      </div>
+      <details class="tryon">
+        <summary>Примерить стиль другого мастера</summary>
+        <div class="tryon-body">
+          <label for="tryPreset">Мастер из примеров</label>
+          <select id="tryPreset"></select>
+          <label for="tryName">Или впишите ФИО</label>
+          <input id="tryName" type="text" autocomplete="off" placeholder="Фамилия Имя Отчество">
+          <div class="tryon-row">
+            <button type="button" class="btn solid" id="tryApply">Примерить</button>
+            <button type="button" class="btn" id="tryReset">Вернуть Подборкина</button>
+          </div>
+          <p class="note">Меняется только рамка: обложка, заголовки, розетка, раскат и пиксель табло. Вердикты, микроны и ошибки остаются в общих цветах, чтобы отчёты разных мастеров можно было сравнить.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="cover-grid">
+      <div>
+        <p class="sec-kicker">VIN · позиция 10 · K = 2019</p>
+        <h1 class="car-name" id="h-s1">BMW 530d xDrive</h1>
+        <p class="car-sub lede" data-m="client family">Седан G30, 2019 модельный год, чёрный. Дизель 265 л.с., полный привод.</p>
+        <p class="car-sub mono small" data-m="pro">G30 до рестайлинга · выпуск 11.2018 · МГ 2019 · B57D30, 265 л.с., 620 Н·м · ZF 8HP Steptronic · xDrive · цвет 475 Black Sapphire · M Sport (SA 337) · VIN WBA•••••••••••••• (скрыт)</p>
+        <div class="odo-wrap">
+          <p class="sec-kicker">Пробег по приборке</p>
+          <div class="drums odo" data-drums="111111" aria-label="111 111 километров"></div>
+        </div>
+        <div class="verdict-pick budget" role="img" aria-label="Решение мастера: торговаться">
+          <div>БРАТЬ</div><div class="on">ТОРГОВАТЬСЯ</div><div>УЙТИ</div>
+        </div>
+        <p class="verdict-text budget" data-m="client">Машина живая, но стоит дешевле, чем просят. Смело торгуйтесь на 300 000 ₽.</p>
+        <p class="verdict-text budget" data-m="pro">3 крашеных элемента, 1 со шпаклёвкой. EGS помнит на 13 189 км больше KOMBI. Смета Мск 216 400–301 700 ₽.</p>
+        <p class="verdict-text budget" data-m="family">Хорошая машина с парой болячек. Брать можно, если продавец уступит около 300 тысяч: они уйдут на ремонт в первые полгода.</p>
+        <p class="seller-only seller-verdict">Итог осмотра: правый бок крашен, активна ошибка клапана EGR, передняя подвеска требует ремонта. Все находки и сметы ниже.</p>
+        <div class="price-line">
+          <span>Продавец просит <b class="mono">4 690 000 ₽</b></span>
+          <span class="budget">Обоснованный дисконт <b class="mono">−300 000 ₽</b></span>
+        </div>
+      </div>
+
+      <div>
+        <div class="plate-wrap">
+          <div class="raskat" aria-hidden="true"></div>
+          <div class="plate-stage">
+            <div class="rose" id="roseCover" aria-hidden="true"></div>
+            <div class="plate" id="plate" role="img" aria-label="VIN-табличка мастера"></div>
+          </div>
+        </div>
+        <div class="plate-cap">
+          <div>
+            <p class="note">Виньетку выпустил</p>
+            <p class="master" id="masterName">Алексей Андреевич Подборкин</p>
+          </div>
+          <div>
+            <p class="note">Код стиля</p>
+            <p class="code" id="styleCode">AAP2L68D<b>X</b>T1890268</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Для своих -->
+    <div class="fam budget" data-m="family" aria-labelledby="h-fam">
+      <h3 id="h-fam">Коротко для семьи</h3>
+      <div class="fam-grid">
+        <div>
+          <h4>Безопасность</h4>
+          <ul>
+            <li>Подушки и ремни без ошибок.</li>
+            <li>Силовых аварий не нашли. Правый бок перекрашивали, стойки и пороги заводские.</li>
+            <li>Детские кресла крепятся на ISOFIX, на двух задних местах у дверей.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Быт</h4>
+          <ul>
+            <li>Багажник 530 литров. Прогулочная коляска и два чемодана помещаются.</li>
+            <li>Полный привод: зимой во дворе не застрянете.</li>
+            <li>Сзади справа не греет сиденье. Починят за 22 тыс. ₽.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Деньги в месяц</h4>
+          <table class="money-table">
+            <tr><td>Дизель, 1 500 км в месяц</td><td>9 600 ₽</td></tr>
+            <tr><td>ОСАГО</td><td>1 000 ₽</td></tr>
+            <tr><td>КАСКО, примерно</td><td>15 000 ₽</td></tr>
+            <tr><td>Транспортный налог</td><td>3 300 ₽</td></tr>
+            <tr><td>Резерв на ремонт</td><td>10 600 ₽</td></tr>
+            <tr class="total"><td>Итого</td><td>39 500 ₽</td></tr>
+          </table>
+          <p class="note" style="margin-top:8px">Налог: 265 л.с. × 150 ₽ по ставке Москвы, 39 750 ₽ в год. КАСКО зависит от стажа, это ориентир.</p>
+        </div>
+      </div>
+      <div>
+        <p style="font-weight:600;margin-bottom:8px">Ваш голос</p>
+        <div class="vote" role="group" aria-label="Голосование семьи">
+          <button type="button" data-vote="take" aria-pressed="false"><svg aria-hidden="true"><use href="#i-thumb"/></svg>Берём</button>
+          <button type="button" data-vote="look" aria-pressed="false"><svg aria-hidden="true"><use href="#i-eye"/></svg>Смотрим дальше</button>
+          <button type="button" data-vote="ask" aria-pressed="false"><svg aria-hidden="true"><use href="#i-q"/></svg>Вопрос мастеру</button>
+        </div>
+        <p class="note" id="voteNote" style="margin-top:8px">Голос сохраняется только на этом устройстве.</p>
+        <form class="vote-q" id="voteQ" hidden>
+          <label for="voteText">Ваш вопрос</label>
+          <textarea id="voteText" placeholder="Например: сколько будет стоить, если коробку всё-таки меняли?"></textarea>
+          <button type="submit" class="btn solid" style="justify-self:start">Сохранить вопрос</button>
+          <p class="note" id="voteQNote" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+    <!-- Суфлёр торга -->
+    <div class="prompter budget" aria-labelledby="h-prompter">
+      <div style="display:flex;flex-wrap:wrap;gap:13px;justify-content:space-between;align-items:center">
+        <h3 id="h-prompter">Суфлёр торга</h3>
+        <button type="button" class="btn" data-seller-btn aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-eye"/></svg>Показать продавцу</button>
+      </div>
+      <p class="note" data-m="client family">«Показать продавцу» прячет ваши цифры торга и деньги семьи. Остаются факты осмотра и сметы.</p>
+      <p class="note" data-m="pro">Режим продавца скрывает якорь, цель, точку ухода, окупаемость и раздел «Для своих». Остаются находки и сметы.</p>
+      <div class="pscale" id="pscale"></div>
+      <div class="three">
+        <div><p class="k">Якорь, ₽</p><p class="v">4 250 000</p><p class="d">первое предложение</p></div>
+        <div><p class="k">Цель, ₽</p><p class="v">4 390 000</p><p class="d">просят минус дефекты</p></div>
+        <div class="walk"><p class="k">Уход, ₽</p><p class="v">4 520 000</p><p class="d">дороже не берём</p></div>
+      </div>
+      <p class="note" data-m="pro">Цель = 4 690 000 − 300 000 (смета Мск с оригиналом, 301 700, округлено вниз). Точка ухода = медиана 9 аналогов G30 530d 2018–2019, 95–130 тыс. км (демо-выборка) минус срочный ремонт.</p>
+      <div class="args" id="args"></div>
+      <p class="payback">Собьёте цену до цели, и осмотр за 15 000 ₽ окупится в 20 раз.</p>
+    </div>
+
+  </section>
+
+  <div class="perf sec-sep" aria-hidden="true"></div>
+
+  <!-- 2. Пробег -->
+  <section class="sec" id="s2" data-sec="2" aria-labelledby="h-s2">
+    <div class="sec-head">
+      <p class="sec-pos"><b>09</b>VIN</p>
+      <div>
+        <p class="sec-kicker">Пробег · криминалистика</p>
+        <h2 class="sec-title" id="h-s2">Где машина проговорилась о пробеге</h2>
+        <p class="sec-lede" data-m="client">Пробег хранится не только на приборке. Мы сверили шесть мест. Пять сходятся, коробка передач спорит.</p>
+        <p class="sec-lede" data-m="pro">6 свидетелей: KOMBI, BDC, ключ, сервисная история, архив объявлений, EGS. Расхождение только у EGS: +13 189 км.</p>
+        <p class="sec-lede" data-m="family">Со спидометром, скорее всего, всё честно. Одна нестыковка есть, мастер попросит у продавца документ.</p>
+      </div>
+    </div>
+
+    <div class="vscale" role="list" aria-label="Шкала вердиктов пробега">
+      <div class="vcell" role="listitem"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="28" fill="none" style="stroke:var(--ok)" stroke-width="5"/></svg><span class="l">Подтверждён</span><span class="s">сплошная линия</span></div>
+      <div class="vcell" role="listitem"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="28" fill="none" style="stroke:var(--clean)" stroke-width="5" stroke-dasharray="16 7"/></svg><span class="l">Не скручен</span><span class="s">длинный штрих</span></div>
+      <div class="vcell on" role="listitem" aria-current="true"><span class="now">СЕЙЧАС</span><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="28" fill="none" style="stroke:var(--doubt)" stroke-width="6" stroke-dasharray="0.1 9" stroke-linecap="round"/></svg><span class="l">Есть сомнения</span><span class="s">пунктир</span></div>
+      <div class="vcell" role="listitem"><svg viewBox="0 0 80 80" aria-hidden="true"><path id="zigRing" fill="none" style="stroke:var(--danger)" stroke-width="3.5" stroke-linejoin="round"/></svg><span class="l">Скручен</span><span class="s">зигзаг</span></div>
+    </div>
+
+    <div class="witness" id="witness"></div>
+    <p class="note" style="margin-top:8px" data-m="client family">Барабан коробки встал на полцифры мимо. Так выглядит показание, которое не сходится с остальными.</p>
+    <p class="note" style="margin-top:8px" data-m="pro">Полуцифра на барабане EGS обозначает противоречие, точность замера тут ни при чём. BDC и ключ отстают на 21 и 7 км. Это задержка записи, норма.</p>
+
+    <div class="bio">
+      <h3 class="sec-kicker" style="margin-bottom:8px">Биография машины</h3>
+      <div class="bio-chart" id="bioChart" role="img" aria-label="График пробега по годам: 2018 — 0, 2021 — 58 200, 2023 — 96 000, 2026 — 111 111 по приборке и 124 300 по коробке"></div>
+      <p class="note" data-m="client family">До 2023 года машина проезжала около 20 тыс. км в год. После — всего 4 тыс. в год. Такое бывает, но вместе с коробкой это повод спросить.</p>
+      <p class="note" data-m="pro">Темп: 11.2018–06.2021 ≈ 22 500 км/год; 06.2021–04.2023 ≈ 20 600 км/год; 04.2023–09.2026 ≈ 4 400 км/год.</p>
+    </div>
+
+    <div class="verdict-box">
+      <svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="30" fill="none" style="stroke:var(--ink-ghost)" stroke-width="2"/><path d="M40 10 A30 30 0 1 1 22.4 15.7" fill="none" style="stroke:var(--doubt)" stroke-width="6" stroke-dasharray="0.1 9" stroke-linecap="round"/><text x="40" y="46" text-anchor="middle" style="font:700 17px var(--f-mono);fill:var(--ink)">88%</text></svg>
+      <div>
+        <p class="v">Есть сомнения</p>
+        <p>История сходится на 88%.</p>
+        <p class="note" data-m="client family">Блок коробки могли поставить с другой машины. Попросите заказ-наряд.<span class="budget"> Если бумаги нет, торгуйтесь так, будто пробег 125 тыс. км.</span></p>
+        <p class="note" data-m="pro">Гипотеза: замена EGS или мехатроника с донора. Нужен заказ-наряд.<span class="budget"> Без него считаем пробег ≥124 300 км.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="perf sec-sep" aria-hidden="true"></div>
+
+  <!-- 3. Заявления продавца -->
+  <section class="sec" id="s3" data-sec="3" aria-labelledby="h-s3">
+    <div class="sec-head">
+      <p class="sec-pos"><b>11</b>VIN</p>
+      <div>
+        <p class="sec-kicker">Протокол заявлений продавца</p>
+        <h2 class="sec-title" id="h-s3">Что обещал продавец</h2>
+        <p class="sec-lede" data-m="client">Шесть фраз из объявления и звонка. Мы проверили каждую.</p>
+        <p class="sec-lede" data-m="family">Продавец сказал правду в трёх случаях из шести. Про аварию он умолчал.</p>
+        <p class="sec-lede" data-m="pro">Утверждения из объявления (Авито, 17.09.2026) и звонка 19.09.2026. Статус по доказательствам осмотра.</p>
+      </div>
+    </div>
+    <div class="claims-sum"><span class="big">3 из 6</span><span>подтверждено, одно косвенно</span><span class="tag c-danger"><svg class="ico" style="width:15px;height:15px" aria-hidden="true"><use href="#i-cross"/></svg>опровергнуто 1</span></div>
+    <div class="claims">
+      <div class="claim"><svg class="c-danger" aria-hidden="true"><use href="#i-cross"/></svg><q>Не бита</q><span class="st c-danger">ОПРОВЕРГНУТО</span>
+        <p class="chk" data-m="client family">Правый бок крашен, в задней правой двери шпаклёвка.</p><p class="chk" data-m="pro">ПП крыло 240, ПП дверь 310, ЗП дверь 620 мкм. Стойки и пороги заводские.</p></div>
+      <div class="claim"><svg class="c-ok" aria-hidden="true"><use href="#i-ok"/></svg><q>Один владелец в России</q><span class="st c-ok">ПОДТВЕРЖДЕНО</span>
+        <p class="chk">ПТС и история регистраций: один собственник с 2019 года.</p></div>
+      <div class="claim"><svg class="c-doubt" aria-hidden="true"><use href="#i-none"/></svg><q>Родной пробег</q><span class="st c-doubt">НЕ ДОКАЗАНО</span>
+        <p class="chk" data-m="client family">Коробка помнит на 13 тыс. км больше. Нужен документ.</p><p class="chk" data-m="pro">EGS 124 300 против KOMBI 111 111. См. позицию 09.</p></div>
+      <div class="claim"><svg class="c-ok" aria-hidden="true"><use href="#i-ok"/></svg><q>Радиатор EGR по отзыву меняли</q><span class="st c-ok">ПОДТВЕРЖДЕНО</span>
+        <p class="chk" data-m="client family">Есть заказ-наряд от дилера.</p><p class="chk" data-m="pro">Заказ-наряд дилера 2019 г., отзывная кампания по радиатору EGR, деталь новой ревизии на месте.</p></div>
+      <div class="claim"><svg class="c-soft" aria-hidden="true"><use href="#i-none"/></svg><q>Масло не ест</q><span class="st c-soft">НЕ ПРОВЕРЯЛОСЬ</span>
+        <p class="chk">За один осмотр это не узнать. Нужен замер через 1 000 км.</p></div>
+      <div class="claim"><svg class="c-clean" aria-hidden="true"><use href="#i-half"/></svg><q>Зимовала в гараже</q><span class="st c-clean">КОСВЕННО ДА</span>
+        <p class="chk">Нижние кромки дверей и крепёж без коррозии. Рыжик только на левом пороге, от камня.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= АКТ II ================= -->
+  <div class="act">
+    <div class="act-head"><span class="n">АКТ II</span><span class="t">Машина руками</span><span class="note">B · C · P · U, те же буквы, что в кодах ошибок</span></div>
+    <svg class="gband" aria-hidden="true" preserveAspectRatio="none"><rect width="100%" height="21" fill="url(#gwave)"/></svg>
+  </div>
+
+  <!-- 4. Кузов -->
+  <section class="sec" id="s4" data-sec="4" aria-labelledby="h-s4">
+    <div class="sec-head">
+      <p class="sec-pos"><b>B</b>06–07</p>
+      <div>
+        <p class="sec-kicker">B · Кузов</p>
+        <h2 class="sec-title" id="h-s4">Кузов, разложенный как выкройка</h2>
+        <p class="sec-lede" data-m="client">Чем толще слой краски, тем шире шов вокруг детали и гуще штриховка.</p>
+        <p class="sec-lede" data-m="pro">41 замер по 13 металлическим панелям. Штриховка по шагу 170 мкм, ширина шва растёт с максимумом по панели.</p>
+        <p class="sec-lede" data-m="family">Правый бок перекрашивали после небольшой аварии. Кузов ровный, двери закрываются как надо. На безопасность это не влияет, на цену — да.</p>
+      </div>
+    </div>
+
+    <div class="counters">
+      <div class="counter paint"><p class="n">3</p><p class="k">Крашено</p></div>
+      <div class="counter need"><p class="n">2</p><p class="k">Требует окраса</p></div>
+      <p class="note" style="max-width:34ch;padding-bottom:8px">100 мкм — это лист офисной бумаги. 620 мкм в задней правой двери — стопка из 6 листов.</p>
+    </div>
+
+    <div class="cols c-11-5" style="margin-top:21px">
+      <div class="pattern">
+        <div class="pattern-full" id="patFull"></div>
+        <div class="pattern-fold">
+          <div class="fold" id="fold">
+            <div class="fold-card">
+              <div class="front" id="patRight"></div>
+              <div class="back" id="patLeft"></div>
+            </div>
+          </div>
+          <button type="button" class="btn fold-btn" id="foldBtn" aria-controls="fold" aria-pressed="false">Развернуть левую сторону</button>
+          <p class="note" id="foldNote" style="margin-top:8px;text-align:center">Выкройка сложена по оси машины. Сейчас видна правая сторона, на ней все находки.</p>
+        </div>
+      </div>
+      <div>
+        <p class="sec-kicker" style="margin-bottom:8px">Шаг 170 мкм</p>
+        <div class="scale170" id="scale170"></div>
+        <p class="note" style="margin-top:13px">Бамперы пластиковые, толщиномер их не меряет. Они заштрихованы как другой материал.</p>
+        <p class="note" style="margin-top:8px">Капот, передние крылья, двери и крышка багажника у G30 алюминиевые. Их мерили в режиме NFe.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:34px">
+      <h3 class="sec-kicker">Керны: срезы краски, 1 px = 5 мкм</h3>
+      <div class="kerns" id="kerns"></div>
+      <div class="klegend" style="margin-top:13px" aria-hidden="true">
+        <span><i style="background:var(--l-ecoat)"></i>катафорез</span>
+        <span><i style="background:var(--l-putty)"></i>шпаклёвка</span>
+        <span><i style="background:var(--l-primer)"></i>грунт</span>
+        <span><i style="background:var(--l-base)"></i>база</span>
+        <span><i style="background:var(--l-clear)"></i>лак</span>
+      </div>
+    </div>
+
+    <div data-m="pro" style="margin-top:34px">
+      <h3 class="sec-kicker" style="margin-bottom:8px">Все замеры, мкм</h3>
+      <div class="tbl-scroll"><table class="um-table" id="umTable"></table></div>
+    </div>
+  </section>
+
+  <div class="perf sec-sep" aria-hidden="true"></div>
+
+  <!-- 5. Ходовая -->
+  <section class="sec" id="s5" data-sec="5" aria-labelledby="h-s5">
+    <div class="sec-head">
+      <p class="sec-pos"><b>C</b>08</p>
+      <div>
+        <p class="sec-kicker">C · Ходовая</p>
+        <h2 class="sec-title" id="h-s5">Вид снизу</h2>
+        <p class="sec-lede" data-m="client">Четыре булавки. Две из них надо чинить в ближайший месяц.</p>
+        <p class="sec-lede" data-m="pro">Осмотр с подкатного лежака, без подъёмника. Тяжесть 1–3, цены с оригинальными запчастями.</p>
+        <p class="sec-lede" data-m="family">Подвеска немного разболталась спереди. Ездить безопасно, но лучше починить до зимы.</p>
+      </div>
+    </div>
+    <div class="cols c-5-11">
+      <div class="under" id="under"></div>
+      <div class="pins" id="pins"></div>
+    </div>
+  </section>
+
+  <div class="perf sec-sep" aria-hidden="true"></div>
+
+  <!-- 6. Двигатель -->
+  <section class="sec" id="s6" data-sec="6" aria-labelledby="h-s6">
+    <div class="sec-head">
+      <p class="sec-pos"><b>P</b>04–05</p>
+      <div>
+        <p class="sec-kicker">P · Двигатель</p>
+        <h2 class="sec-title" id="h-s6">Паспорт мотора B57D30</h2>
+        <p class="sec-lede" data-m="client">Мы прошли по местам, где этот мотор обычно болеет. Одно требует ремонта, одно под наблюдением.</p>
+        <p class="sec-lede" data-m="pro">3.0 R6, одна турбина с изменяемой геометрией, цепь ГРМ сзади. Типовые точки из базы знаний и что нашли.</p>
+        <p class="sec-lede" data-m="family">Мотор здоровый. Одну деталь, клапан рециркуляции, надо заменить сразу, это около 50 тыс. ₽.</p>
+      </div>
+    </div>
+    <div class="pass-head">
+      <span class="code">B57D30 · 265 л.с.</span>
+      <button type="button" class="btn" id="calqueBtn" aria-pressed="true">Калька типовых болячек: вкл</button>
+    </div>
+    <div class="legend-icons">
+      <span class="c-ok"><svg aria-hidden="true"><use href="#i-ok"/></svg>проверено</span>
+      <span class="c-remark"><svg aria-hidden="true"><use href="#i-warn"/></svg>замечание</span>
+      <span class="c-soft"><svg aria-hidden="true"><use href="#i-none"/></svg>не проверялось</span>
+      <span class="soft">жёлтая калька: типовое место из базы; где оно совпало с замечанием, стоит метка «совпало»</span>
+    </div>
+    <div class="pass calque-on" id="pass"></div>
+    <div class="sw-line"><svg class="ico c-ok" aria-hidden="true"><use href="#i-ok"/></svg><span>ПО: заводское, I-Stufe совпадает с историей обновлений</span></div>
+    <p class="note" style="margin-top:13px">Сервопривод турбины есть в кальке, но не проверен. Проверьте через 10 000 км или на первой поездке по трассе.</p>
+  </section>
+
+  <div class="perf sec-sep" aria-hidden="true"></div>
+
+  <!-- 7. Электрика -->
+  <section class="sec" id="s7" data-sec="7" aria-labelledby="h-s7">
+    <div class="sec-head">
+      <p class="sec-pos"><b>U</b>12–13</p>
+      <div>
+        <p class="sec-kicker">U · Электрика</p>
+        <h2 class="sec-title" id="h-s7">Табло ошибок</h2>
+        <p class="sec-lede" data-m="client">Ошибки разложены на три кучки. Платить придётся только за первую, «Деньги».</p>
+        <p class="sec-lede" data-m="pro">2 сессии диагностики. Фильтр шума: коммуникационные коды после отключения АКБ, не повторились после стирания.</p>
+        <p class="sec-lede" data-m="family">Из электрики сломан только подогрев одного заднего сиденья. Остальное работает.</p>
+      </div>
+    </div>
+    <div class="tablo">
+      <div class="tgrp money">
+        <p class="gh">Деньги</p>
+        <p class="dot c-danger">P0401</p>
+        <p class="st c-danger">● АКТИВНА</p>
+        <p class="dsc" data-m="client family">Рециркуляция выхлопа работает слабо. Клапан EGR в нагаре, нужна замена.</p>
+        <p class="dsc" data-m="pro">EGR: недостаточный поток. 3 события, первое на 109 870 км, последнее на 111 087 км.</p>
+        <p class="st">Мск 53 500 ₽ · СПб 50 000 ₽</p>
+      </div>
+      <div class="tgrp hist">
+        <p class="gh">История</p>
+        <p class="dot">P2463</p>
+        <p class="st c-soft">○ В ПАМЯТИ</p>
+        <p class="dsc" data-m="client family">Сажевый фильтр однажды забился. Сейчас чистый, перепад в норме.</p>
+        <p class="dsc" data-m="pro">DPF: накопление сажи. 1 событие на 110 540 км, прерванная регенерация. Δp сейчас в норме.</p>
+        <p class="st">0 ₽ сейчас</p>
+      </div>
+      <div class="tgrp noise">
+        <p class="gh">Шум</p>
+        <p class="dot">U0100 +4</p>
+        <p class="st c-soft">— СТЁРТЫ</p>
+        <p class="dsc" data-m="client family">Блоки потеряли связь, когда отключали аккумулятор. Это нормально.</p>
+        <p class="dsc" data-m="pro">Потеря связи с блоком двигателя и ещё 4 коммуникационных кода, все на 111 095 км. После стирания не вернулись.</p>
+        <p class="st">0 ₽</p>
+      </div>
+    </div>
+    <h3 class="sec-kicker" style="margin-top:34px">17 функций: всё ли работает</h3>
+    <p class="note" id="funcSum">15 работают · 1 не работает · 1 с перебоями</p>
+    <div class="funcs" id="funcs"></div>
+  </section>
+
+  <!-- ================= АКТ III ================= -->
+  <div class="act">
+    <div class="act-head"><span class="n">АКТ III</span><span class="t">Деньги и время</span><span class="note">смета, прогноз, печать</span></div>
+    <svg class="gband" aria-hidden="true" preserveAspectRatio="none"><rect width="100%" height="21" fill="url(#gwave)"/></svg>
+  </div>
+
+  <!-- 8. Две столицы -->
+  <section class="sec" id="s8" data-sec="8" aria-labelledby="h-s8">
+    <div class="sec-head">
+      <p class="sec-pos"><b>₽</b>14–15</p>
+      <div>
+        <p class="sec-kicker">Смета · цены 2026 года</p>
+        <h2 class="sec-title" id="h-s8">Две столицы</h2>
+        <p class="sec-lede" data-m="client">Сколько вложить после покупки. Слева Москва, справа Петербург, по каждой строке два варианта запчастей.</p>
+        <p class="sec-lede" data-m="pro">Нормо-часы по независимым сервисам BMW, запчасти: оригинал BMW и аналог проверенных брендов. Итоги пересчитаны из строк.</p>
+        <p class="sec-lede" data-m="family">Сразу после покупки понадобится 110–180 тысяч. В течение полугода ещё 105–125 тысяч.</p>
+      </div>
+    </div>
+    <div class="axis-grid" style="margin-bottom:4px">
+      <p class="city l">Москва</p><span class="axis"></span><p class="city">Санкт-Петербург</p>
+    </div>
+    <div id="receipts"></div>
+    <div class="tape" id="tape" aria-hidden="true"></div>
+    <div class="caps-sum" id="capsSum"></div>
+  </section>
+
+  <div class="perf sec-sep" aria-hidden="true"></div>
+
+  <!-- 9. ИИ-обзор и синоптик -->
+  <section class="sec" id="s9" data-sec="9" aria-labelledby="h-s9">
+    <div class="sec-head">
+      <p class="sec-pos"><b>R</b>01–03</p>
+      <div>
+        <p class="sec-kicker">R · Справка базы знаний</p>
+        <h2 class="sec-title" id="h-s9">Модель и мотор</h2>
+        <p class="sec-lede" data-m="client">Что известно про эту модель и её мотор и что ждать в ближайший год.</p>
+        <p class="sec-lede" data-m="pro">Выжимка по G30 pre-LCI, B57D30 и ZF 8HP со ссылками на статьи базы. Ниже прогноз расходов на +20 000 км.</p>
+        <p class="sec-lede" data-m="family">Модель надёжная, если её обслуживать. Ниже сказано, сколько откладывать в месяц на ремонт.</p>
+      </div>
+    </div>
+    <div class="cols c-11-5">
+      <div class="ai-text">
+        <p class="ai-plate"><svg class="ico" aria-hidden="true"><use href="#i-okbox"/></svg>Составлено ИИ по 6 статьям базы, проверено мастером</p>
+        <div data-m="client family">
+          <p>G30 — седан BMW 5-й серии, его выпускали с 2017 по 2023 год. Эта машина собрана до рестайлинга 2020 года. На таком пробеге у неё обычно устаёт передняя подвеска<sup><a href="#kb5">[5]</a></sup>, а у мотора — система рециркуляции выхлопа<sup><a href="#kb3">[3]</a></sup>.</p>
+          <p>Мотор B57 надёжный, если вовремя менять масло. По одной детали, радиатору EGR, был отзыв. На этой машине его уже заменили<sup><a href="#kb2">[2]</a></sup>. BMW считает масло в коробке ZF залитым на весь срок, но мастера меняют его примерно раз в 60–80 тыс. км<sup><a href="#kb4">[4]</a></sup>.</p>
+          <p>Капот, передние крылья, двери и крышка багажника сделаны из алюминия. Толщину краски на них мерят в отдельном режиме<sup><a href="#kb6">[6]</a></sup>. Типичные места для проверки на 90–130 тыс. км собраны в отдельной статье<sup><a href="#kb1">[1]</a></sup>.</p>
+        </div>
+        <div data-m="pro">
+          <p>G30 (2017–2023, LCI с середины 2020). Экземпляр pre-LCI, выпуск 11.2018. Зона внимания на 90–130 тыс. км: передние нижние рычаги и шаровые на xDrive<sup><a href="#kb5">[5]</a></sup>, опоры стоек, задние верхние рычаги<sup><a href="#kb1">[1]</a></sup>.</p>
+          <p>B57D30: 3.0 R6, VNT-турбина, цепь ГРМ со стороны коробки. Отзыв по радиатору EGR (риск течи ОЖ и возгорания) проверяется по VIN; здесь закрыт<sup><a href="#kb2">[2]</a></sup>. Клапан EGR коксуется при городской эксплуатации, P0401 — типовой симптом<sup><a href="#kb3">[3]</a></sup>.</p>
+          <p>ZF 8HP: заводская заливка «на весь срок», практика — замена ATF с поддоном-фильтром каждые 60–80 тыс. км и адаптация<sup><a href="#kb4">[4]</a></sup>. Навесные панели Al: замер ЛКП в режиме NFe, заводской коридор 100–160 мкм<sup><a href="#kb6">[6]</a></sup>.</p>
+        </div>
+      </div>
+      <div>
+        <p class="sec-kicker" style="margin-bottom:8px">Статьи базы (пример)</p>
+        <ol class="kb">
+          <li id="kb1"><span class="n">[1]</span><span>G30: что смотреть на 90–130 тыс. км</span></li>
+          <li id="kb2"><span class="n">[2]</span><span>B57: отзыв по радиатору EGR и как проверить по VIN</span></li>
+          <li id="kb3"><span class="n">[3]</span><span>Клапан EGR на B57: чистить или менять</span></li>
+          <li id="kb4"><span class="n">[4]</span><span>ZF 8HP: масло и адаптации, когда и сколько</span></li>
+          <li id="kb5"><span class="n">[5]</span><span>Передняя подвеска G30 xDrive: рычаги и шаровые</span></li>
+          <li id="kb6"><span class="n">[6]</span><span>Толщина ЛКП на G30: где алюминий и как мерить</span></li>
+        </ol>
+        <p class="note" style="margin-top:8px">Заголовки статей вымышлены для демо.</p>
+      </div>
+    </div>
+
+    <div class="syn">
+      <h3 class="sec-kicker" style="margin-bottom:8px">Синоптик на 365 дней · +20 000 км</h3>
+      <p class="note" style="margin-bottom:13px" data-m="client family">Прогноз как погода: что вероятно понадобится за год и сколько стоит.</p>
+      <p class="note" style="margin-bottom:13px" data-m="pro">Вероятности по базе для B57 на 110–130 тыс. км с учётом находок осмотра. Ожидание = вероятность × середина вилки.</p>
+      <div class="syn-track" id="syn"></div>
+      <div class="reserve" id="reserve"></div>
+    </div>
+  </section>
+
+  <div class="perf sec-sep" aria-hidden="true"></div>
+
+  <!-- 10. Охота и печать -->
+  <section class="sec" id="s10" data-sec="10" aria-labelledby="h-s10">
+    <div class="sec-head">
+      <p class="sec-pos"><b>16</b>–17</p>
+      <div>
+        <p class="sec-kicker">Охота и печать</p>
+        <h2 class="sec-title" id="h-s10">Как нашли эту машину</h2>
+        <p class="sec-lede" data-m="client">Мастер пересмотрел 38 объявлений, прежде чем позвать вас сюда.</p>
+        <p class="sec-lede" data-m="family">Из 38 машин мастер выбрал одну. Три отсеянные показаны ниже: вот от чего вас уберегли.</p>
+        <p class="sec-lede" data-m="pro">Воронка по G30 530d 2018–2019, бюджет до 4,6 млн ₽, Москва и область, 01–27.09.2026.</p>
+      </div>
+    </div>
+    <div class="cols c-8-8">
+      <div>
+        <div class="funnel" id="funnel"></div>
+        <p class="note" style="margin-top:8px">Отсеяли машины с проблемами примерно на 1,2 млн ₽ по сметам мастера.</p>
+      </div>
+      <div class="blackbox">
+        <h3 class="sec-kicker">Чёрный ящик осмотра</h3>
+        <div class="bb-stats">
+          <div><b>1:17</b>ч:мин на осмотре</div>
+          <div><b>41</b>замер краски</div>
+          <div><b>2</b>сессии диагностики</div>
+          <div><b>126</b>фото</div>
+        </div>
+        <p style="font-weight:600">Что не проверялось и почему</p>
+        <ul class="notchk">
+          <li><svg class="c-soft" aria-hidden="true"><use href="#i-none"/></svg><span>Подъёмник. Низ смотрели с лежака и фонарём, на подъёмник продавец не поехал.</span></li>
+          <li><svg class="c-soft" aria-hidden="true"><use href="#i-none"/></svg><span>Трасса 120+ км/ч. Продавец разрешил только город, поэтому турбину и коробку под нагрузкой не проверили.</span></li>
+          <li><svg class="c-soft" aria-hidden="true"><use href="#i-none"/></svg><span>Расход масла. Нужен контрольный замер через 1 000 км.</span></li>
+          <li><svg class="c-soft" aria-hidden="true"><use href="#i-none"/></svg><span>Цилиндры эндоскопом. Не было повода, компрессия по данным блока ровная.</span></li>
+        </ul>
+        <label class="ack" for="ackNot"><input type="checkbox" id="ackNot"><span>Я прочитал(а), что не проверялось</span></label>
+        <p class="note" id="ackNote" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="obits" id="obits"></div>
+
+    <div class="seal-grid">
+      <div class="seal">
+        <button type="button" class="seal-btn" id="sealBtn" aria-expanded="false" aria-controls="authBox" aria-label="Проверить подлинность виньетки"><span id="sealSvg"></span></button>
+        <p class="sig" id="sigName">А. А. Подборкин</p>
+        <p class="small mono" id="sealTxt">стиль проверен · X</p>
+        <div class="auth" id="authBox" hidden></div>
+        <div class="qr"><span id="qrSvg"></span><p class="note" style="max-width:22ch;text-align:left">Демо-узор. В настоящей виньетке здесь QR проверки подлинности по номеру Т-000417.</p></div>
+        <div class="chev" aria-label="Шевроны мастера"><span class="tag">Охотник за скрутками ×25</span><span class="tag">G30 · 50 осмотров</span></div>
+      </div>
+      <div>
+        <div class="trophy" role="img" aria-label="Трофейная карточка машины: рейтинг 70 из 99">
+          <div class="rose-s" id="roseTrophy" aria-hidden="true"></div>
+          <div class="inner">
+            <p class="mono small">BMW 530d xDrive · G30</p>
+            <div class="rt"><b>70</b><span>из 99<br>серебро</span></div>
+            <div class="attrs">
+              <div><span>МОТ</span><span>71</span></div>
+              <div><span>КОР</span><span>64</span></div>
+              <div><span>ХОД</span><span>68</span></div>
+              <div><span>КУЗ</span><span>58</span></div>
+              <div><span>ЭЛК</span><span>82</span></div>
+              <div><span>ДОК</span><span>74</span></div>
+            </div>
+            <p class="note">Процентиль среди G30 появится, когда в сети наберётся когорта осмотров.</p>
+          </div>
+          <p class="foot" id="trophyFoot">Подобрал: А. А. Подборкин</p>
+        </div>
+        <div class="pass-on">
+          <button type="button" class="btn" id="passBtn">Передать виньетку следующему владельцу</button>
+          <p class="note" id="passNote" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="micro" aria-hidden="true">ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·</p>
+    <div class="foot-row">
+      <span>Независимый сервис, не связан с автопроизводителями.</span>
+      <span>Демо-виньетка: машина, продавец и цены — пример.</span>
+      <a href="./">На главную</a>
+      <a href="ideas.html">Идеи сервиса</a>
+    </div>
+  </footer>
+  </main>
+</div>
+
+<script src="vignette.js"></script>
+<script>
+(function(){
+'use strict';
+var V = window.Vignette;
+var root = document.documentElement;
+var $ = function(s, c){ return (c || document).querySelector(s); };
+var $$ = function(s, c){ return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+var rub = function(n){ return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); };
+var store = {
+  get: function(k){ try { return window.localStorage.getItem(k); } catch(e){ return null; } },
+  set: function(k, v){ try { window.localStorage.setItem(k, v); } catch(e){} }
+};
+var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+var NS = 'http://www.w3.org/2000/svg';
+
+/* ---------- данные сметы (одна правда для суфлёра, ходовой и лент) ---------- */
+var ITEMS = [
+  {g:'urgent', arg:'engine', name:'Клапан EGR: замена, чистка впуска', m:{w:14000,o:39500,a:18500}, s:{w:12000,o:38000,a:17500}},
+  {g:'urgent', arg:'susp', pin:1, name:'Передние нижние рычаги ×2 и развал', m:{w:13500,o:48000,a:19500}, s:{w:11500,o:46000,a:18500}},
+  {g:'urgent', arg:'susp', pin:4, name:'Опора левого амортизатора', m:{w:7500,o:12800,a:5600}, s:{w:6500,o:12300,a:5300}},
+  {g:'urgent', arg:'gear', name:'ZF 8HP: диагностика, масло с поддоном-фильтром, адаптация', m:{w:14500,o:26500,a:16000}, s:{w:12500,o:25500,a:15500}},
+  {g:'plan', arg:'body', name:'Окрас капота: алюминий, сколы, с материалами', m:{w:44000,o:0,a:0}, s:{w:37000,o:0,a:0}},
+  {g:'plan', arg:'body', name:'Левый порог: рыжик, антикор, окрас с материалами', m:{w:32000,o:0,a:0}, s:{w:27000,o:0,a:0}},
+  {g:'plan', arg:'susp', pin:2, name:'Задние верхние рычаги ×2', m:{w:9500,o:17600,a:7400}, s:{w:8000,o:16900,a:7000}},
+  {g:'plan', arg:'elec', name:'Подогрев заднего правого сиденья', m:{w:7500,o:14800,a:6900}, s:{w:6500,o:14200,a:6600}}
+];
+function sum(list, city, key){ return list.reduce(function(a, it){ return a + it[city][key]; }, 0); }
+function tot(list, city, key){ return sum(list, city, 'w') + sum(list, city, key); }
+var MSK_O = tot(ITEMS, 'm', 'o'), MSK_A = tot(ITEMS, 'm', 'a'), SPB_O = tot(ITEMS, 's', 'o'), SPB_A = tot(ITEMS, 's', 'a');
+$('#sellerSum').textContent = rub(MSK_O) + ' ₽';
+
+/* ---------- стиль мастера ---------- */
+var current = null;
+function initials(words){
+  if (!words.length) return 'Мастер';
+  if (words.length === 1) return words[0];
+  var last = words[words.length - 1];
+  return words.slice(0, -1).map(function(w){ return w[0].toUpperCase() + '.'; }).join(' ') + ' ' + last;
+}
+function plateRows(s){
+  var w = s.words.map(function(x){ return x.toUpperCase(); });
+  var r1 = w.slice(0, 2).join('·'), r2 = w.slice(2).join('·');
+  if (w.length < 3) { r1 = w[0] || 'МАСТЕР'; r2 = w[1] || ''; }
+  var pad = function(t){ t = t.slice(0, 17); var l = Math.floor((17 - t.length) / 2); var out = []; for (var i = 0; i < 17; i++) out.push(i >= l && i < l + t.length ? t[i - l] : ''); return out; };
+  return pad(r1).concat(pad(r2));
+}
+function renderStyle(s, anim){
+  current = s;
+  V.apply(s, root);
+  var n = 0;
+  $('#roseCover').innerHTML = V.rosetteSVG(s, {size: 300, stroke: .55, animate: !!anim && !reduced, idPrefix: 'rc' + (++n)});
+  $('#roseTrophy').innerHTML = V.rosetteSVG(s, {size: 150, stroke: .45, idPrefix: 'rt' + n});
+  $('#plate').innerHTML = plateRows(s).map(function(ch){ return '<span class="' + (ch === '·' || !ch ? 'gap' : '') + '">' + (ch === '' ? '·' : ch) + '</span>'; }).join('');
+  $('#plate').setAttribute('aria-label', 'VIN-табличка мастера: ' + s.name);
+  $('#masterName').textContent = s.name || 'Мастер';
+  var c = s.styleCode;
+  $('#styleCode').innerHTML = c.slice(0, 8) + '<b>' + c[8] + '</b>' + c.slice(9);
+  var ini = initials(s.words);
+  $('#sigName').textContent = ini;
+  $('#trophyFoot').textContent = 'Подобрал: ' + ini;
+  $('#sealTxt').textContent = (s.passed ? 'стиль проверен · ' : 'стиль не прошёл проверку · ') + s.checkDigit;
+  $('#sealSvg').innerHTML = sealSVG(s);
+  if (!$('#authBox').hidden) fillAuth();
+}
+function sealSVG(s){
+  var id = 'seal' + Math.random().toString(36).slice(2, 7);
+  var rose = V.rosetteSVG(s, {size: 150, stroke: .45, idPrefix: id + 'r'});
+  var micro = ('СТИЛЬ ПРОВЕРЕН · ' + s.checkDigit + ' · ВИНЬЕТКА Т-000417 · ' + s.styleCode + ' · ');
+  return '<svg viewBox="-110 -110 220 220" width="220" height="220" role="img" aria-label="Печать мастера">' +
+    '<defs><path id="' + id + 'p" d="M0,-96 a96,96 0 1,1 -0.1,0"/></defs>' +
+    '<circle r="104" fill="none" style="stroke:var(--ink)" stroke-width="1.5"/>' +
+    '<circle r="88" fill="none" style="stroke:var(--guilloche)" stroke-width="1"/>' +
+    '<text style="font:600 8.4px var(--f-mono);fill:var(--ink-soft);letter-spacing:.9px"><textPath href="#' + id + 'p">' + micro + micro.slice(0, 20) + '</textPath></text>' +
+    rose.replace('<svg ', '<svg x="-75" y="-75" ') +
+    '</svg>';
+}
+function fillAuth(){
+  var s = current;
+  $('#authBox').innerHTML = 'Проверка подлинности (демо)<br>Виньетка: Т-000417<br>Мастер: ' + (s.name || '—') + '<br>Код стиля: ' + s.styleCode + '<br>Контрольный знак: ' + s.checkDigit + (s.passed ? ' · контраст пройден' : ' · контраст не пройден') + '<br>Выпущена: 30.09.2026<br>Отпечаток: 4f1a·09c2·77e3 (пример)';
+}
+$('#sealBtn').addEventListener('click', function(){
+  var box = $('#authBox'), open = box.hidden;
+  if (open) fillAuth();
+  box.hidden = !open;
+  this.setAttribute('aria-expanded', String(open));
+});
+
+// выбор мастера
+var sel = $('#tryPreset');
+V.PRESET_NAMES.forEach(function(nm, i){ var o = document.createElement('option'); o.value = String(i); o.textContent = nm + (i === 0 ? ' (владелец)' : ' (пример)'); sel.appendChild(o); });
+sel.addEventListener('change', function(){ $('#tryName').value = ''; renderStyle(V.PRESETS[+sel.value], true); });
+$('#tryApply').addEventListener('click', function(){
+  var v = $('#tryName').value.trim();
+  renderStyle(v ? V.fromName(v) : V.PRESETS[+sel.value], true);
+});
+$('#tryName').addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); $('#tryApply').click(); } });
+$('#tryReset').addEventListener('click', function(){ sel.value = '0'; $('#tryName').value = ''; renderStyle(V.PRESETS[0], true); });
+
+/* ---------- номер лесенкой ---------- */
+(function(){
+  var t = 'Т-000417', sizes = [21, 17, 17, 19, 21, 25, 29, 34], h = '';
+  for (var i = 0; i < t.length; i++) h += '<span aria-hidden="true" style="font-size:' + sizes[i] + 'px">' + t[i] + '</span>';
+  $('#serial').innerHTML = h;
+})();
+
+/* ---------- барабаны ---------- */
+function buildDrums(el, value, offIdx){
+  var digits = String(value).split(''), h = '', k = 0;
+  digits.forEach(function(d, i){
+    if (i > 0 && (digits.length - i) % 3 === 0) h += '<span class="drum sp" aria-hidden="true"></span>';
+    var reel = '';
+    for (var r = 0; r < 21; r++) reel += '<span>' + (r % 10) + '</span>';
+    var pos = +d + 10 + (i === offIdx ? .5 : 0);
+    h += '<span class="drum' + (i === offIdx ? ' off' : '') + '" aria-hidden="true" style="--i:' + (k++) + '"><span class="reel" style="--pos:' + pos + '">' + reel + '</span></span>';
+  });
+  el.innerHTML = h;
+  if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', rub(value));
+  el.setAttribute('role', 'img');
+}
+$$('[data-drums]').forEach(function(el){ buildDrums(el, el.getAttribute('data-drums')); var u = document.createElement('span'); u.className = 'unit'; u.textContent = 'км'; u.setAttribute('aria-hidden', 'true'); el.appendChild(u); });
+
+var WIT = [
+  {who:'KOMBI · приборка', sub:'одометр', v:111111, ev:'Точка отсчёта.', proof:'показание', cls:'c-soft'},
+  {who:'BDC · блок кузова', sub:'резервная копия пробега', v:111090, ev:'Сходится, отстаёт на 21 км.', proof:'косвенно · сходится', cls:'c-clean'},
+  {who:'Ключ', sub:'память ключа', v:111104, ev:'Сходится, отстаёт на 7 км.', proof:'косвенно · сходится', cls:'c-clean'},
+  {who:'ТО у дилера', sub:'06.2021', v:58200, ev:'Документ. Темп до 2021 года ≈ 22 тыс. км в год.', proof:'документ', cls:'c-ok'},
+  {who:'Архив объявлений', sub:'04.2023', v:96000, ev:'Фото приборки в старом объявлении.', proof:'косвенно · сходится', cls:'c-clean'},
+  {who:'EGS · блок коробки', sub:'счётчик в данных адаптаций', v:124300, ev:'На 13 189 км больше приборки. Блок могли поставить с другой машины.', proof:'противоречие', cls:'c-danger', off:1, bad:true}
+];
+$('#witness').innerHTML = WIT.map(function(w, i){
+  return '<div class="wrow' + (w.bad ? ' bad' : '') + '"><p class="who">' + w.who + '<small>' + w.sub + '</small></p>' +
+    '<div class="drums w-d" data-v="' + w.v + '" data-off="' + (w.off == null ? -1 : w.off) + '" aria-label="' + rub(w.v) + ' км"></div>' +
+    '<p class="ev"><span class="tag ' + w.cls + '">' + w.proof + '</span> ' + w.ev + '</p></div>';
+}).join('');
+$$('.w-d').forEach(function(el){ buildDrums(el, el.getAttribute('data-v'), +el.getAttribute('data-off')); });
+
+// зигзаг «скручен»
+(function(){
+  var d = '', N = 36;
+  for (var i = 0; i <= N; i++){ var a = i / N * Math.PI * 2 - Math.PI / 2, r = i % 2 ? 23 : 32; d += (i ? 'L' : 'M') + (40 + r * Math.cos(a)).toFixed(1) + ' ' + (40 + r * Math.sin(a)).toFixed(1); }
+  $('#zigRing').setAttribute('d', d + 'Z');
+})();
+
+/* ---------- биография: график по масштабу ---------- */
+function bioChart(){
+  var box = $('#bioChart'), W = Math.max(340, Math.min(900, box.clientWidth || 340)), H = 250;
+  var L = 62, R = 16, T = 21, B = 55, pw = W - L - R, ph = H - T - B;
+  var t0 = 2018.75, t1 = 2027.0, mMax = 130000;
+  var x = function(t){ return L + (t - t0) / (t1 - t0) * pw; }, y = function(m){ return T + ph - m / mMax * ph; };
+  var s = '<svg xmlns="' + NS + '" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">';
+  [0, 40000, 80000, 120000].forEach(function(m){
+    s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(m) + '" y2="' + y(m) + '" style="stroke:var(--guilloche)" stroke-width="' + (m ? .6 : 1.2) + '" ' + (m ? 'stroke-dasharray="2 4"' : '') + '/>';
+    s += '<text x="' + (L - 8) + '" y="' + (y(m) + 4) + '" text-anchor="end" style="font:500 11px var(--f-mono);fill:var(--ink-soft)">' + (m ? m / 1000 + ' тыс' : '0') + '</text>';
+  });
+  var step = W < 520 ? 2 : 1;
+  for (var yr = 2019; yr <= 2026; yr += step){
+    s += '<line x1="' + x(yr) + '" x2="' + x(yr) + '" y1="' + (T + ph) + '" y2="' + (T + ph + 5) + '" style="stroke:var(--ink-soft)"/>';
+    s += '<text x="' + x(yr) + '" y="' + (T + ph + 18) + '" text-anchor="middle" style="font:500 11px var(--f-mono);fill:var(--ink-soft)">' + yr + '</text>';
+  }
+  var P = [[2018.83, 0], [2021.42, 58200], [2023.25, 96000], [2026.74, 111111]];
+  s += '<polyline fill="none" style="stroke:var(--ink)" stroke-width="2.4" points="' + P.slice(0, 3).map(function(p){ return x(p[0]) + ',' + y(p[1]); }).join(' ') + '"/>';
+  s += '<line x1="' + x(P[2][0]) + '" y1="' + y(P[2][1]) + '" x2="' + x(P[3][0]) + '" y2="' + y(P[3][1]) + '" style="stroke:var(--doubt)" stroke-width="3" stroke-dasharray="0.1 7" stroke-linecap="round"/>';
+  // EGS
+  s += '<line x1="' + x(P[3][0]) + '" y1="' + y(111111) + '" x2="' + x(P[3][0]) + '" y2="' + y(124300) + '" style="stroke:var(--danger)" stroke-width="1.5"/>';
+  s += '<rect x="' + (x(P[3][0]) - 6) + '" y="' + (y(124300) - 6) + '" width="12" height="12" transform="rotate(45 ' + x(P[3][0]) + ' ' + y(124300) + ')" style="fill:var(--paper);stroke:var(--danger)" stroke-width="2"/>';
+  s += '<text x="' + (x(P[3][0]) - 12) + '" y="' + (y(124300) + 4) + '" text-anchor="end" style="font:600 11px var(--f-mono);fill:var(--danger)">EGS 124 300</text>';
+  var lab = [['выпуск', 'start', 12, -2], ['ТО · 58 200', 'end', -9, -7], ['объявление · 96 000', 'end', -9, -7], ['KOMBI 111 111', 'end', -9, W < 520 ? 44 : 32]];
+  P.forEach(function(p, i){
+    s += '<circle cx="' + x(p[0]) + '" cy="' + y(p[1]) + '" r="5" style="fill:var(--paper);stroke:var(--ink)" stroke-width="2"/>';
+    s += '<text x="' + (x(p[0]) + lab[i][2]) + '" y="' + (y(p[1]) + lab[i][3]) + '" text-anchor="' + lab[i][1] + '" style="font:600 11px var(--f-mono);fill:var(--ink)">' + lab[i][0] + '</text>';
+  });
+  // события
+  [[2019.2, 'ввоз'], [2024.4, 'ремонт правого бока']].forEach(function(e){
+    s += '<path d="M' + x(e[0]) + ' ' + (T + ph + 26) + 'l5 8h-10z" style="fill:var(--remark)"/>';
+    var far = x(e[0]) > W * .55;
+    s += '<text x="' + (x(e[0]) + (far ? -8 : 8)) + '" y="' + (T + ph + 36) + '" text-anchor="' + (far ? 'end' : 'start') + '" style="font:500 11px var(--f-body);fill:var(--ink-soft)">' + e[1] + '</text>';
+  });
+  box.innerHTML = s + '</svg>';
+}
+
+/* ---------- суфлёр: шкала цен по масштабу ---------- */
+function priceScale(){
+  var box = $('#pscale'), W = Math.max(320, Math.min(900, box.clientWidth || 320)), H = 89, L = 13, R = 13;
+  var p0 = 4200000, p1 = 4740000, x = function(p){ return L + (p - p0) / (p1 - p0) * (W - L - R); };
+  var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" aria-label="Шкала цены: якорь 4 250 000, цель 4 390 000, уход 4 520 000, продавец 4 690 000" role="img">';
+  s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="44" y2="44" style="stroke:var(--ink)" stroke-width="1.5"/>';
+  for (var p = 4200000; p <= 4700000; p += 100000){ s += '<line x1="' + x(p) + '" x2="' + x(p) + '" y1="40" y2="48" style="stroke:var(--ink-soft)"/>'; s += '<text x="' + x(p) + '" y="66" text-anchor="middle" style="font:500 11px var(--f-mono);fill:var(--ink-soft)">' + (p / 1e6).toFixed(1).replace('.', ',') + '</text>'; }
+  s += '<text x="' + L + '" y="14" style="font:500 11px var(--f-mono);fill:var(--ink-soft)">млн ₽</text>';
+  s += '<rect x="' + x(4250000) + '" y="38" width="' + (x(4520000) - x(4250000)) + '" height="12" style="fill:var(--marker)" opacity=".7"/>';
+  s += '<line x1="' + x(4390000) + '" x2="' + (x(4690000)) + '" y1="26" y2="26" style="stroke:var(--danger)" stroke-width="1.5" stroke-dasharray="3 3"/>';
+  s += '<text x="' + ((x(4390000) + x(4690000)) / 2) + '" y="20" text-anchor="middle" style="font:600 11px var(--f-mono);fill:var(--danger)">−300 000</text>';
+  [[4250000, 'якорь', 'circle'], [4390000, 'цель', 'rect'], [4520000, 'уход', 'x'], [4690000, 'просят', 'tri']].forEach(function(m, i){
+    var cx = x(m[0]);
+    if (m[2] === 'circle') s += '<circle cx="' + cx + '" cy="44" r="6" style="fill:var(--ink)"/>';
+    if (m[2] === 'rect') s += '<rect x="' + (cx - 6) + '" y="38" width="12" height="12" style="fill:var(--ink)"/>';
+    if (m[2] === 'x') s += '<path d="M' + (cx - 6) + ' 38l12 12M' + (cx + 6) + ' 38l-12 12" style="stroke:var(--ink)" stroke-width="2.5"/>';
+    if (m[2] === 'tri') s += '<path d="M' + cx + ' 37l7 13h-14z" style="fill:var(--paper);stroke:var(--ink)" stroke-width="2"/>';
+    s += '<text x="' + cx + '" y="' + 84 + '" text-anchor="' + (i === 3 ? 'end' : 'middle') + '" style="font:600 12px var(--f-body);fill:var(--ink)">' + m[1] + '</text>';
+  });
+  box.innerHTML = s + '</svg>';
+}
+
+/* ---------- аргументы торга ---------- */
+(function(){
+  var A = [
+    {k:'susp', h:'Ходовая: рычаги, опора, сайлентблоки', say:'«Спереди люфтят шаровые, стучит опора. Это срочный ремонт, я считаю его в цену».', obj:'«Все так ездят» — «Ездят, но за свой счёт. Смета в отчёте, по строкам».'},
+    {k:'body', h:'Кузов: капот в сколах, рыжик на пороге', say:'«Капот и порог надо красить. Плюс правый бок уже крашен, дверь со шпаклёвкой».', obj:'«Это мелочи» — «Два элемента под окрас. Это 76 тысяч по Москве».'},
+    {k:'engine', h:'Мотор: клапан EGR, ошибка активна', say:'«P0401 горит сейчас. Клапан в нагаре, меняется вместе с чисткой впуска».', obj:'«Сотрите и поедет» — «Ошибка вернулась три раза. Клапан износился, стирание его не починит».'},
+    {k:'gear', h:'Коробка: пробег под вопросом, масло не менялось', say:'«Блок коробки помнит на 13 тысяч больше. Покажите заказ-наряд или считаем обслуживание на себе».', obj:'«Масло там на весь срок» — «ZF рекомендует менять. В истории замены нет».'},
+    {k:'elec', h:'Электрика: подогрев сиденья сзади', say:'«Правое заднее сиденье не греет. Это элемент в подушке, меняется целиком».', obj:''}
+  ];
+  $('#args').innerHTML = A.map(function(a){
+    var its = ITEMS.filter(function(it){ return it.arg === a.k; });
+    return '<div class="arg"><h4>' + a.h + '</h4><span class="sum">' + rub(tot(its, 'm', 'o')) + ' ₽</span>' +
+      '<p class="say"><i>Скажите:</i> ' + a.say + (a.obj ? '<br><i>Если ответят</i> ' + a.obj : '') + '</p></div>';
+  }).join('') + '<div class="args-total"><span>Итого дефектов, Москва, оригинал</span><span class="sum">' + rub(MSK_O) + ' ₽</span></div>';
+})();
+
+/* ---------- кузов: выкройка ---------- */
+var PANELS = [
+  {id:'fb', n:'Передний бампер', s:'Пер. бампер', mat:'pl', col:'c', y:[10, 52]},
+  {id:'hood', n:'Капот', s:'Капот', mat:'al', um:128, r:'121–134', need:'сколы', col:'c', y:[62, 194]},
+  {id:'roof', n:'Крыша', s:'Крыша', mat:'st', um:118, r:'112–123', col:'c', y:[204, 336]},
+  {id:'trunk', n:'Крышка багажника', s:'Багажник', mat:'al', um:122, r:'117–126', col:'c', y:[346, 432]},
+  {id:'rb', n:'Задний бампер', s:'Зад. бампер', mat:'pl', col:'c', y:[442, 484]},
+  {id:'flf', n:'Переднее левое крыло', s:'ПЛ крыло', mat:'al', um:124, r:'120–128', col:'L', y:[62, 148]},
+  {id:'fld', n:'Передняя левая дверь', s:'ПЛ дверь', mat:'al', um:119, r:'114–125', col:'L', y:[158, 272]},
+  {id:'rld', n:'Задняя левая дверь', s:'ЗЛ дверь', mat:'al', um:126, r:'119–131', col:'L', y:[282, 388]},
+  {id:'rlf', n:'Заднее левое крыло', s:'ЗЛ крыло', mat:'st', um:131, r:'124–138', col:'L', y:[398, 468]},
+  {id:'ls', n:'Левый порог', s:'Л порог', mat:'st', um:112, r:'108–117', need:'рыжик', col:'Ls', y:[158, 388]},
+  {id:'frf', n:'Переднее правое крыло', s:'ПП крыло', mat:'al', um:240, r:'228–251', col:'R', y:[62, 148]},
+  {id:'frd', n:'Передняя правая дверь', s:'ПП дверь', mat:'al', um:310, r:'284–327', col:'R', y:[158, 272]},
+  {id:'rrd', n:'Задняя правая дверь', s:'ЗП дверь', mat:'al', um:620, r:'540–620', col:'R', y:[282, 388]},
+  {id:'rrf', n:'Заднее правое крыло', s:'ЗП крыло', mat:'st', um:142, r:'133–151', col:'R', y:[398, 468]},
+  {id:'rs', n:'Правый порог', s:'П порог', mat:'st', um:124, r:'118–129', col:'Rs', y:[158, 388]}
+];
+function seamW(um){ if (!um || um < 170) return 1; if (um <= 510) return 4 + 2 * (um - 170) / 170; return Math.min(14, 8 + (um - 510) / 30); }
+function stepOf(um){ return !um ? -1 : um < 170 ? 0 : um < 340 ? 1 : um < 510 ? 2 : 3; }
+function stepWord(um){ return ['завод', 'перекрас', 'два слоя', 'шпаклёвка'][stepOf(um)]; }
+function hatchDefs(p){
+  return '<defs>' +
+    '<pattern id="' + p + 'h1" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--ink)" stroke-width="1.2"/></pattern>' +
+    '<pattern id="' + p + 'h2" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V6M0 0H6" style="stroke:var(--ink)" stroke-width="1.2"/></pattern>' +
+    '<pattern id="' + p + 'h3" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V4M0 0H4" style="stroke:var(--danger)" stroke-width="1.3"/></pattern>' +
+    '<pattern id="' + p + 'pl" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)"><line x1="0" y1="0" x2="0" y2="8" style="stroke:var(--guilloche)" stroke-width="1" stroke-dasharray="2 2"/></pattern>' +
+    '</defs>';
+}
+function panelFill(pn, p){
+  if (pn.mat === 'pl') return 'url(#' + p + 'pl)';
+  var st = stepOf(pn.um); return st === 0 ? 'var(--paper-raised)' : 'url(#' + p + 'h' + st + ')';
+}
+function patternSVG(which, p){
+  var M = 10, SW = 104, SL = 24, G = 8, CW = 144;
+  var X = {};
+  if (which === 'full') { X.L = M; X.Ls = X.L + SW + G; X.c = X.Ls + SL + G; X.Rs = X.c + CW + G; X.R = X.Rs + SL + G; }
+  else if (which === 'right') { X.c = M; X.Rs = X.c + CW + G; X.R = X.Rs + SL + G; }
+  else { X.L = M; X.Ls = X.L + SW + G; X.c = X.Ls + SL + G; }
+  var W = which === 'full' ? X.R + SW + M : (which === 'right' ? X.R + SW + M : X.c + CW + M), H = 494;
+  var width = function(col){ return col === 'c' ? CW : (col === 'Ls' || col === 'Rs') ? SL : SW; };
+  var out = '<svg xmlns="' + NS + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Развёртка кузова, ' + (which === 'full' ? 'обе стороны' : which === 'right' ? 'правая сторона' : 'левая сторона') + '">' + hatchDefs(p);
+  var groups = {left:'', rest:''};
+  PANELS.forEach(function(pn){
+    if (X[pn.col] == null) return;
+    var x0 = X[pn.col], w = width(pn.col), y0 = pn.y[0], h = pn.y[1] - pn.y[0], g = '';
+    var sw = seamW(pn.um), bad = pn.um >= 510;
+    var title = pn.n + (pn.mat === 'pl' ? ': пластик, не замерялся' : ': ' + pn.um + ' мкм, ' + stepWord(pn.um)) + (pn.need ? ', требует окраса (' + pn.need + ')' : '') + (pn.mat === 'al' ? ', алюминий, режим NFe' : '');
+    g += '<g><title>' + title + '</title>';
+    if (sw > 1) g += '<rect x="' + (x0 - sw / 2) + '" y="' + (y0 - sw / 2) + '" width="' + (w + sw) + '" height="' + (h + sw) + '" fill="none" style="stroke:' + (bad ? 'var(--danger)' : 'var(--ink)') + '" stroke-width="' + sw.toFixed(1) + '" class="seam"/>';
+    g += '<rect x="' + x0 + '" y="' + y0 + '" width="' + w + '" height="' + h + '" style="fill:var(--paper-raised);stroke:var(--ink)" stroke-width="1"/>';
+    g += '<rect x="' + x0 + '" y="' + y0 + '" width="' + w + '" height="' + h + '" style="fill:' + panelFill(pn, p) + '"/>';
+    var cx = x0 + w / 2, cy = y0 + h / 2;
+    if (pn.col === 'Ls' || pn.col === 'Rs') {
+      var tt = pn.s + ' · ' + pn.um;
+      g += '<g transform="rotate(-90 ' + cx + ' ' + cy + ')"><rect x="' + (cx - 44) + '" y="' + (cy - 9) + '" width="88" height="18" style="fill:var(--paper-raised)"/><text x="' + cx + '" y="' + (cy + 4.5) + '" text-anchor="middle" style="font:600 12px var(--f-mono);fill:var(--ink)">' + tt + '</text></g>';
+      if (pn.need) { for (var k = 0; k < 4; k++) g += '<circle cx="' + cx + '" cy="' + (y0 + 14 + k * 9) + '" r="3" style="fill:var(--paper);stroke:var(--remark)" stroke-width="2"/>'; }
+    } else if (pn.mat === 'pl') {
+      g += '<rect x="' + (cx - 58) + '" y="' + (cy - 16) + '" width="116" height="32" style="fill:var(--paper)" opacity=".92"/>';
+      g += '<text x="' + cx + '" y="' + (cy - 2) + '" text-anchor="middle" style="font:600 12px var(--f-body);fill:var(--ink)">' + pn.s + '</text>';
+      g += '<text x="' + cx + '" y="' + (cy + 12) + '" text-anchor="middle" style="font:500 10.5px var(--f-body);fill:var(--ink-soft)">пластик · не замерялся</text>';
+    } else {
+      var bw = Math.min(w - 12, 92), lines = pn.need ? 4 : 3, bh = lines * 16 + 6;
+      g += '<rect x="' + (cx - bw / 2) + '" y="' + (cy - bh / 2) + '" width="' + bw + '" height="' + bh + '" style="fill:var(--paper-raised)"/>';
+      var ty = cy - bh / 2 + 16;
+      g += '<text x="' + cx + '" y="' + ty + '" text-anchor="middle" style="font:500 12px var(--f-body);fill:var(--ink-soft)">' + pn.s + '</text>';
+      g += '<text x="' + cx + '" y="' + (ty + 17) + '" text-anchor="middle" style="font:700 16px var(--f-mono);fill:' + (bad ? 'var(--danger)' : 'var(--ink)') + '">' + pn.um + '</text>';
+      g += '<text x="' + cx + '" y="' + (ty + 32) + '" text-anchor="middle" style="font:600 11px var(--f-body);fill:' + (bad ? 'var(--danger)' : 'var(--ink-soft)') + '">' + stepWord(pn.um) + '</text>';
+      if (pn.need) g += '<text x="' + cx + '" y="' + (ty + 47) + '" text-anchor="middle" style="font:700 11px var(--f-body);fill:var(--remark)">▲ ' + pn.need + '</text>';
+      if (pn.mat === 'al') g += '<text x="' + (x0 + w - 4) + '" y="' + (y0 + 12) + '" text-anchor="end" style="font:700 9.5px var(--f-mono);fill:var(--ink-soft)">NFe</text>';
+      if (pn.need === 'сколы') { for (var q = 0; q < 4; q++) g += '<path d="M' + (x0 + 14 + q * 24) + ' ' + (y0 + 8) + 'l4 7h-8z" style="fill:var(--remark)"/>'; }
+    }
+    g += '</g>';
+    if (pn.col === 'L' || pn.col === 'Ls') groups.left += g; else groups.rest += g;
+  });
+  // ось симметрии
+  var ax = X.c + CW / 2;
+  var axis = '<line x1="' + ax + '" x2="' + ax + '" y1="2" y2="' + (H - 2) + '" style="stroke:var(--guilloche)" stroke-width="1" stroke-dasharray="10 3 2 3"/>';
+  var foldX = X.c != null && X.Ls != null ? X.Ls + SL + G / 2 : 0;
+  out += axis + groups.rest;
+  if (groups.left) out += '<g class="left-half" style="transform-origin:' + foldX + 'px 0px">' + groups.left + '</g>';
+  out += '<text x="' + ax + '" y="' + (H - 1) + '" text-anchor="middle" style="font:500 0px var(--f-mono)"></text>';
+  return out + '</svg>';
+}
+$('#patFull').innerHTML = patternSVG('full', 'pf');
+$('#patRight').innerHTML = patternSVG('right', 'pr');
+$('#patLeft').innerHTML = patternSVG('left', 'pl');
+$('#foldBtn').addEventListener('click', function(){
+  var f = $('#fold'), on = !f.classList.contains('flipped');
+  f.classList.toggle('flipped', on);
+  this.setAttribute('aria-pressed', String(on));
+  this.textContent = on ? 'Сложить обратно: правая сторона' : 'Развернуть левую сторону';
+  $('#foldNote').textContent = on ? 'Левая сторона: крашеных деталей нет, на пороге рыжик.' : 'Выкройка сложена по оси машины. Сейчас видна правая сторона, на ней все находки.';
+});
+// шкала 170
+(function(){
+  var st = [['до 170', 'завод', 'var(--paper-raised)', 1], ['170–340', 'перекрас', 'url(#sch1)', 4.8], ['340–510', 'два слоя', 'url(#sch2)', 6.6], ['510+', 'шпаклёвка', 'url(#sch3)', 11.7]];
+  $('#scale170').innerHTML = st.map(function(s, i){
+    return '<div><svg viewBox="0 0 80 34" preserveAspectRatio="none" aria-hidden="true">' + (i === 0 ? hatchDefs('sc') : '') + '<rect x="' + (s[3] / 2 + 1) + '" y="' + (s[3] / 2 + 1) + '" width="' + (78 - s[3]) + '" height="' + (32 - s[3]) + '" style="fill:' + s[2] + ';stroke:' + (i === 3 ? 'var(--danger)' : 'var(--ink)') + '" stroke-width="' + s[3] + '"/></svg><span class="mono">' + s[0] + '</span><span>' + s[1] + '</span></div>';
+  }).join('');
+})();
+// керны
+(function(){
+  var K = [
+    {n:'Капот', um:128, L:[['l-ecoat', 20], ['l-primer', 30], ['l-base', 25], ['l-clear', 53]]},
+    {n:'ПП крыло', um:240, L:[['l-ecoat', 20], ['l-primer', 30], ['l-base', 25], ['l-clear', 45], ['l-primer', 40], ['l-base', 30], ['l-clear', 50]]},
+    {n:'ПП дверь', um:310, L:[['l-ecoat', 20], ['l-primer', 30], ['l-base', 25], ['l-clear', 45], ['l-primer', 70], ['l-base', 40], ['l-clear', 80]]},
+    {n:'ЗП дверь', um:620, L:[['l-ecoat', 20], ['l-putty', 380], ['l-primer', 90], ['l-base', 40], ['l-clear', 90]]}
+  ];
+  $('#kerns').innerHTML = K.map(function(k){
+    var total = k.L.reduce(function(a, l){ return a + l[1]; }, 0);
+    return '<div class="kern" role="img" aria-label="' + k.n + ': ' + total + ' мкм, слоёв ' + k.L.length + '"><span class="lbl' + (total >= 510 ? ' c-danger' : '') + '">' + total + '</span><div class="col">' +
+      k.L.map(function(l){ return '<span style="height:' + (l[1] / 5) + 'px;background:var(--' + l[0] + ')' + (l[0] === 'l-putty' ? ';background-image:repeating-linear-gradient(45deg,var(--danger) 0 1px,transparent 1px 5px)' : '') + '"></span>'; }).join('') +
+      '</div><span class="nm">' + k.n + '</span></div>';
+  }).join('');
+})();
+// таблица замеров
+(function(){
+  var h = '<thead><tr><th>Панель</th><th>Материал</th><th class="n">Макс.</th><th class="n">Разброс</th><th>Вывод</th></tr></thead><tbody>';
+  PANELS.forEach(function(p){
+    h += '<tr><td>' + p.n + '</td><td>' + (p.mat === 'al' ? 'Al · NFe' : p.mat === 'st' ? 'сталь · Fe' : 'пластик') + '</td><td class="n">' + (p.um || '—') + '</td><td class="n">' + (p.r || '—') + '</td><td>' + (p.mat === 'pl' ? 'не замерялся' : stepWord(p.um) + (p.need ? ', ' + p.need : '')) + '</td></tr>';
+  });
+  $('#umTable').innerHTML = h + '</tbody>';
+})();
+
+/* ---------- ходовая: вид снизу ---------- */
+(function(){
+  var s = '<svg viewBox="0 0 300 500" role="img" aria-label="Вид снизу: булавки на передних рычагах, задних рычагах, тормозных дисках и левой опоре">';
+  s += '<text x="150" y="14" text-anchor="middle" style="font:600 11px var(--f-mono);fill:var(--ink-soft)">ПЕРЕД ▲</text>';
+  s += '<rect x="44" y="24" width="212" height="460" rx="48" style="fill:var(--paper-raised);stroke:var(--ink-soft)" stroke-width="1.5"/>';
+  [[22, 72], [256, 72], [22, 352], [256, 352]].forEach(function(w){ s += '<rect x="' + w[0] + '" y="' + w[1] + '" width="22" height="74" rx="4" style="fill:var(--ink)"/>'; });
+  s += '<rect x="112" y="52" width="76" height="118" style="fill:var(--paper-sunken);stroke:var(--ink-soft)"/><text x="150" y="115" text-anchor="middle" style="font:600 10px var(--f-mono);fill:var(--ink-soft)">B57</text>';
+  s += '<rect x="126" y="172" width="48" height="86" style="fill:var(--paper-sunken);stroke:var(--ink-soft)"/><text x="150" y="220" text-anchor="middle" style="font:600 10px var(--f-mono);fill:var(--ink-soft)">8HP</text>';
+  s += '<line x1="150" y1="258" x2="150" y2="372" style="stroke:var(--ink-soft)" stroke-width="5"/>';
+  s += '<line x1="166" y1="180" x2="166" y2="110" style="stroke:var(--ink-soft)" stroke-width="3"/>';
+  s += '<rect x="126" y="364" width="48" height="30" style="fill:var(--paper-sunken);stroke:var(--ink-soft)"/>';
+  s += '<path d="M200 170 C210 260 214 330 222 440" fill="none" style="stroke:var(--guilloche)" stroke-width="4" stroke-dasharray="6 4"/>';
+  s += '<path d="M60 128 L112 132 M240 128 L188 132 M60 372 L126 360 M240 372 L174 360" style="stroke:var(--ink-soft)" stroke-width="3"/>';
+  var pin = function(x, y, n, col){ return '<g transform="translate(' + x + ' ' + y + ')"><path d="M0 0 C-11 -12 -11 -26 0 -26 C11 -26 11 -12 0 0Z" style="fill:' + col + ';stroke:var(--paper)" stroke-width="1.5"/><text x="0" y="-13" text-anchor="middle" style="font:700 11px var(--f-mono);fill:var(--paper)">' + n + '</text></g>'; };
+  s += pin(84, 136, 1, 'var(--danger)') + pin(216, 136, 1, 'var(--danger)');
+  s += pin(86, 370, 2, 'var(--remark)') + pin(214, 370, 2, 'var(--remark)');
+  s += pin(33, 110, 3, 'var(--ok)') + pin(267, 110, 3, 'var(--ok)');
+  s += pin(66, 92, 4, 'var(--danger)');
+  s += '<text x="150" y="498" text-anchor="middle" style="font:500 10px var(--f-mono);fill:var(--ink-soft)">выхлоп — пунктир</text>';
+  $('#under').innerHTML = s + '</svg>';
+  var byPin = function(n, c){ return tot(ITEMS.filter(function(i){ return i.pin === n; }), c, 'o'); };
+  var P = [
+    {n:1, col:'c-danger', sev:2, h:'Передние нижние рычаги', c:'Люфт в шаровых слева и справа. Менять оба рычага и делать развал.', p:'Шаровые опоры нижних рычагов: люфт при раскачке, пыльники целы. Рычаги в сборе ×2 + развал.'},
+    {n:2, col:'c-remark', sev:1, h:'Задние верхние рычаги', c:'Трещины в резиновых втулках. Не срочно, в плановый ремонт.', p:'Сайлентблоки верхних рычагов: радиальные трещины, люфта нет.'},
+    {n:3, col:'c-ok', sev:0, h:'Передние тормозные диски', c:'Износ в пределах нормы. Хватит примерно на 15 тыс. км.', p:'Бурт 0,8 мм, биения на торможении нет.'},
+    {n:4, col:'c-danger', sev:2, h:'Опора левого амортизатора', c:'Стучит на неровностях. Менять в ближайший месяц.', p:'Верхняя опора левой стойки: стук на неровностях до 20 км/ч.'}
+  ];
+  $('#pins').innerHTML = P.map(function(p){
+    var dots = ''; for (var i = 0; i < 3; i++) dots += i < p.sev ? '●' : '○';
+    var m = byPin(p.n, 'm'), sp = byPin(p.n, 's');
+    return '<div class="pin"><span class="no ' + p.col + '"><span>' + p.n + '</span></span><div><h4>' + p.h + ' <span class="sev ' + p.col + '" aria-label="тяжесть ' + p.sev + ' из 3">' + (p.sev ? dots : '✓ норма') + '</span></h4>' +
+      '<p data-m="client family">' + p.c + '</p><p data-m="pro" class="small">' + p.p + '</p>' +
+      '<p class="pr">' + (m ? '<span>Мск ' + rub(m) + ' ₽</span><span>СПб ' + rub(sp) + ' ₽</span>' : '<span>0 ₽</span>') + '</p></div></div>';
+  }).join('');
+})();
+
+/* ---------- двигатель: паспорт и калька ---------- */
+(function(){
+  var R = [
+    {k:'Радиатор EGR', st:'ok', typ:'часто · отзыв', c:'Заменён по отзыву, есть заказ-наряд.', p:'Отзывная кампания по радиатору EGR: деталь новой ревизии, запись дилера 2019 г.'},
+    {k:'Клапан EGR', st:'warn', typ:'часто', c:'Нагар, ошибка P0401 горит. Нужна замена.', p:'P0401 активна, 3 события. Нагар на заслонке, чистка впуска вместе с заменой.'},
+    {k:'Теплообменник и маслоохладитель', st:'warn', typ:'иногда', c:'Лёгкое потение прокладки. Капель нет, следим.', p:'Потение по прокладке корпуса масляного фильтра / теплообменника. Контроль через 5 000 км.'},
+    {k:'Цепь ГРМ, сзади мотора', st:'ok', typ:'иногда', c:'На холодном пуске тихо, без звона.', p:'Холодный пуск при ОЖ 14 °C: шумов со стороны коробки нет.'},
+    {k:'Сажевый фильтр', st:'ok', typ:'', c:'Перепад давления в норме.', p:'Δp на холостых и 2 500 об/мин в норме, регенерация проходит.'},
+    {k:'Форсунки', st:'ok', typ:'', c:'Коррекции подачи в норме.', p:'Коррекции по цилиндрам в допуске, разброс 0,6 мг/ход.'},
+    {k:'Сервопривод турбины', st:'none', typ:'иногда', c:'Не проверяли: нужна трасса, продавец не разрешил.', p:'Тест VNT под нагрузкой не выполнен. Проверить через 10 000 км.'}
+  ];
+  var ic = {ok:['i-ok', 'c-ok', 'проверено'], warn:['i-warn', 'c-remark', 'замечание'], none:['i-none', 'c-soft', 'не проверялось']};
+  var motif = (function(){ var d = ''; for (var i = 0; i <= 120; i++){ var t = i / 120 * Math.PI * 2, r = 18 + 7 * Math.cos(5 * t); d += (i ? 'L' : 'M') + (27.5 + r * Math.cos(t)).toFixed(1) + ' ' + (27.5 + r * Math.sin(t)).toFixed(1); } return '<svg class="motif" viewBox="0 0 55 55" aria-hidden="true"><path d="' + d + 'Z" fill="none" stroke="currentColor" stroke-width="1"/><path d="' + d + 'Z" fill="none" stroke="currentColor" stroke-width="1" transform="rotate(36 27.5 27.5)"/></svg>'; })();
+  $('#pass').innerHTML = R.map(function(r){
+    var i = ic[r.st];
+    return '<div class="prow ' + r.st + (r.typ ? ' t' : '') + '"><svg class="ico ' + i[1] + '" role="img" aria-label="' + i[2] + '"><use href="#' + i[0] + '"/></svg><h4>' + r.k + '</h4><span class="typ">' + (r.typ ? 'в базе: ' + r.typ + (r.st === 'warn' ? ' · совпало' : '') : '') + '</span>' +
+      '<p class="d" data-m="client family">' + r.c + '</p><p class="d" data-m="pro">' + r.p + '</p>' + (r.typ ? motif : '') + '</div>';
+  }).join('');
+  $('#calqueBtn').addEventListener('click', function(){
+    var on = !$('#pass').classList.contains('calque-on');
+    $('#pass').classList.toggle('calque-on', on);
+    this.setAttribute('aria-pressed', String(on));
+    this.textContent = 'Калька типовых болячек: ' + (on ? 'вкл' : 'выкл');
+  });
+})();
+
+/* ---------- электрика: 17 функций ---------- */
+(function(){
+  var F = [['Фары и ДХО'], ['Поворотники и стопы'], ['Стеклоподъёмники'], ['Зеркала: привод и подогрев'], ['Центральный замок и ключ'], ['Климат'], ['Подогрев руля'], ['Подогрев передних сидений'],
+    ['Подогрев задних сидений', 'fault', 'правое не греет'], ['Парктроник спереди'], ['Парктроник сзади', 'flick', 'правый датчик иногда в ошибке'], ['Камера заднего вида'], ['Мультимедиа и навигация'], ['Акустика'], ['Круиз-контроль'], ['Привод крышки багажника'], ['Сиденья с памятью']];
+  $('#funcs').innerHTML = F.map(function(f){
+    var st = f[1] || 'ok', ic = st === 'ok' ? ['i-okbox', 'c-ok', 'работает'] : st === 'fault' ? ['i-no', 'c-danger', 'не работает'] : ['i-flick', 'c-remark', 'с перебоями'];
+    return '<div class="func ' + (st !== 'ok' ? 'fault' : '') + '"><svg class="' + ic[1] + '" role="img" aria-label="' + ic[2] + '"><use href="#' + ic[0] + '"/></svg><span><b>' + f[0] + '</b>' + (f[2] ? '<span class="' + ic[1] + '">' + f[2] + '</span>' : '') + '</span></div>';
+  }).join('');
+})();
+
+/* ---------- две столицы ---------- */
+(function(){
+  var h = '';
+  var grp = function(g, title){
+    var list = ITEMS.filter(function(i){ return i.g === g; });
+    h += '<div class="axis-grid"><p class="rgroup ' + g + '">' + title + '</p></div>';
+    list.forEach(function(it){
+      var side = function(c, l){
+        var v = it[c];
+        return '<div class="rv receipt ' + (l ? 'l' : '') + '"><div><i>работа</i><span>' + rub(v.w) + '</span></div>' +
+          (v.o ? '<div><i>оригинал</i><span>' + rub(v.o) + '</span></div><div><i>аналог</i><span>' + rub(v.a) + '</span></div>' : '<div><i>запчасти</i><span>—</span></div>') + '</div>';
+      };
+      h += '<div class="axis-grid"><p class="ritem receipt">' + it.name + '</p>' + side('m', 1) + '<span class="axis"></span>' + side('s', 0) + '</div>';
+    });
+    var sub = function(c, l){ return '<div class="rv rsub receipt ' + (l ? 'l' : '') + '"><div class="sub-h">' + (g === 'urgent' ? 'итого срочно' : 'итого планово') + '</div><div><i>аналог</i><span>' + rub(tot(list, c, 'a')) + ' ₽</span></div><div><i>оригинал</i><span>' + rub(tot(list, c, 'o')) + ' ₽</span></div></div>'; };
+    h += '<div class="axis-grid">' + sub('m', 1) + '<span class="axis"></span>' + sub('s', 0) + '</div>';
+  };
+  grp('urgent', 'Срочно · до 1 000 км');
+  grp('plan', 'Планово · за 6 месяцев');
+  var fin = function(a, o, l){ return '<div class="rv rtotal receipt ' + (l ? 'l' : '') + '"><div><i>итого, аналог</i><span>' + rub(a) + ' ₽</span></div><div><i>итого, оригинал</i><span>' + rub(o) + ' ₽</span></div></div>'; };
+  h += '<div class="axis-grid">' + fin(MSK_A, MSK_O, 1) + '<span class="axis"></span>' + fin(SPB_A, SPB_O, 0) + '</div>';
+  $('#receipts').innerHTML = h;
+  var max = Math.max(MSK_O, SPB_O);
+  $('#tape').innerHTML = '<div><div class="bar-l" style="width:' + (MSK_O / max * 100).toFixed(1) + '%;margin-left:auto"></div><p class="cap" style="text-align:right">Москва дороже на ' + rub(MSK_O - SPB_O) + ' ₽</p></div><span class="axis" style="height:44px"></span><div><div class="bar-r" style="width:' + (SPB_O / max * 100).toFixed(1) + '%"></div><p class="cap">СПб</p></div>';
+  var uM = ITEMS.filter(function(i){ return i.g === 'urgent'; });
+  $('#capsSum').innerHTML = '<p class="big"><span class="k">Вложения после покупки</span><span>Москва ' + rub(Math.floor(MSK_A / 1000)) + '–' + rub(Math.ceil(MSK_O / 1000)) + ' тыс. ₽</span><span>Петербург ' + rub(Math.floor(SPB_A / 1000)) + '–' + rub(Math.ceil(SPB_O / 1000)) + ' тыс. ₽</span></p>' +
+    '<p class="note">Первая цифра — с аналогами, вторая — с оригиналом. Срочная часть по Москве: ' + rub(tot(uM, 'm', 'a')) + '–' + rub(tot(uM, 'm', 'o')) + ' ₽.</p>' +
+    '<p class="budget">В торг уходит <b class="mono">300 000 ₽</b>: смета Москвы с оригиналом, округлённая вниз.</p>';
+})();
+
+/* ---------- синоптик ---------- */
+(function(){
+  var S = [
+    {when:'Осень · 0–5 тыс. км', wx:'w-sun', sky:'ясно', ev:[{p:1, t:'ТО: масло, фильтры, проверка', lo:45000, hi:45000}]},
+    {when:'Зима · 5–10 тыс. км', wx:'w-cloud', sky:'облачно', ev:[{p:.6, t:'Свечи накала и аккумулятор', lo:35000, hi:70000}]},
+    {when:'Весна · 10–15 тыс. км', wx:'w-rain', sky:'дождь', ev:[{p:.5, t:'Передние колодки и диски', lo:40000, hi:55000}]},
+    {when:'Лето · 15–20 тыс. км', wx:'w-storm', sky:'гроза', ev:[{p:.3, t:'Прокладка маслоохладителя', lo:40000, hi:65000}, {p:.15, t:'Сервопривод турбины, если не проверите заранее', lo:60000, hi:90000}], note:'Подвеска: у этой машины стальные пружины, дорогой пневмы нет.'}
+  ];
+  var exp = 0;
+  $('#syn').innerHTML = S.map(function(s){
+    var top = Math.max.apply(null, s.ev.map(function(e){ return e.p; }));
+    return '<div class="season"><p class="when">' + s.when + '</p><div class="wx"><svg aria-hidden="true"><use href="#' + s.wx + '"/></svg><span class="p">' + Math.round(top * 100) + '%</span></div><p class="small soft">' + s.sky + '</p>' +
+      s.ev.map(function(e){ var m = (e.lo + e.hi) / 2 * e.p; exp += m; return '<div class="it"><p>' + (e.p < 1 ? Math.round(e.p * 100) + '% · ' : '') + e.t + '</p><p class="rub">' + (e.lo === e.hi ? rub(e.lo) : rub(e.lo) + '–' + rub(e.hi)) + ' ₽</p><p class="rub soft" data-m="pro">ожидание ' + rub(m) + ' ₽</p></div>'; }).join('') +
+      (s.note ? '<p class="small soft">' + s.note + '</p>' : '') + '</div>';
+  }).join('');
+  var mo = Math.round(exp / 12 / 100) * 100;
+  $('#reserve').innerHTML = '<span class="sec-kicker">Резерв</span><span class="big">' + rub(mo) + ' ₽</span><span>в месяц</span>' +
+    '<p class="note" style="flex-basis:100%" data-m="pro">Сумма ожиданий ' + rub(exp) + ' ₽ за год ÷ 12. Смета «Две столицы» сюда не входит.</p>' +
+    '<p class="note" style="flex-basis:100%" data-m="client family">Столько стоит откладывать каждый месяц сверх ремонта из сметы.</p>';
+})();
+
+/* ---------- охота ---------- */
+(function(){
+  var F = [[38, 'объявлений'], [9, 'звонков'], [4, 'выезда'], [1, 'эта машина']];
+  $('#funnel').innerHTML = F.map(function(f, i){ return '<div class="frow"><div class="b' + (i === 3 ? ' last' : '') + '" style="width:' + (f[0] / 38 * 100).toFixed(1) + '%"></div><p class="t">' + f[0] + ' ' + f[1] + '</p></div>'; }).join('');
+  var O = [
+    {h:'530d G30 · 2018 · Москва', why:'Скрутка', t:'На приборке 124 тыс. км, в ключе 211 тыс.', d:'отсеяна 12.09'},
+    {h:'530d G30 · 2019 · Подольск', why:'«Конструктор»', t:'Перед от другой машины, стёкла 2022 года, лонжерон с проваркой.', d:'отсеяна 16.09'},
+    {h:'530d G30 · 2018 · Балашиха', why:'Течь мехатроника', t:'ZF 8HP течёт по втулке разъёма, толчок при переключении 2→3. Продавец не уступил.', d:'отсеяна 21.09'}
+  ];
+  $('#obits').innerHTML = O.map(function(o){ return '<div class="obit"><p class="h">' + o.h + '</p><p class="why">' + o.why + '</p><p>' + o.t + '</p><p class="note">' + o.d + ' · пример</p></div>'; }).join('');
+})();
+$('#ackNot').addEventListener('change', function(){ $('#ackNote').textContent = this.checked ? 'Отмечено. Мастер увидит, что вы в курсе.' : ''; });
+$('#passBtn').addEventListener('click', function(){ $('#passNote').textContent = 'После сделки мастер перевыпустит ссылку на нового владельца. В демо эта кнопка ничего не отправляет.'; });
+
+/* ---------- демо-QR (рисунок, не код) ---------- */
+(function(){
+  var N = 21, c = 4, s = '<svg viewBox="0 0 ' + (N * c) + ' ' + (N * c) + '" role="img" aria-label="Демо-узор вместо QR">', seed = 417;
+  var rnd = function(){ seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
+  var finder = function(x, y){ return '<rect x="' + (x * c + 2) + '" y="' + (y * c + 2) + '" width="' + (5 * c + 4 - 4) + '" height="' + (5 * c + 4 - 4) + '" fill="none" style="stroke:var(--ink)" stroke-width="4"/><rect x="' + ((x + 2) * c) + '" y="' + ((y + 2) * c) + '" width="' + (3 * c) + '" height="' + (3 * c) + '" style="fill:var(--ink)"/>'; };
+  for (var y = 0; y < N; y++) for (var x = 0; x < N; x++){
+    var inF = (x < 8 && y < 8) || (x > 12 && y < 8) || (x < 8 && y > 12);
+    if (!inF && rnd() > .52) s += '<rect x="' + (x * c) + '" y="' + (y * c) + '" width="' + c + '" height="' + c + '" style="fill:var(--ink)"/>';
+  }
+  s += finder(0, 0) + finder(14, 0) + finder(0, 14);
+  $('#qrSvg').innerHTML = s + '</svg>';
+})();
+
+/* ---------- режимы чтения ---------- */
+function setMode(m){
+  root.setAttribute('data-mode', m);
+  $$('[data-mode-btn]').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-mode-btn') === m)); });
+  store.set('vignette-mode', m);
+}
+$$('[data-mode-btn]').forEach(function(b){ b.addEventListener('click', function(){ setMode(b.getAttribute('data-mode-btn')); }); });
+var savedMode = store.get('vignette-mode');
+if (savedMode === 'pro' || savedMode === 'family' || savedMode === 'client') setMode(savedMode);
+
+// режим продавца
+function setSeller(on){
+  if (on) root.setAttribute('data-seller', ''); else root.removeAttribute('data-seller');
+  $$('[data-seller-btn]').forEach(function(b){ if (!b.classList.contains('solid')) b.setAttribute('aria-pressed', String(on)); });
+  if (on) window.scrollTo({top: 0});
+}
+$$('[data-seller-btn]').forEach(function(b){ b.addEventListener('click', function(){ setSeller(!root.hasAttribute('data-seller')); }); });
+
+// голосование
+function setVote(v){
+  $$('[data-vote]').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-vote') === v)); });
+  $('#voteQ').hidden = v !== 'ask';
+  var t = {take:'Ваш голос: берём.', look:'Ваш голос: смотрим дальше.', ask:'Ваш голос: есть вопрос.'}[v];
+  $('#voteNote').textContent = (t || '') + ' Голос сохраняется только на этом устройстве.';
+}
+$$('[data-vote]').forEach(function(b){ b.addEventListener('click', function(){ var v = b.getAttribute('data-vote'); store.set('vignette-vote-T000417', v); setVote(v); }); });
+var savedVote = store.get('vignette-vote-T000417'); if (savedVote) setVote(savedVote);
+var savedQ = store.get('vignette-q-T000417'); if (savedQ) $('#voteText').value = savedQ;
+$('#voteQ').addEventListener('submit', function(e){ e.preventDefault(); store.set('vignette-q-T000417', $('#voteText').value); $('#voteQNote').textContent = 'Вопрос сохранён на этом устройстве. В настоящей виньетке он уйдёт мастеру.'; });
+
+/* ---------- VIN-рельс ---------- */
+var RAIL = [
+  {p:1, ch:'W', s:'s9', t:'ИИ-обзор'}, {p:2, ch:'B', s:'s9', t:'ИИ-обзор'}, {p:3, ch:'A', s:'s9', t:'ИИ-обзор'},
+  {p:4, ch:'•', s:'s6', t:'Двигатель'}, {p:5, ch:'•', s:'s6', t:'Двигатель'},
+  {p:6, ch:'•', s:'s4', t:'Кузов'}, {p:7, ch:'•', s:'s4', t:'Кузов'},
+  {p:8, ch:'•', s:'s5', t:'Ходовая'}, {p:9, ch:'•', s:'s2', t:'Пробег'}, {p:10, ch:'K', s:'s1', t:'Обложка'},
+  {p:11, ch:'•', s:'s3', t:'Продавец'}, {p:12, ch:'•', s:'s7', t:'Электрика'}, {p:13, ch:'•', s:'s7', t:'Электрика'},
+  {p:14, ch:'•', s:'s8', t:'Смета'}, {p:15, ch:'•', s:'s8', t:'Смета'}, {p:16, ch:'•', s:'s10', t:'Охота и печать'}, {p:17, ch:'•', s:'s10', t:'Охота и печать'}
+];
+var CLS = {s4:'B', s5:'C', s6:'P', s7:'U', s9:'R', s8:'₽'};
+$('#railH').innerHTML = RAIL.map(function(r){ return '<a href="#' + r.s + '" data-s="' + r.s + '" aria-label="Позиция ' + r.p + ': ' + r.t + '">' + r.ch + '</a>'; }).join('');
+$('#railV').innerHTML = RAIL.map(function(r){ return '<a href="#' + r.s + '" data-s="' + r.s + '" aria-label="Позиция ' + r.p + ': ' + r.t + '"><span class="c">' + r.ch + '</span><span class="p">' + (CLS[r.s] && (r.p === 4 || r.p === 6 || r.p === 8 || r.p === 12 || r.p === 1 || r.p === 14) ? CLS[r.s] : r.p) + '</span></a>'; }).join('') + '<span class="vert" aria-hidden="true">ВИНЬЕТКА</span>';
+function markRail(id){
+  $$('.rail-h a, .rail-v a').forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-s') === id); });
+  var r = RAIL.filter(function(x){ return x.s === id; });
+  if (r.length) $('#barSec').textContent = (r.length > 1 ? r[0].p + '–' + r[r.length - 1].p : r[0].p) + ' · ' + r[0].t;
+}
+markRail('s1');
+
+/* ---------- наблюдатели: рельс, барабаны, разворот ---------- */
+function setBarH(){ root.style.setProperty('--bar-h', $('#bar').offsetHeight + 'px'); }
+setBarH();
+if ('IntersectionObserver' in window){
+  var spy = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) markRail(e.target.id); }); }, {rootMargin:'-35% 0px -60% 0px'});
+  $$('section.sec').forEach(function(s){ spy.observe(s); });
+  if (!reduced){
+    var spin = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('spin'); spin.unobserve(e.target); } }); }, {threshold:.6});
+    $$('.drums').forEach(function(d){ spin.observe(d); });
+    var unf = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('unfold'); unf.unobserve(e.target); } }); }, {threshold:.4});
+    unf.observe($('#patFull'));
+  }
+}
+
+renderStyle(V.PRESETS[0]);
+bioChart(); priceScale();
+var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ bioChart(); priceScale(); setBarH(); }, 150); });
+})();
+</script>
+</body>
+</html>

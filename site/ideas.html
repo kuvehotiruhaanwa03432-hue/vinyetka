@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Карта идей Виньетки</title>
+<meta name="description" content="Рабочий документ владельца Виньетки: откуда взялся стиль, 24 идеи, карта усилие × wow, лестница запуска и деньги.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:FLAR,VOLM,wght@0..100,0..100,100..900&family=Handjet:ELGR,ELSH,wght@1..2,0..16,100..900&family=Martian+Mono:wdth,wght@75..112.5,100..800&family=Onest:wght@100..900&display=swap">
+<style>
+/* Сетка «VIN-17»: 17 колонок. 17 простое, пополам не делится, центральной симметрии нет.
+   Ширины блоков только из ряда Фибоначчи, в сумме 17: 1·8·8, 13·3·1, 8·5·3·1, 5·5·5·2, 3·13·1, 8·5·2·2, 1·3·13.
+   Здесь: заголовки разделов 3·13·1, строка идеи 1·8·5·3, лестница 5·5·5·2.
+   На телефоне одна колонка со сдвигом 1/17, поля 16px.
+   Кегли 13/17/21/34/55/89, отступы 8/13/21/34/55/89. */
+:root{
+  /* бумага и чернила: одинаковы для всех мастеров */
+  --paper:#EDF3EE; --paper-raised:#F9FCF9; --paper-sunken:#DCE7DF;
+  --ink:#111111; --ink-soft:#3F5B5B; --ink-ghost:#11111177;
+  --guilloche:#779999; --action:#226688; --on-action:#FFFFFF;
+  --marker:#CBCA6A; --on-marker:#111111;
+  /* системные цвета данных */
+  --verdict-ok:#246A0F; --verdict-clean:#1A6B40; --verdict-doubt:#0A6590; --danger:#BD0D09;
+  /* цвета мастера: Vignette.apply() переписывает -l/-d; до запуска стоит Подборкин */
+  --spec-a-l:#AECEAE; --spec-a-d:#003631; --spec-a-text-l:#00736A; --spec-a-text-d:#3BC2B4;
+  --spec-b-l:#EDACDE; --spec-b-d:#48183F; --spec-b-text-l:#9B418B; --spec-b-text-d:#E484D0;
+  --rosette-1-l:#779999; --rosette-1-d:#779999; --rosette-2-l:#009488; --rosette-2-d:#42C2B4; --rosette-3-l:#EB4060; --rosette-3-d:#E781D2;
+  --flar:68; --volm:89; --elsh:13; --elgr:1; --rake-angle:275.29deg;
+  /* шрифты */
+  --f-display:"Commissioner", "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-body:"Onest", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"Martian Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --f-board:"Handjet", "Martian Mono", ui-monospace, monospace;
+  --gut:16px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E171B; --paper-raised:#15232A; --paper-sunken:#0A1114;
+    --ink:#E4EFE6; --ink-soft:#9DB6B6; --ink-ghost:#E4EFE677;
+    --guilloche:#779999; --action:#6FB4D8; --on-action:#0E171B;
+    --marker:#CBCA6A; --on-marker:#0E171B;
+    --verdict-ok:#72C95A; --verdict-clean:#4FC48C; --verdict-doubt:#4CC3EE; --danger:#FF6152;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E171B; --paper-raised:#15232A; --paper-sunken:#0A1114;
+  --ink:#E4EFE6; --ink-soft:#9DB6B6; --ink-ghost:#E4EFE677;
+  --guilloche:#779999; --action:#6FB4D8; --on-action:#0E171B;
+  --marker:#CBCA6A; --on-marker:#0E171B;
+  --verdict-ok:#72C95A; --verdict-clean:#4FC48C; --verdict-doubt:#4CC3EE; --danger:#FF6152;
+  color-scheme:dark;
+}
+/* маппинг переменных движка на тему: на корне, куда вызван Vignette.apply */
+:root,[data-vignette]{
+  --spec-a:var(--spec-a-l); --spec-a-text:var(--spec-a-text-l);
+  --spec-b:var(--spec-b-l); --spec-b-text:var(--spec-b-text-l);
+  --rosette-1:var(--rosette-1-l); --rosette-2:var(--rosette-2-l); --rosette-3:var(--rosette-3-l);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]),:root:not([data-theme="light"]) [data-vignette]{
+    --spec-a:var(--spec-a-d); --spec-a-text:var(--spec-a-text-d);
+    --spec-b:var(--spec-b-d); --spec-b-text:var(--spec-b-text-d);
+    --rosette-1:var(--rosette-1-d); --rosette-2:var(--rosette-2-d); --rosette-3:var(--rosette-3-d);
+  }
+}
+:root[data-theme="dark"],:root[data-theme="dark"] [data-vignette]{
+  --spec-a:var(--spec-a-d); --spec-a-text:var(--spec-a-text-d);
+  --spec-b:var(--spec-b-d); --spec-b-text:var(--spec-b-text-d);
+  --rosette-1:var(--rosette-1-d); --rosette-2:var(--rosette-2-d); --rosette-3:var(--rosette-3-d);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/25px var(--f-body)}
+[hidden]{display:none!important}
+img,svg{max-width:100%}
+a{color:var(--action);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--action);outline-offset:3px}
+p{margin:0}
+h1,h2,h3{margin:0;text-wrap:balance}
+ul,ol{margin:0;padding:0;list-style:none}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:var(--gut);top:-100px;background:var(--action);color:var(--on-action);padding:8px 13px;z-index:30}
+.skip:focus{top:8px}
+
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font:500 13px/21px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--spec-a-text)}
+.small{font-size:13px;line-height:21px}
+.soft{color:var(--ink-soft)}
+.mark{background:var(--marker);color:var(--on-marker);padding:0 3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.lbl{font:500 11px/17px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+
+/* шапка */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--guilloche)}
+.top-in{max-width:1280px;margin:0 auto;padding-inline:var(--gut);padding-block:8px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 21px}
+.logo{display:flex;align-items:baseline;text-decoration:none;color:var(--ink);line-height:1}
+.logo .v{font:800 17px/1 var(--f-mono);font-variation-settings:"wdth" 112.5;letter-spacing:.02em}
+.logo .t{font:700 19px/1 var(--f-display);font-variation-settings:"FLAR" 100,"VOLM" 0}
+.doc-tag{font:500 11px/13px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);padding:4px 6px;border:1px dashed var(--guilloche)}
+.nav{display:flex;gap:13px;margin-left:auto;font:500 13px/21px var(--f-mono)}
+.nav a{white-space:nowrap}
+.toc{order:3;flex:1 1 100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px}
+.toc a{display:flex;align-items:center;gap:6px;min-width:0;padding:3px 6px;background:var(--paper-sunken);color:var(--ink-soft);text-decoration:none;font:600 11px/15px var(--f-mono);transition:background-color .3s,color .3s}
+.toc a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.toc a.on{background:var(--spec-a);color:var(--ink)}
+@media (max-width:759px){.toc a span{display:none}.toc a{justify-content:center}.doc-tag{display:none}.field input{font-size:18px}}
+
+/* страница */
+.page{max-width:1280px;margin:0 auto;padding-inline:var(--gut);padding-block:0 34px}
+.sec{padding-block:55px 34px;scroll-margin-top:89px}
+.shead{display:grid;gap:13px;margin-bottom:34px}
+.shead .num{font:500 13px/21px var(--f-mono);color:var(--spec-a-text);letter-spacing:.08em}
+.h2{font:700 34px/1.08 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm);letter-spacing:-.01em}
+.lead{color:var(--ink-soft);max-width:40em}
+.body{min-width:0}
+@media (max-width:759px){.shift{padding-left:calc(100% / 17)}}
+@media (min-width:760px){
+  .h2{font-size:55px}
+  .shead{grid-template-columns:repeat(17,minmax(0,1fr));gap:0 21px}
+  .shead .num{grid-column:1 / span 3;padding-top:13px}
+  .shead .ht{grid-column:4 / span 13}
+  .body.b13{margin-left:calc((100% + 21px) * 3 / 17);}
+}
+
+/* гильош и перфорация */
+.gband{display:block;width:100%;height:55px}
+.gband path{fill:none;vector-effect:non-scaling-stroke;stroke-width:.7}
+.perf{height:13px;background:radial-gradient(circle,transparent 0 2.6px,var(--guilloche) 3px 3.8px,transparent 4.2px) 0 50%/13px 13px repeat-x}
+
+/* герой */
+.hero{padding-block:55px 34px;display:grid;gap:34px}
+.h1{font:800 55px/1 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm);letter-spacing:-.02em}
+.h1 em{font-style:normal;color:var(--spec-a-text)}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;margin-top:34px;max-width:560px}
+.stat{padding:13px;background:var(--paper-sunken);display:flex;flex-direction:column;gap:4px}
+.stat b{font:500 55px/.9 var(--f-board);font-variation-settings:"ELSH" var(--elsh),"ELGR" var(--elgr);color:var(--ink)}
+.stat span{font:500 11px/15px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.hero-side{display:flex;flex-direction:column;align-items:center;gap:13px}
+.rose{width:min(100%,320px);aspect-ratio:1}
+.rose svg{width:100%;height:auto;display:block}
+.seal-cap{font:500 11px/17px var(--f-mono);color:var(--ink-soft);text-align:center;max-width:320px}
+.seal-cap b{color:var(--ink);letter-spacing:.06em}
+.warn{margin-top:21px;padding:13px;border-left:3px solid var(--marker);background:var(--paper-raised);font-size:13px;line-height:21px;max-width:560px}
+@media (min-width:760px){
+  .h1{font-size:89px}
+  .hero{grid-template-columns:repeat(17,minmax(0,1fr));gap:0 21px;align-items:center}
+  .hero-main{grid-column:1 / span 11}
+  .hero-side{grid-column:12 / span 6}
+  .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+
+/* 1. разбор имени */
+.namebox{background:var(--paper-raised);border:1px solid var(--guilloche);padding:21px 13px;display:grid;gap:21px;margin-bottom:34px}
+.field label{display:block;font:500 13px/21px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+.field input{width:100%;font:500 21px/1.3 var(--f-body);color:var(--ink);background:var(--paper);border:1px solid var(--guilloche);border-bottom:3px solid var(--spec-a-text);padding:8px 13px;border-radius:0}
+.field input:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+.words{display:flex;flex-wrap:wrap;gap:21px 34px}
+.word{display:flex;flex-direction:column;gap:6px}
+.word{min-width:0;max-width:100%}
+.letters{display:flex;flex-wrap:wrap;gap:2px}
+.lt{display:flex;flex-direction:column;align-items:center;min-width:21px;padding:2px 0 3px;background:var(--paper-sunken);border-bottom:2px solid transparent}
+.lt .c{font:600 17px/25px var(--f-body)}
+.lt .n{font:500 9px/11px var(--f-mono);color:var(--ink-soft)}
+.lt .g{font:700 9px/11px var(--f-mono);height:11px;color:var(--ink-soft)}
+.lt.ga{background:var(--spec-a);border-bottom:2px solid var(--ink)}
+.lt.gb{background:var(--spec-b);border-bottom:2px dashed var(--ink)}
+.lt.ga .g,.lt.gb .g,.lt.ga .n,.lt.gb .n{color:var(--ink)}
+.wsum{font:500 13px/21px var(--f-mono);color:var(--ink-soft)}
+.wsum b{color:var(--ink);font-size:17px}
+.derive{display:grid;gap:8px;font:500 13px/21px var(--f-mono)}
+.derive div{display:flex;flex-wrap:wrap;gap:4px 13px;align-items:baseline;padding-top:8px;border-top:1px dashed var(--guilloche)}
+.derive dt,.derive .k{color:var(--ink-soft);min-width:110px}
+.derive b{color:var(--ink)}
+.derive .code{font-variation-settings:"wdth" 112.5;letter-spacing:.06em;font-size:15px}
+.derive .code i{font-style:normal;color:var(--spec-b-text);text-decoration:underline 2px}
+.sw{display:inline-block;width:21px;height:13px;border:1px solid var(--ink);vertical-align:-2px;margin-right:4px}
+.legend-mini{display:flex;flex-wrap:wrap;gap:6px 21px;font:500 11px/17px var(--f-mono);color:var(--ink-soft)}
+.legend-mini span{display:inline-flex;align-items:center;gap:6px}
+.legend-mini i{display:inline-block;width:17px;height:11px;box-shadow:inset 0 0 0 1px var(--ink-soft)}
+.legend-mini .ka{background:var(--spec-a);border-bottom:2px solid var(--ink)}
+.legend-mini .kb{background:var(--spec-b);border-bottom:2px dashed var(--ink)}
+
+.pats{counter-reset:p;border-top:2px solid var(--ink)}
+.pat{display:grid;gap:8px 21px;padding-block:21px;border-bottom:1px solid var(--guilloche)}
+.pat .pn{font:500 13px/21px var(--f-mono);color:var(--spec-a-text)}
+.pat .from{font-weight:500}
+.pat .from .mono{font-size:14px}
+.pat .from .mark{white-space:nowrap}
+.pat .to{position:relative;padding-left:34px;color:var(--ink)}
+.pat .to::before{content:"→";position:absolute;left:0;top:0;font:600 17px/25px var(--f-mono);color:var(--spec-a-text)}
+.pat .vis{display:flex;flex-wrap:wrap;gap:6px 13px;align-items:center;font:500 12px/17px var(--f-mono);color:var(--ink-soft);margin-top:8px}
+.cells17{display:grid;grid-template-columns:repeat(17,minmax(0,1fr));gap:2px;max-width:420px;width:100%}
+.cells17 span{display:grid;place-items:center;height:25px;background:var(--paper-sunken);font:600 12px/1 var(--f-mono);color:var(--ink)}
+.cells17 span.h{background:var(--marker);color:var(--on-marker);box-shadow:inset 0 -2px 0 var(--ink)}
+.cells17 span.sp{background:transparent;color:var(--ink-soft)}
+.chk{font:500 11px/17px var(--f-mono);color:var(--verdict-ok);letter-spacing:.04em}
+.chk::before{content:"";display:inline-block;width:7px;height:4px;border-left:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg) translate(1px,-2px);margin-right:6px}
+@media (min-width:760px){
+  .pat{grid-template-columns:repeat(17,minmax(0,1fr))}
+  .pat .pn{grid-column:1 / span 1}
+  .pat .from{grid-column:2 / span 7}
+  .pat .to{grid-column:9 / span 9}
+}
+
+/* 2. идеи: фильтры */
+.ctrl{display:grid;gap:13px;margin-bottom:21px;padding:13px;background:var(--paper-sunken);position:relative}
+.ctrl .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ctrl .rl{font:500 11px/17px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);min-width:89px}
+.chip{display:inline-flex;align-items:center;gap:6px;font:500 13px/17px var(--f-mono);color:var(--ink);background:var(--paper-raised);border:1px solid var(--guilloche);padding:7px 10px;cursor:pointer;border-radius:0}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip .shp{width:13px;height:13px}
+.count{font:500 13px/21px var(--f-mono);color:var(--ink-soft)}
+.count b{color:var(--ink)}
+.shp{width:13px;height:13px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;vertical-align:-2px}
+
+/* строки идей */
+.ideas{border-top:2px solid var(--ink)}
+.idea{display:grid;gap:13px;padding-block:21px;border-bottom:1px solid var(--guilloche);scroll-margin-top:110px;transition:background-color .6s}
+.idea.flash{background:var(--paper-raised)}
+.i-num{display:flex;align-items:flex-start}
+.i-num span{font:600 13px/21px var(--f-mono);background:var(--paper-sunken);padding:2px 6px}
+.i-grp{display:flex;align-items:center;gap:6px;font:500 11px/17px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
+.i-t{font:700 21px/1.2 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;margin-bottom:8px}
+.i-pitch{margin-bottom:13px}
+.i-mech p:last-child,.i-money p:last-child{font-size:15px;line-height:23px;color:var(--ink-soft)}
+.i-mech p:last-child{color:var(--ink)}
+.ideas.brief .i-mech{display:none}
+.i-meta{display:flex;flex-direction:column;gap:13px;align-items:flex-start}
+.eff,.wow{display:grid;grid-template-columns:55px auto 21px;align-items:end;gap:8px;font:500 11px/13px var(--f-mono)}
+.eff .k,.wow .k{color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em}
+.eff .v,.wow .v{font:600 13px/13px var(--f-mono);color:var(--ink)}
+.bars{display:flex;gap:2px;align-items:end}
+.bars i{display:block;width:13px;height:13px;border:1.5px solid var(--ink)}
+.bars i:nth-child(2){width:21px}.bars i:nth-child(3){width:34px}
+.bars i.on{background:var(--ink)}
+.ticks{display:flex;gap:2px;align-items:end;height:21px}
+.ticks i{display:block;width:5px;height:calc(6px + var(--h) * 1.5px);border:1px solid var(--ink-soft)}
+.ticks i.on{background:var(--spec-a-text);border-color:var(--spec-a-text)}
+.stamp{font:700 11px/13px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 8px}
+.stamp.mvp{color:var(--action);border:2px solid var(--action);outline:1px solid var(--action);outline-offset:2px;margin:3px}
+.stamp.later{color:var(--ink-soft);border:1px dashed var(--guilloche)}
+.empty{padding:34px 0;color:var(--ink-soft)}
+@media (max-width:759px){
+  .idea{padding-left:calc(100% / 17)}
+
+}
+@media (min-width:760px){
+  .idea{grid-template-columns:repeat(17,minmax(0,1fr));gap:0 21px}
+  .i-num{grid-column:1 / span 1}
+  .i-main{grid-column:2 / span 8}
+  .i-money{grid-column:10 / span 5}
+  .i-meta{grid-column:15 / span 3}
+}
+
+/* 3. карта усилие × wow */
+.chart-wrap{position:relative;border-top:2px solid var(--ink);padding-top:13px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .grid line{stroke:var(--guilloche);stroke-width:1;stroke-dasharray:2 4}
+.chart .grid line.base{stroke:var(--ink);stroke-dasharray:none}
+.chart .ax{font:500 11px var(--f-mono);fill:var(--ink-soft)}
+.chart .axb{font:600 13px var(--f-mono);fill:var(--ink)}
+.chart .void{font:500 12px var(--f-body);fill:var(--ink-soft)}
+.chart .voidbox{fill:var(--paper-sunken)}
+.pt{cursor:pointer}
+.pt .m{stroke:var(--ink);stroke-width:1.5;fill:var(--paper-raised)}
+.pt.mvp .m{fill:var(--action);stroke:var(--action)}
+.pt text{font:600 10px var(--f-mono);fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.pt.mvp text{fill:var(--on-action)}
+.pt .ring{fill:none;stroke:var(--paper);stroke-width:3}
+.pt.dim{opacity:.28}
+.pt:focus{outline:none}
+.pt:focus-visible .hl,.pt:hover .hl{stroke:var(--action);stroke-width:2;fill:none}
+.pt .hl{fill:transparent;stroke:transparent}
+.tip{position:absolute;z-index:5;pointer-events:none;max-width:260px;background:var(--paper-raised);border:1px solid var(--ink);padding:8px 10px;font:400 13px/19px var(--f-body);color:var(--ink);box-shadow:3px 3px 0 var(--paper-sunken)}
+.tip b{display:block;font:700 15px/19px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;margin-bottom:4px}
+.tip .mono{font-size:11px;line-height:17px;color:var(--ink-soft)}
+.clegend{display:flex;flex-wrap:wrap;gap:8px 21px;margin-top:13px;font:500 12px/17px var(--f-mono);color:var(--ink-soft)}
+.clegend span{display:inline-flex;align-items:center;gap:6px}
+.clegend .fill{width:21px;height:11px;border:1.5px solid var(--ink);background:var(--paper-raised)}
+.clegend .fill.f{background:var(--action);border-color:var(--action)}
+.clegend .lg{color:var(--ink);text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+.clegend .sep{flex-basis:100%;height:0}
+.quads{display:grid;gap:21px;margin-top:34px}
+.quad h3{font:700 17px/25px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;padding-top:8px;border-top:1px solid var(--ink);margin-bottom:4px}
+.quad p{font-size:15px;line-height:23px;color:var(--ink-soft);margin-bottom:8px}
+.lchips{display:flex;flex-wrap:wrap;gap:4px}
+.lchip{display:inline-flex;align-items:center;gap:6px;font:500 12px/17px var(--f-body);color:var(--ink);text-decoration:none;background:var(--paper-raised);border:1px solid var(--guilloche);padding:3px 8px}
+.lchip:hover{border-color:var(--ink)}
+.lchip .mono{font-size:11px;color:var(--ink-soft)}
+@media (min-width:760px){.quads{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* 4. лестница */
+.ladder{display:grid;gap:34px;counter-reset:s}
+.step{display:flex;flex-direction:column;gap:13px;min-width:0}
+.step-h{padding:13px;background:var(--paper-sunken);border-top:3px solid var(--ink);display:flex;flex-direction:column;gap:4px}
+.step.s0 .step-h{border-top-color:var(--action)}
+.step-t{font:700 21px/1.2 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.step-n{font-size:12px;line-height:17px;color:var(--ink-soft)}
+.step-l{display:flex;flex-direction:column}
+.step-l li{padding-block:8px;border-bottom:1px dashed var(--guilloche);display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.step-l li.mhead{border-bottom:0;padding-block:13px 0;font-size:11px;line-height:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--spec-a-text)}
+.step-l .note{font-size:14px;line-height:21px;color:var(--ink)}
+.dep{font:500 11px/17px var(--f-mono);color:var(--ink-soft)}
+.dep a{white-space:nowrap}
+.stock{margin-top:34px;padding:21px 13px;border:1px solid var(--guilloche);background:var(--paper-raised)}
+.stock h3{font:700 21px/1.2 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;margin-bottom:8px}
+.stock ul{display:grid;gap:6px;margin-top:13px}
+.stock li{position:relative;padding-left:21px;font-size:15px;line-height:23px}
+.stock li::before{content:"";position:absolute;left:2px;top:8px;width:8px;height:8px;border:1.5px solid var(--ink);border-radius:50%}
+@media (min-width:760px){
+  .ladder{grid-template-columns:repeat(17,minmax(0,1fr));gap:0 21px;align-items:start}
+  .step.s0{grid-column:1 / span 6}
+  .step.s1{grid-column:7 / span 6;margin-top:55px}
+  .step.s2{grid-column:13 / span 5;margin-top:110px}
+  .stock ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 34px}
+}
+
+/* 5. деньги */
+.hyp{display:inline-block;font:700 11px/13px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:var(--marker);color:var(--on-marker);padding:4px 8px}
+.tiers{display:grid;gap:2px;margin-block:21px 34px}
+.tier{background:var(--paper-raised);border-top:3px solid var(--ink);padding:21px 13px 21px;display:flex;flex-direction:column;gap:8px;position:relative}
+.tier::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:13px;background:radial-gradient(circle,var(--paper) 0 3px,transparent 3.5px) 0 50%/13px 13px repeat-x}
+.tier .tn{font:500 13px/21px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.tier .tp{font:700 34px/1 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tier .tp small{font:500 13px/1 var(--f-mono);color:var(--ink-soft);margin-left:4px}
+.tier p{font-size:15px;line-height:23px}
+.tier.free{border-top-style:dashed}
+@media (min-width:760px){.tiers{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.calc{display:grid;gap:21px;padding:21px 13px;background:var(--paper-sunken);margin-bottom:34px}
+.calc h3,.streams-h{font:700 21px/1.2 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.rng{display:grid;gap:4px}
+.rng label{display:flex;justify-content:space-between;gap:8px;font:500 13px/21px var(--f-body)}
+.rng label output{font:600 13px/21px var(--f-mono)}
+.rng input{width:100%;accent-color:var(--action)}
+.calc-out{display:grid;gap:8px;font:500 13px/21px var(--f-mono)}
+.calc-out div{display:flex;justify-content:space-between;gap:13px;padding-bottom:6px;border-bottom:1px dashed var(--guilloche)}
+.calc-out div.tot{border-bottom:2px solid var(--ink)}
+.calc-out b{font-size:15px;color:var(--ink);white-space:nowrap}
+.calc-out div.tot b{font:700 21px/1 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.calc-note{font-size:14px;line-height:21px;color:var(--ink)}
+@media (min-width:760px){.calc{grid-template-columns:repeat(17,minmax(0,1fr));gap:21px}.calc .ci{grid-column:1 / span 8;display:grid;gap:13px;align-content:start}.calc .co{grid-column:9 / span 9;display:grid;gap:13px;align-content:start}}
+.tbl-wrap{overflow-x:auto;margin-top:13px;border-top:2px solid var(--ink)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px;line-height:21px}
+th,td{text-align:left;vertical-align:top;padding:10px 13px 10px 0;border-bottom:1px solid var(--guilloche)}
+th{font:500 11px/17px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+td.n{font-family:var(--f-mono);font-size:13px;min-width:170px}
+td a{font-family:var(--f-mono);font-size:12px}
+@media (max-width:759px){
+  /* на телефоне строка таблицы складывается в карточку: ставка видна без прокрутки */
+  .tbl-wrap table{min-width:0}
+  .tbl-wrap thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .tbl-wrap tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 13px;padding-block:10px;border-bottom:1px solid var(--guilloche)}
+  .tbl-wrap td{display:block;padding:0;border:0;min-width:0}
+  .tbl-wrap td:nth-child(1){grid-column:1;grid-row:1;font-weight:500}
+  .tbl-wrap td:nth-child(4){grid-column:2;grid-row:1;text-align:right}
+  .tbl-wrap td:nth-child(4)::before{content:"идея ";font:500 11px/17px var(--f-mono);color:var(--ink-soft)}
+  .tbl-wrap td:nth-child(2){grid-column:1 / -1;font-size:13px;line-height:19px;color:var(--ink-soft)}
+  .tbl-wrap td:nth-child(2)::before{content:"Платит: "}
+  .tbl-wrap td.n{grid-column:1 / -1}
+}
+
+/* 6. крючки */
+.hooks{display:grid;gap:0;border-top:2px solid var(--ink)}
+.hook{display:grid;gap:8px 21px;padding:21px 13px;border-bottom:1px solid var(--guilloche)}
+.hook .hk{font:500 13px/21px var(--f-mono);color:var(--spec-a-text)}
+.hook .hh{font:700 25px/1.15 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm)}
+.hook .screen{font:500 12px/19px var(--f-mono);color:var(--ink);background:var(--paper-sunken);padding:8px 10px;border-left:3px solid var(--spec-a)}
+.hook .why{font-size:15px;line-height:23px}
+.hook .risk{font-size:14px;line-height:21px;color:var(--ink-soft)}
+.hook .risk b,.hook .why b{color:var(--ink)}
+.hook.cur{background:var(--paper-raised)}
+@media (min-width:760px){
+  .hook{grid-template-columns:repeat(17,minmax(0,1fr))}
+  .hook .hk{grid-column:1 / span 2}
+  .hook .hl{grid-column:3 / span 7;display:flex;flex-direction:column;gap:8px}
+  .hook .hr{grid-column:10 / span 8;display:flex;flex-direction:column;gap:8px}
+}
+@media (max-width:759px){.hook .hl,.hook .hr{display:flex;flex-direction:column;gap:8px}}
+
+/* подвал */
+.foot{padding-block:34px 55px;display:flex;flex-direction:column;gap:13px;border-top:2px solid var(--ink);margin-top:34px}
+.foot .ln{display:flex;flex-wrap:wrap;gap:8px 21px;font:500 13px/21px var(--f-mono)}
+.foot p{font-size:13px;line-height:21px;color:var(--ink-soft);max-width:60em}
+.micro{font:500 9px/13px var(--f-mono);letter-spacing:.14em;color:var(--guilloche);white-space:nowrap;overflow:hidden}
+.foot-seal{display:flex;align-items:center;gap:13px}
+.foot-seal .rose{width:55px}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">К содержанию</a>
+<header class="top">
+  <div class="top-in">
+    <a class="logo" href="./" aria-label="Виньетка, на главную"><span class="v">ВИН</span><span class="t">ЬЕТКА</span></a>
+    <span class="doc-tag">Карта идей · для владельца</span>
+    <nav class="nav" aria-label="Страницы">
+      <a href="./">← Лендинг</a>
+      <a href="report.html">Демо-отчёт</a>
+    </nav>
+    <nav class="toc" id="toc" aria-label="Разделы документа">
+      <a href="#s1" aria-label="01 · Из строки">01<span>Из строки</span></a>
+      <a href="#s2" aria-label="02 · 24 идеи">02<span>24 идеи</span></a>
+      <a href="#s3" aria-label="03 · Усилие × wow">03<span>Усилие × wow</span></a>
+      <a href="#s4" aria-label="04 · Лестница">04<span>Лестница</span></a>
+      <a href="#s5" aria-label="05 · Деньги">05<span>Деньги</span></a>
+      <a href="#s6" aria-label="06 · Крючки">06<span>Крючки</span></a>
+    </nav>
+  </div>
+</header>
+
+<main class="page" id="main">
+
+<section class="hero" aria-labelledby="h1">
+  <div class="hero-main">
+    <p class="eyebrow">Рабочий документ · сентябрь 2026</p>
+    <h1 class="h1" id="h1">Карта идей <em>Виньетки</em></h1>
+    <p class="lead" style="margin-top:21px">Откуда взялся стиль, какие 24 идеи лежат в работе, что запускать первым и на чём зарабатывать. Документ для владельца сервиса, мастерам его не показываем.</p>
+    <div class="stats">
+      <div class="stat"><b>24</b><span>идеи</span></div>
+      <div class="stat"><b>12</b><span>в MVP</span></div>
+      <div class="stat"><b>4</b><span>группы</span></div>
+      <div class="stat"><b>12</b><span>паттернов имени</span></div>
+    </div>
+    <p class="warn"><b>Все денежные цифры — гипотезы.</b> Они взяты из брифа и не проверены продажами. Считайте их порядком величины.</p>
+  </div>
+  <div class="hero-side">
+    <div class="rose" id="rose-hero" role="img" aria-label="Розетка-гильош Подборкина: три слоя, 7, 9 и 9 лепестков"></div>
+    <p class="seal-cap">Страница в стиле демо-виньетки владельца<br><b id="seal-code">AAP2L68DXT1890268</b><br>Алексей Андреевич Подборкин</p>
+  </div>
+</section>
+
+<svg class="gband" id="g1" viewBox="0 0 1200 55" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+<!-- 1. Паттерны -->
+<section class="sec" id="s1" aria-labelledby="h-s1">
+  <div class="shead">
+    <p class="num">01 · Выведение</p>
+    <div class="ht">
+      <h2 class="h2" id="h-s1">Как направление выведено из строки</h2>
+      <p class="lead" style="margin-top:13px">Всё в системе взято из одной строки: «Алексей Андреевич Подборкин». Ниже двенадцать находок и решения, которые из них выросли. Суммы пересчитывает скрипт прямо на этой странице.</p>
+    </div>
+  </div>
+
+  <div class="body b13">
+    <div class="namebox">
+      <div class="field">
+        <label for="nm">Строка для разбора</label>
+        <input id="nm" type="text" value="Алексей Андреевич Подборкин" spellcheck="false" autocomplete="off" aria-describedby="nm-hint">
+        <p class="small soft" id="nm-hint" style="margin-top:6px">Под каждой буквой её номер в алфавите. Двенадцать гомоглифов пронумерованы и дают два цвета. Паттерны ниже посчитаны для Подборкина.</p>
+      </div>
+      <div class="words" id="words" aria-live="polite"></div>
+      <div class="legend-mini" aria-hidden="true"><span><i class="ka"></i>знаки 1–6 → цвет А</span><span><i class="kb"></i>знаки 7–12 → цвет Б</span></div>
+      <dl class="derive" id="derive" style="margin:0"></dl>
+    </div>
+
+    <ol class="pats">
+      <li class="pat">
+        <span class="pn">01</span>
+        <div class="from">«Алексей Андреевич» = 7 + пробел + 9 = <span class="mono mark">17 знаков</span>, как в VIN.
+          <div class="vis"><div class="cells17" id="c17" aria-label="Алексей Андреевич: 17 ячеек, 10-я — Н"></div></div>
+        </div>
+        <p class="to">Сетка из 17 колонок на всех страницах. Шильд мастера — VIN-табличка 17 × 2: имя и отчество в первой строке, фамилия во второй.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">02</span>
+        <p class="from">10-й знак этой строки — <span class="mono mark">Н</span>, латинская H. В VIN буква H на 10-й позиции значит 2017 модельный год. 2026 кодируется буквой T.</p>
+        <p class="to">Номера отчётов «Т-000417» с цифрами лесенкой, как серийник на купюре. В «VIN мастера» 10-й знак тоже T.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">03</span>
+        <div class="from">Суммы букв: Алексей <span class="mono" data-sum="Алексей">68</span> = 4×17, Андреевич <span class="mono" data-sum="Андреевич">89</span> (Фибоначчи), Подборкин <span class="mono" data-sum="Подборкин">111</span>. Всего <span class="mono mark">268</span>. 111 / 68 ≈ 1,632 ≈ φ.
+          <div class="vis"><span class="chk" data-check="68,89,111">сверено скриптом</span></div>
+        </div>
+        <p class="to">Кегли 13/17/21/34/55/89/144, отступы 8/13/21/34/55/89. Заголовок героя 89 px, чернила #111, демо-пробег 111 111 км.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">04</span>
+        <div class="from">268 как CSS-цвет: <span class="mono mark">#268</span> = #226688. Цифровой корень 268 = 7. 268 mod 7 = 2. 268 mod 17 = 13.
+          <div class="vis"><span><i class="sw" style="background:#226688"></i>#226688</span></div>
+        </div>
+        <p class="to">Кобальт ссылок и кнопок. 7 систем машины в отчёте. Стартовый шаблон сетки № 2 (1·8·8). Пиксель табло Handjet ELSH 13.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">05</span>
+        <div class="from">Гомоглифы читаются как hex: <span class="mono">АлЕкСЕй АндрЕЕВиЧ ПОдБОркин</span> → A·E·C·E / A·E·E·B·4 / 0·6·0. Ровно <span class="mono mark">12 знаков</span>, два цвета.
+          <div class="vis"><span><i class="sw" style="background:#AECEAE"></i>#AECEAE шалфей</span><span><i class="sw" style="background:#EB4060"></i>#EB4060 малина</span></div>
+        </div>
+        <p class="to">Личная пара Подборкина и принцип всего движка стилей: «ваш цвет спрятан в вашем имени». Выбрать цвет вручную нельзя, только повернуть на 137,5°.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">06</span>
+        <div class="from">Длины слов <span class="mono mark">7 / 9 / 9</span> → #799 = #779999.
+          <div class="vis"><span><i class="sw" style="background:#779999"></i>#779999 патина</span></div>
+        </div>
+        <p class="to">Цвет гильоша и перфорации: средний тон читается и на мятной бумаге, и на ночном петроле. Та же тройка задаёт лепестки розетки: 7, 9 и 9.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">07</span>
+        <p class="from">Инициалы А.А.П. = позиции <span class="mono">1·1·17</span>. «АА» в hex = <span class="mono mark">170</span> = 10×17. Цепочка 1117.</p>
+        <p class="to">Шаг шкалы толщиномера 170 мкм: до 170 завод, 170–340 один слой, 340–510 два, больше 510 шпаклёвка. Токен #1117 (чернила с альфой 0,47) для неактивного.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">08</span>
+        <p class="from">Слоги <span class="mono">А-лек-сей / Ан-дре-е-вич / Под-бор-кин</span> = <span class="mono mark">3·4·3</span>, палиндром.</p>
+        <p class="to">Отчёт идёт тремя актами по 3, 4 и 3 блока. Средний акт физический: кузов, ходовая, двигатель, электрика.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">09</span>
+        <div class="from">Суммы слов вердиктов: «Подтверждён» = <span class="mono" data-sum="Подтверждён">120</span>, «Не скручен» = <span class="mono" data-sum="Не скручен">137</span> ≈ 137,5°, «Есть сомнения» = <span class="mono" data-sum="Есть сомнения">203</span>. «Скручен» = 137 − 137 = <span class="mono">0°</span>.
+          <div class="vis"><span class="chk" data-check="120,137,203">сверено скриптом</span></div>
+        </div>
+        <p class="to">Оттенки вердиктов пробега: 120° зелёный, 137° золотой угол, 203° лазурь вместо светофорного жёлтого, 0° красный. У каждого ещё и свой тип штриха.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">10</span>
+        <div class="from">«Управляемый творческий хаос» = <span class="mono" data-sum="Управляемый творческий хаос">365</span>, дней в году. 365 mod 360 = <span class="mono mark">5°</span>.
+          <div class="vis"><span class="chk" data-check="365">сверено скриптом</span></div>
+        </div>
+        <p class="to">Оттенок тревоги: шпаклёвка, скрутка, активные ошибки. Число 365 дало блок «Синоптик на 365 дней».</p>
+      </li>
+      <li class="pat">
+        <span class="pn">11</span>
+        <p class="from">Скрытые слова <span class="mono mark">ПОД · БОР · КИН</span>.</p>
+        <p class="to">«Под» дал вид снизу для ходовой и слой «что под краской». «Бор» дал керны: срезы слоёв ЛКП в масштабе, как геологические образцы.</p>
+      </li>
+      <li class="pat">
+        <span class="pn">12</span>
+        <div class="from">Первые глифы запроса в hex: <span class="mono">BAEBAE · CBCA6A · 33A000 · 0BAEE0</span>. Самая частая буква запроса «о», 54 раза.
+          <div class="vis"><span><i class="sw" style="background:#BAEBAE"></i>BAEBAE</span><span><i class="sw" style="background:#CBCA6A"></i>CBCA6A</span><span><i class="sw" style="background:#33A000"></i>33A000</span><span><i class="sw" style="background:#0BAEE0"></i>0BAEE0</span></div>
+        </div>
+        <p class="to">Мятная бумага, горчичный маркер, зелёный вердикт и лазурь сомнения. Буква «о» — круг и ноль: барабаны одометра и розетка.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<div class="perf" aria-hidden="true"></div>
+
+<!-- 2. 24 идеи -->
+<section class="sec" id="s2" aria-labelledby="h-s2">
+  <div class="shead">
+    <p class="num">02 · Каталог</p>
+    <div class="ht">
+      <h2 class="h2" id="h-s2">24 идеи</h2>
+      <p class="lead" style="margin-top:13px">Четыре группы по шесть. У каждой идеи суть, механика, деньги, усилие и wow. Метка MVP значит «входит в первые три месяца».</p>
+    </div>
+  </div>
+
+  <div class="ctrl" role="group" aria-label="Фильтры и сортировка">
+    <div class="row" role="group" aria-label="Группа">
+      <span class="rl">Группа</span>
+      <button type="button" class="chip" data-g="all" aria-pressed="true">Все</button>
+      <button type="button" class="chip" data-g="rep" aria-pressed="false"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>В отчёте</button>
+      <button type="button" class="chip" data-g="fld" aria-pressed="false"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg>В поле</button>
+      <button type="button" class="chip" data-g="mon" aria-pressed="false"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg>Деньги и рост</button>
+      <button type="button" class="chip" data-g="wld" aria-pressed="false"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg>Безумные</button>
+    </div>
+    <div class="row">
+      <span class="rl">Отбор</span>
+      <button type="button" class="chip" id="f-mvp" aria-pressed="false">Только MVP</button>
+      <button type="button" class="chip" id="f-brief" aria-pressed="false">Без механики</button>
+    </div>
+    <div class="row" role="group" aria-label="Сортировка">
+      <span class="rl">Порядок</span>
+      <button type="button" class="chip" data-sort="brief" aria-pressed="true">Как в брифе</button>
+      <button type="button" class="chip" data-sort="wow" aria-pressed="false">Wow ↓</button>
+      <button type="button" class="chip" data-sort="eff" aria-pressed="false">Усилие ↑</button>
+    </div>
+    <p class="count" id="count" aria-live="polite">Показано <b>24</b> из 24</p>
+  </div>
+
+  <div class="ideas" id="ideas">
+<article class="idea" id="idea-1" data-i="0" data-g="rep" data-mvp="1" data-e="M" data-w="9" aria-labelledby="it-1">
+  <div class="i-num mono"><span>01</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>В отчёте</p>
+    <h3 class="i-t" id="it-1">Суфлёр торга и лист для продавца</h3>
+    <p class="i-pitch">Отчёт становится оружием на сделке. Каждый дефект — карточка с ценой, готовой фразой и ответом на отговорку. Отдельная ссылка «Показать продавцу» ведёт на версию без бюджета клиента, а после сделки считается «подбор окупился в ×N».</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Находки по средним ценам Мск/СПб складываются в обоснованный дисконт. Сверху три цифры: якорь, цель, точка ухода (медиана аналогов с Авито/Авто.ру минус дефекты). Карточки идут от сильных аргументов к слабым. «Лист продавца» — отдельная ссылка в стиле мастера: только факты, фото и суммы. После сделки клиент вводит цену, появляется счётчик окупаемости, в профиле мастера — «сторговано клиентам 4,3 млн ₽».</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Входит в финальную виньетку (1 490 ₽). Опционально плата за успех 1–2% от сторгованного в пользу мастера, 20% из них сервису. Каждый лист продавца — бесплатный показ бренда мастера.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 9 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="on" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">9</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-2" data-i="1" data-g="rep" data-mvp="1" data-e="M" data-w="8" aria-labelledby="it-2">
+  <div class="i-num mono"><span>02</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>В отчёте</p>
+    <h3 class="i-t" id="it-2">Синоптик владения: прогноз погоды на 365 дней → 36 месяцев</h3>
+    <p class="i-pitch">Смета «сейчас» дополняется прогнозом: что вероятно сломается на этом моторе при этом пробеге, когда и сколько стоит. Итог — резерв в месяц и «настоящая цена» машины.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>RAG по базе знаний берёт модель, код мотора и КПП, пробег и находки осмотра и строит шкалу отказов. Подача как прогноз погоды: «Зима: 70% — течь маслоохладителя, 25–40 тыс. ₽». Три сценария года: спокойный, типичный, плохой. Резерв на месяц. Настоящая цена = покупка + владение − остаточная стоимость, можно сравнить двух кандидатов. В MVP горизонт 12 месяцев / +20 000 км.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Кнопка «записаться заранее» ведёт в партнёрские BMW/Mercedes-сервисы Мск и СПб, комиссия 5–10%. Сравнение двух кандидатов — платный апгрейд.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-3" data-i="2" data-g="rep" data-mvp="1" data-e="S" data-w="7" aria-labelledby="it-3">
+  <div class="i-num mono"><span>03</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>В отчёте</p>
+    <h3 class="i-t" id="it-3">Режим «Для своих»</h3>
+    <p class="i-pitch">Одна кнопка переписывает отчёт для жены, мужа или родителей: без терминов, про безопасность, быт и деньги в месяц. Внутри семейное голосование.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>ИИ пересказывает находки бытовыми сравнениями («через год ремонт на сумму как новый смартфон»). Блоки: безопасность (подушки, ISOFIX, силовые ДТП), быт (фото багажника, влезет ли коляска), расходы в месяц (топливо, ОСАГО/КАСКО, ТО, резерв). Красивое превью для Telegram и WhatsApp. Голосование «Берём / Смотрим дальше / Есть вопрос», вопрос приходит мастеру.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Виральность и конверсия отказов в покупки: мастеру проще продлить подписку, бренд мастера виден при каждой пересылке.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие S, малое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class=""></i><i class=""></i></span><span class="v">S</span></div><div class="wow" aria-label="Wow 7 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">7</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-4" data-i="3" data-g="rep" data-mvp="1" data-e="S" data-w="8" aria-labelledby="it-4">
+  <div class="i-num mono"><span>04</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>В отчёте</p>
+    <h3 class="i-t" id="it-4">Журнал охоты: турнир осмотренных машин и шевроны</h3>
+    <p class="i-pitch">Клиент видит всю охоту, а не одну машину: сколько лотов отсеяно и почему, с мини-некрологами и доказательствами. За подтверждённые находки мастер получает шевроны.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Воронка «38 объявлений → 9 звонков → 4 выезда → 1 покупка». Отсеянные машины собраны в турнирную таблицу: честная цена, прогноз расходов, крашеные элементы, приговор («в ключе 211 тыс., на приборке 124 тыс.»). Итог: «отсеяно проблем на 1,2 млн ₽». Шевроны начисляются автоматически («Охотник за скрутками ×25», «G30 — 50 осмотров») и печатаются в шапке.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Растёт конверсия из разового осмотра (5–10 тыс. ₽) в подбор под ключ (40–100 тыс. ₽). Стена трофеев в тарифе «Про». Накопленный статус удерживает мастера на платформе.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие S, малое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class=""></i><i class=""></i></span><span class="v">S</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-5" data-i="4" data-g="rep" data-mvp="1" data-e="M" data-w="9" aria-labelledby="it-5">
+  <div class="i-num mono"><span>05</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>В отчёте</p>
+    <h3 class="i-t" id="it-5">Пробег-криминалистика → биография машины</h3>
+    <p class="i-pitch">Вместо «пробег не скручен» — следственная матрица и хронология жизни машины: все места, где машина «проговорилась» о своём пробеге, на одной оси времени. Скрутка видна как ступенька.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Пробег из KOMBI, FEM/BDC, FRM и EGS у BMW, из панели, EIS, ESP и 722.9 у Mercedes. Плюс стоп-кадры ошибок, регистрация АКБ, CBS, Key Memory ключа, ТО, архив объявлений, ГИБДД и реестр залогов. Каждая точка помечена: документ, косвенная улика или противоречие. Итог — одна из 4 категорий владельца, уровень уверенности и «история сходится на 92%». В MVP свидетели вносятся вручную или из лога сканера, позже автопарсинг ISTA / Xentry / Launch.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Входит в платный тариф. Отдельная «экспертиза пробега» за 990 ₽ для перекупов и трейд-ина.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 9 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="on" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">9</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-6" data-i="5" data-g="rep" data-mvp="0" data-e="S" data-w="8" aria-labelledby="it-6">
+  <div class="i-num mono"><span>06</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>В отчёте</p>
+    <h3 class="i-t" id="it-6">Договор с зубами и тест подписью</h3>
+    <p class="i-pitch">Из отчёта собирается ДКП, где продавец письменно заверяет ключевые факты. Отказ подписать пункт о пробеге — последний красный флаг.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Шаблон подставляет VIN, пробег на дату осмотра и перечень недостатков. Заверения продавца по ст. 431.2 ГК РФ: пробег не корректировался, силовых ДТП не было, не такси и не каршеринг. Шаблон проверяет юрист-партнёр. Чек-лист перед передачей денег: реестр залогов ФНП, ограничения ГИБДД, ЭПТС, безопасный расчёт.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Опция «Сопровождение сделки», мастер продаёт её за 3 000–5 000 ₽. Партнёрства с юристами и сервисами безопасных расчётов.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие S, малое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class=""></i><i class=""></i></span><span class="v">S</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp later">позже · до 6 мес</span></div>
+</article>
+<article class="idea" id="idea-7" data-i="6" data-g="fld" data-mvp="1" data-e="M" data-w="8" aria-labelledby="it-7">
+  <div class="i-num mono"><span>07</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg>Для специалиста в поле</p>
+    <h3 class="i-t" id="it-7">Штурман осмотра: VIN + объявление = маршрут</h3>
+    <p class="i-pitch">До выезда мастер вставляет VIN и ссылку на объявление и получает чек-лист под этот мотор, коробку, опции и слова продавца, в порядке обхода машины.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>VIN-декодер даёт код мотора и КПП, дату, заводские опции. RAG по базе знаний добавляет пункты: B57 — радиатор и клапан EGR; N47 — цепь на холодную; M274 — фазорегуляторы; 722.9 — плата; ZF 8HP — адаптации. Парсер объявления превращает «не бит, 1 владелец, родной пробег» в пункты проверки (питает протокол допроса).</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Штурман бесплатный и ведёт в платный отчёт. Главный крючок базы знаний в ежедневной работе мастера.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-8" data-i="7" data-g="fld" data-mvp="1" data-e="M" data-w="7" aria-labelledby="it-8">
+  <div class="i-num mono"><span>08</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg>Для специалиста в поле</p>
+    <h3 class="i-t" id="it-8">Коды ошибок в рубли</h3>
+    <p class="i-pitch">Мастер загружает экспорт или фото экрана ISTA, Xentry или Launch. Сервис делит ошибки на «шум», «историю» и «деньги» и к каждой даёт причину и цену Мск/СПб.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Парсер экспорта плюс OCR фото экрана. Коммуникационные ошибки после отключения АКБ уходят в шум. RAG связывает код, мотор и пробег с вероятностями («на N47 при 160 тыс. — скорее цепь, чем датчик»). Цены за оригинал и аналог. Результат сразу попадает в табло электрики и в торг.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Ядро платного тарифа. Платный разовый вопрос агенту про сложную комбинацию кодов.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 7 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">7</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-9" data-i="8" data-g="fld" data-mvp="0" data-e="M" data-w="7" aria-labelledby="it-9">
+  <div class="i-num mono"><span>09</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg>Для специалиста в поле</p>
+    <h3 class="i-t" id="it-9">Режим мороза: осмотр одной рукой</h3>
+    <p class="i-pitch">Полевой интерфейс для −20 °C и подземного паркинга: Bluetooth-толщиномер, голос, офлайн. Отчёт готов, пока мастер идёт к машине.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Замер по Bluetooth сразу ложится в элемент, названный голосом или следующий по маршруту обхода. Заводской коридор толщин для кузова берётся из базы. Предупреждения про алюминий (NFe) и пластик. Фраза «задний левый рычаг, сайлент порван» раскладывается в раздел с деталью и ценой. Офлайн, синхронизация в машине.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Главный аргумент подписки: «отчёт через 0 минут после осмотра». Партнёрские продажи толщиномеров и OBD-адаптеров.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 7 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">7</span></div><span class="stamp later">позже · до 6 мес</span></div>
+</article>
+<article class="idea" id="idea-10" data-i="9" data-g="fld" data-mvp="1" data-e="S" data-w="7" aria-labelledby="it-10">
+  <div class="i-num mono"><span>10</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg>Для специалиста в поле</p>
+    <h3 class="i-t" id="it-10">Чёрный ящик осмотра и отрицательный протокол</h3>
+    <p class="i-pitch">Каждый замер, фото и сессия диагностики получают время, геометку и хеш. Отчёт становится доказательством работы, а честное «что не проверялось» — признаком профессионализма.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>В отчёте: «1 ч 17 мин, 41 замер ЛКП, 2 сессии диагностики, 126 фото». Отрицательный протокол перечисляет, что не проверено и почему, клиент подтверждает тапом. После выдачи отчёт запечатывается хешем, подлинность проверяется по QR и номеру «Т-». Отчёт «выцветает» через 10 дней.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Партнёрский полис ответственности мастера 300–500 ₽ за осмотр с комиссией сервису. Выцветание приводит к платным повторным досмотрам перед сделкой.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие S, малое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class=""></i><i class=""></i></span><span class="v">S</span></div><div class="wow" aria-label="Wow 7 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">7</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-11" data-i="10" data-g="fld" data-mvp="0" data-e="M" data-w="9" aria-labelledby="it-11">
+  <div class="i-num mono"><span>11</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg>Для специалиста в поле</p>
+    <h3 class="i-t" id="it-11">Провенанс: даты на деталях и заводская метрика против нынешнего тела</h3>
+    <p class="i-pitch">Находит ДТП, которое не видит толщиномер: даты на стёклах, ремнях, фарах, шинах плюс сверка заводской комплектации по VIN с тем, что стоит в машине физически.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Компьютерное зрение читает точечные коды дат стёкол, этикетки ремней, «часики» фар и DOT шин. Всё, что моложе машины, группируется по сторонам: правые стёкла, ремень и фара 2021 года — боковой удар в 2021-м. По VIN подтягиваются SA-коды BMW или Datacard Mercedes (цвет, опции, рынок назначения). Чек-лист «есть / нет / другое»: Harman Kardon был с завода, а сейчас нет — меняли двери или голову; рынок США — повод проверить аукционы битых машин.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Премиум-модуль +1 500–3 000 ₽ к чеку мастера. Оффер для лендинга: «найдём ДТП, которое не видит толщиномер».</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 9 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="on" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">9</span></div><span class="stamp later">позже · до 12 мес</span></div>
+</article>
+<article class="idea" id="idea-12" data-i="11" data-g="fld" data-mvp="0" data-e="L" data-w="8" aria-labelledby="it-12">
+  <div class="i-num mono"><span>12</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg>Для специалиста в поле</p>
+    <h3 class="i-t" id="it-12">Детектор вмешательства в «мозги»</h3>
+    <p class="i-pitch">Раздел о софт-истории машины: чип-тюнинг, удалённые EGR, DPF и мочевина, перепрошивки, тихо отключённые ошибки.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Заводской и текущий I-Stufe BMW, версии DME и EGS, кодирование FA против VIN; у Mercedes SCN и версии ПО в Xentry. Признаки «Евро-2»: нулевой перепад на DPF при живом блоке, нет ожидаемых ошибок при снятых датчиках. Вердикт «заводское / изменено / следы вмешательства», RAG поясняет последствия. Смена I-Stufe ложится ещё одной точкой на таймлайн пробега.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Премиум-раздел и пакет «Дизель-экспертиза» для B47/B57/N57/OM642/OM651/OM654.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие L, большое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="v">L</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp later">позже · до 12 мес</span></div>
+</article>
+<article class="idea" id="idea-13" data-i="12" data-g="mon" data-mvp="1" data-e="S" data-w="8" aria-labelledby="it-13">
+  <div class="i-num mono"><span>13</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg>Деньги и рост</p>
+    <h3 class="i-t" id="it-13">Отказы бесплатно, платишь только за «ту самую»</h3>
+    <p class="i-pitch">Отказные виньетки бесплатны всегда и с полным брендингом. Мастер платит только за финальную виньетку по купленной машине. Отказы — главное сырьё данных сервиса.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>На одну покупку приходится 4–8 осмотров. Отказной отчёт генерируется бесплатно и уходит клиенту. Финальный стоит 1 490 ₽ или входит в «Про». Покупка подтверждается кнопкой клиента «Я купил», активацией медкарты или сменой собственника по VIN в течение 30 дней. Прятать покупку невыгодно: клиент теряет постпродажные бонусы.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>1 000 активных мастеров × 3 покупки в месяц × 1 490 ₽ ≈ 4,5 млн ₽ в месяц плюс подписки. Бесплатный поток отказов питает «Кладбище VIN» и процентили.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие S, малое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class=""></i><i class=""></i></span><span class="v">S</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-14" data-i="13" data-g="mon" data-mvp="1" data-e="S" data-w="7" aria-labelledby="it-14">
+  <div class="i-num mono"><span>14</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg>Деньги и рост</p>
+    <h3 class="i-t" id="it-14">База знаний как поставщик покупателей</h3>
+    <p class="i-pitch">Кто спрашивает RAG-агента про проблемы N57 на X5 или читает статью про W212 M276, уже присматривается к покупке. Под ответом появляется «Проверить конкретную машину» и местные мастера в их стилях.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Второй шаг RAG-формы: «Уже нашли машину? Вставьте ссылку». Сервис вытягивает модель, город и цену и показывает трёх мастеров с метрикой «сторговано клиентам» и образцом виньетки. Лиды распределяются аукционом со ставкой и лимитом, приоритет у экспертов по модели. Обезличенные отчёты встраиваются в статьи как SEO-контент.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Лид 600–2 000 ₽. При 50 тыс. запросов в месяц и конверсии 2% это ≈1 000 лидов и 0,8–1,5 млн ₽ в месяц без затрат на привлечение.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие S, малое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class=""></i><i class=""></i></span><span class="v">S</span></div><div class="wow" aria-label="Wow 7 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">7</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-15" data-i="14" data-g="mon" data-mvp="0" data-e="M" data-w="8" aria-labelledby="it-15">
+  <div class="i-num mono"><span>15</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg>Деньги и рост</p>
+    <h3 class="i-t" id="it-15">Выписной эпикриз → медкарта машины</h3>
+    <p class="i-pitch">После сделки виньетка становится выпиской из стационара: назначения на 90 дней, напоминания, журнал обслуживания. При перепродаже она становится паспортом ухода для следующего покупателя.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Лист назначений по дефектам и регламенту: неделя 1 — масло и фильтры; до 2 000 км — масло ZF 8HP с адаптацией. Telegram-бот напоминает, клиент прикладывает заказ-наряды. На 30-й день пуш «вы не купили 3 проблемные машины и сэкономили 212 000 ₽». Через 3–4 года медкарта уходит ссылкой в объявление с кнопкой «проверить у мастера, который вёл машину».</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Подписка владельца 290–490 ₽/мес, первые 3 месяца в подарок от мастера, доля мастеру. Комиссия партнёрских СТО 5–8% или 700–1 500 ₽ за запись. Повторный подбор через 3–4 года.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp later">позже · до 6 мес</span></div>
+</article>
+<article class="idea" id="idea-16" data-i="15" data-g="mon" data-mvp="0" data-e="L" data-w="9" aria-labelledby="it-16">
+  <div class="i-num mono"><span>16</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg>Деньги и рост</p>
+    <h3 class="i-t" id="it-16">Застрахованный вердикт</h3>
+    <p class="i-pitch">Если мастер написал «мотор и АКПП без замечаний», клиент докупает полис на скрытые дефекты этих узлов на 6 месяцев. Цена зависит от мотора и от реальной статистики ошибок мастера.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Партнёр-страховщик получает структурированные данные осмотра, то есть андеррайтинг, которого у него нет. Цена = риск мотора (M57 против N63) × пробег × доля страховых случаев по вердиктам мастера. Сильные мастера дают полис на 30–40% дешевле и знак «Застрахованный вердикт», который снимается автоматически. Отказ страховщика сам по себе сигнал клиенту.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Полис 15–45 тыс. ₽, агентская комиссия 15–35%. Покупка на 5–15% финальных виньеток сравнима со всей платой мастеров.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие L, большое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="v">L</span></div><div class="wow" aria-label="Wow 9 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="on" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">9</span></div><span class="stamp later">позже · до 12 мес</span></div>
+</article>
+<article class="idea" id="idea-17" data-i="16" data-g="mon" data-mvp="0" data-e="M" data-w="9" aria-labelledby="it-17">
+  <div class="i-num mono"><span>17</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg>Деньги и рост</p>
+    <h3 class="i-t" id="it-17">Вторая сторона рынка: отчёт продаётся дважды</h3>
+    <p class="i-pitch">Отказной отчёт с согласия клиента продаётся продавцу как независимая предпродажная проверка. Продавцы, перекупы и дилеры трейд-ина становятся платящими клиентами, а объявления — каналом привлечения.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>После отказа продавец получает предложение: бейдж «Проверено 14.09.2026 мастером X» и QR в объявление за 3 900 ₽. Отчёт заморожен, править нельзя, через 30 дней «протухает». Часть денег возвращается клиенту. Покупатель по QR видит «Перепроверить у этого мастера со скидкой 30%». Отдельно white-label для приёмки трейд-ин у дилеров: каждый рубль скидки подтверждён фото и ценой.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>20–30% с перепродажи отчёта. Пакеты перекупам 35–60 тыс. ₽/мес. Трейд-ин SaaS 25–60 тыс. ₽/мес за точку. Все осмотры пополняют базу VIN.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 9 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="on" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">9</span></div><span class="stamp later">позже · до 6 мес</span></div>
+</article>
+<article class="idea" id="idea-18" data-i="17" data-g="mon" data-mvp="0" data-e="M" data-w="7" aria-labelledby="it-18">
+  <div class="i-num mono"><span>18</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg>Деньги и рост</p>
+    <h3 class="i-t" id="it-18">Руки в другом городе: субподряд под брендом заказчика</h3>
+    <p class="i-pitch">Клиент мастера из Казани нашёл машину в Москве или Владивостоке. Смотрит местный коллега, а виньетка выходит в стиле казанского мастера с пометкой «выезд партнёра».</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Внутренняя биржа заданий: «осмотр W213, Химки, до завтра 14:00, 6 000 ₽». Исполнитель заполняет отчёт, данные ложатся в шаблон и розетку заказчика. Безопасная сделка: оплата после приёмки. Рейтинг субподрядчика: скорость, полнота, расхождения при повторных осмотрах.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Клиринговая комиссия 12–15%, +30% за срочность в течение 4 часов. Сетевой эффект по городам удерживает мастеров.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 7 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">7</span></div><span class="stamp later">позже · до 6 мес</span></div>
+</article>
+<article class="idea" id="idea-19" data-i="18" data-g="mon" data-mvp="0" data-e="L" data-w="8" aria-labelledby="it-19">
+  <div class="i-num mono"><span>19</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg>Деньги и рост</p>
+    <h3 class="i-t" id="it-19">Финансирование прямо в отчёте</h3>
+    <p class="i-pitch">Внизу финальной виньетки — автокредит, лизинг для ИП, КАСКО и ОСАГО на эту машину. Отчёт мастера засчитывается как предстраховой осмотр. Агентские делятся с мастером, и отчёт для него может стать доходом.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Отчёт знает VIN, цену сделки и дефекты. Три предложения банков с предодобрением через Госуслуги. КАСКО с тарифом по фактическому состоянию без отдельного осмотра. Мастер получает 30–40% агентского вознаграждения.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Автокредит 3–5 млн ₽ при ставке 1–2,5% даёт 30–125 тыс. ₽ со сделки. КАСКО 10–20% от премии.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие L, большое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="v">L</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp later">позже · до 12 мес</span></div>
+</article>
+<article class="idea" id="idea-20" data-i="19" data-g="wld" data-mvp="0" data-e="L" data-w="10" aria-labelledby="it-20">
+  <div class="i-num mono"><span>20</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg>Безумные, но настоящие</p>
+    <h3 class="i-t" id="it-20">Кладбище VIN: коллективная память осмотров</h3>
+    <p class="i-pitch">Каждая забракованная машина получает «некролог» в закрытом реестре сети. Когда тот же VIN всплывает на Авито с меньшим пробегом и свежей краской, следующий мастер видит, что изменилось.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Отказ оформляется за 60 секунд: VIN, дата, пробег, 1–3 причины из справочника, фото, толщины по панелям. Перед выездом: «Хоронили 12.03.2026 в Химках: пробег был 184 тыс., в объявлении 121 тыс.; капот тогда 110 мкм, сейчас 260». Give-to-get: 1 некролог = 5 проверок. Данных продавца и клиента нет (152-ФЗ). Раз в квартал «Индекс честности вторички BMW/Mercedes» для PR и SEO.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Проверки входят в подписку мастера. B2B API 190–990 ₽ за запрос для лизинга, банков, выкупщиков, трейд-ина. Годовые контракты 0,6–3 млн ₽. Частникам проверка по кладбищу — лид-магнит на мастера.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие L, большое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="v">L</span></div><div class="wow" aria-label="Wow 10 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="on" style="--h:9"></i><i class="on" style="--h:10"></i></span><span class="v">10</span></div><span class="stamp later">позже · до 12 мес</span></div>
+</article>
+<article class="idea" id="idea-21" data-i="20" data-g="wld" data-mvp="0" data-e="M" data-w="9" aria-labelledby="it-21">
+  <div class="i-num mono"><span>21</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg>Безумные, но настоящие</p>
+    <h3 class="i-t" id="it-21">Натальная карта VIN: гороскоп сборки</h3>
+    <p class="i-pitch">Дата и завод выпуска читаются как дата и место рождения. Каждое «предсказание» гороскопа — реальная проблема партии или модернизация узла, привязанная к датам.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Из VIN берутся завод (Дингольфинг, Лейпциг, Зиндельфинген, Бремен…), месяц выпуска и коды агрегатов. RAG сверяет их с таблицами «до / после модернизации» (N20 до обновления направляющих цепи, 7G-Tronic с капризной платой, отзыв радиатора EGR на B47/B57). «Рождён в ноябре 2018 в Дингольфинге. Асцендент — радиатор EGR». Под каждой строкой «трезвый перевод»: как проверить и сколько стоит.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Бесплатный вирусный лид-магнит на лендинге: «пусть звёзды перепроверит живой человек», лид мастеру за 700–1 500 ₽.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 9 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="on" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">9</span></div><span class="stamp later">позже · до 6 мес</span></div>
+</article>
+<article class="idea" id="idea-22" data-i="21" data-g="wld" data-mvp="1" data-e="M" data-w="9" aria-labelledby="it-22">
+  <div class="i-num mono"><span>22</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg>Безумные, но настоящие</p>
+    <h3 class="i-t" id="it-22">Протокол допроса продавца</h3>
+    <p class="i-pitch">Отчёт оценивает не только машину, но и человека. Всё сказанное продавцом в объявлении и по телефону становится показаниями, их сверяют с фактами.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>ИИ по модели и мотору готовит «вопросы следователя» («радиатор EGR по отзыву меняли? заказ-наряд есть?»). Звонок или голосовое расшифровывается в утверждения. Таблица «Показание → Проверка → Подтверждено / Опровергнуто / Не проверялось», итог «опровергнуто 3 из 7». В MVP — утверждения из объявления плюс ручные показания.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Премиум-блок финальной виньетки. Мастер отсеивает пустые выезды ещё на звонке и защищён от претензий.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 9 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="on" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">9</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+<article class="idea" id="idea-23" data-i="22" data-g="wld" data-mvp="0" data-e="M" data-w="8" aria-labelledby="it-23">
+  <div class="i-num mono"><span>23</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg>Безумные, но настоящие</p>
+    <h3 class="i-t" id="it-23">Аудио-ЭКГ холодного пуска</h3>
+    <p class="i-pitch">30 секунд холодного пуска становятся спектрограммой-кардиограммой с метками мастера и кнопкой «послушать здоровый мотор того же кода». Температура ОЖ по OBD выдаёт тайный прогрев до приезда.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Протокол записи: капот открыт, телефон у привода ГРМ, 30 секунд пуска и 10 секунд перегазовок. Спектрограмма в браузере (WebAudio), метки «0:02 — звон цепи». Если при приезде ОЖ 70 °C, а продавец «не заводил», ставится флаг. Размеченные записи копятся в библиотеку по кодам моторов, дальше — ИИ-предиагностика по звуку.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Премиум-блок. Позже «диагноз по звуку» для частников 199–490 ₽ с передачей лида мастеру и лицензирование датасета.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие M, среднее"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class=""></i></span><span class="v">M</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp later">позже · до 6 мес</span></div>
+</article>
+<article class="idea" id="idea-24" data-i="23" data-g="wld" data-mvp="1" data-e="S" data-w="8" aria-labelledby="it-24">
+  <div class="i-num mono"><span>24</span></div>
+  <div class="i-main">
+    <p class="i-grp"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg>Безумные, но настоящие</p>
+    <h3 class="i-t" id="it-24">Карточка игрока с процентилем среди собратьев</h3>
+    <p class="i-pitch">Итог сворачивается в карточку в стиле футбольного симулятора: рейтинг 0–99, атрибуты МОТ / КОР / ХОД / КУЗ / ЭЛК / ДОК и место машины среди всех проверенных сетью экземпляров той же модели.</p>
+    <div class="i-mech"><p class="lbl">Механика</p><p>Когорты из обезличенных осмотров («G30 530d B57, 90–130 тыс. км»): «по ходовой лучше 74% собратьев». Редкость: золото, серебро, бронза. PNG 1080×1920 с розеткой мастера, «сторговано 180 000 ₽», QR с реферальной ссылкой. Та же статистика возвращается живыми блоками в статьи базы знаний и в RAG. В MVP — трофейная карточка без процентиля.</p></div>
+  </div>
+  <div class="i-money"><p class="lbl">Деньги</p><p>Вирусная петля: каждая карточка — бесплатный лид мастеру и сервису, реферальная скидка другу. Процентиль только на тарифе с доступом к базе.</p></div>
+  <div class="i-meta"><div class="eff" aria-label="Усилие S, малое"><span class="k">Усилие</span><span class="bars" aria-hidden="true"><i class="on"></i><i class=""></i><i class=""></i></span><span class="v">S</span></div><div class="wow" aria-label="Wow 8 из 10"><span class="k">Wow</span><span class="ticks" aria-hidden="true"><i class="on" style="--h:1"></i><i class="on" style="--h:2"></i><i class="on" style="--h:3"></i><i class="on" style="--h:4"></i><i class="on" style="--h:5"></i><i class="on" style="--h:6"></i><i class="on" style="--h:7"></i><i class="on" style="--h:8"></i><i class="" style="--h:9"></i><i class="" style="--h:10"></i></span><span class="v">8</span></div><span class="stamp mvp">MVP</span></div>
+</article>
+  </div>
+  <p class="empty" id="empty" hidden>Под этот фильтр идей нет. Снимите «Только MVP» или выберите другую группу.</p>
+</section>
+
+<svg class="gband" id="g2" viewBox="0 0 1200 55" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+<!-- 3. Карта -->
+<section class="sec" id="s3" aria-labelledby="h-s3">
+  <div class="shead">
+    <p class="num">03 · Приоритеты</p>
+    <div class="ht">
+      <h2 class="h2" id="h-s3">Карта «усилие × wow»</h2>
+      <p class="lead" style="margin-top:13px">По горизонтали усилие S, M, L. По вертикали wow от 1 до 10 на одной шкале. Форма значка — группа, заливка — MVP. Наведите или сфокусируйте точку, чтобы увидеть идею. Нажатие ведёт к её строке.</p>
+    </div>
+  </div>
+  <div class="body b13">
+    <div class="chart-wrap" id="chart-wrap">
+      <div class="chart" id="chart" role="group" aria-label="Точечная диаграмма: 24 идеи по усилию и wow"></div>
+      <div class="tip" id="tip" role="tooltip" hidden></div>
+      <div class="clegend" aria-label="Легенда">
+        <span class="lg">Форма</span>
+        <span><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>В отчёте</span>
+        <span><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg>В поле</span>
+        <span><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg>Деньги и рост</span>
+        <span><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg>Безумные</span>
+        <span class="sep"></span>
+        <span class="lg">Заливка</span>
+        <span><i class="fill f"></i>MVP</span>
+        <span><i class="fill"></i>позже</span>
+      </div>
+    </div>
+    <div class="quads" id="quads"></div>
+  </div>
+</section>
+
+<div class="perf" aria-hidden="true"></div>
+
+<!-- 4. Лестница -->
+<section class="sec" id="s4" aria-labelledby="h-s4">
+  <div class="shead">
+    <p class="num">04 · Порядок</p>
+    <div class="ht">
+      <h2 class="h2" id="h-s4">Лестница запуска</h2>
+      <p class="lead" style="margin-top:13px">Три ступени: MVP за первые три месяца, затем полгода и год. Ступень выше опирается на данные и функции нижней. Ссылки «растёт из» ведут к строке идеи.</p>
+    </div>
+  </div>
+  <ol class="ladder">
+<li class="step s0">
+  <div class="step-h"><p class="eyebrow">Ступень 1</p><h3 class="step-t">Первые 3 месяца · MVP</h3><p class="small soft">Отчёт, который продаётся, и бесплатные отказы, которые копят данные.</p><p class="step-n mono">12 идей</p></div>
+  <ul class="step-l"><li class="mhead mono">Месяц 1</li><li><a class="lchip" href="#idea-5"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg><span class="mono">05</span> Пробег-криминалистика</a><p class="note">Свидетели пробега вносятся вручную или из лога сканера.</p></li><li><a class="lchip" href="#idea-7"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg><span class="mono">07</span> Штурман осмотра</a><p class="note">VIN-декодер и RAG по базе знаний. Бесплатный крючок для мастера.</p></li><li><a class="lchip" href="#idea-8"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg><span class="mono">08</span> Коды ошибок в рубли</a><p class="note">Парсер экспорта ISTA, Xentry, Launch. OCR фото экрана позже.</p></li><li><a class="lchip" href="#idea-10"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg><span class="mono">10</span> Чёрный ящик осмотра</a><p class="note">Время, замеры, хеш. Без него не будет ни страховки, ни доверия к кладбищу.</p></li><li><a class="lchip" href="#idea-13"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg><span class="mono">13</span> Отказы бесплатно</a><p class="note">Фундамент. С первой отказной виньетки копим VIN, пробег, толщины и причину отказа.</p></li><li class="mhead mono">Месяц 2</li><li><a class="lchip" href="#idea-1"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg><span class="mono">01</span> Суфлёр торга</a><p class="note">Главный аргумент за 1 490 ₽. Находки уже посчитаны в рублях.</p><span class="dep">растёт из <a href="#idea-5">05 Пробег-криминалистика</a>, <a href="#idea-8">08 Коды ошибок в рубли</a></span></li><li><a class="lchip" href="#idea-2"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg><span class="mono">02</span> Синоптик владения</a><p class="note">Горизонт 12 месяцев и +20 000 км, без сравнения кандидатов.</p><span class="dep">растёт из <a href="#idea-7">07 Штурман осмотра</a></span></li><li><a class="lchip" href="#idea-22"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg><span class="mono">22</span> Протокол допроса</a><p class="note">Утверждения из объявления и ручные показания. Расшифровка звонков позже.</p><span class="dep">растёт из <a href="#idea-7">07 Штурман осмотра</a></span></li><li class="mhead mono">Месяц 3</li><li><a class="lchip" href="#idea-3"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg><span class="mono">03</span> Режим «Для своих»</a><p class="note">Пересказ для семьи и голосование. Растит пересылки.</p><span class="dep">растёт из <a href="#idea-2">02 Синоптик владения</a></span></li><li><a class="lchip" href="#idea-4"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg><span class="mono">04</span> Журнал охоты</a><p class="note">Воронка охоты и шевроны. Отсеянные машины уже есть в отказных.</p><span class="dep">растёт из <a href="#idea-13">13 Отказы бесплатно</a></span></li><li><a class="lchip" href="#idea-14"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg><span class="mono">14</span> База знаний даёт покупателей</a><p class="note">Кнопка «Проверить машину» под ответами RAG. Лиды без рекламы.</p><span class="dep">растёт из <a href="#idea-7">07 Штурман осмотра</a></span></li><li><a class="lchip" href="#idea-24"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg><span class="mono">24</span> Карточка игрока</a><p class="note">Трофейная карточка без процентиля: сравнивать пока не с чем.</p><span class="dep">растёт из <a href="#idea-1">01 Суфлёр торга</a>, <a href="#idea-4">04 Журнал охоты</a></span></li></ul>
+</li>
+<li class="step s1">
+  <div class="step-h"><p class="eyebrow">Ступень 2</p><h3 class="step-t">До 6 месяцев</h3><p class="small soft">Идеи, которым нужны первые финальные виньетки и живые мастера в поле.</p><p class="step-n mono">7 идей</p></div>
+  <ul class="step-l"><li><a class="lchip" href="#idea-17"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg><span class="mono">17</span> Отчёт продаётся дважды</a><p class="note">Отказных накопилось достаточно. Хеш и заморозка берутся из чёрного ящика.</p><span class="dep">растёт из <a href="#idea-13">13 Отказы бесплатно</a>, <a href="#idea-10">10 Чёрный ящик осмотра</a></span></li><li><a class="lchip" href="#idea-21"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg><span class="mono">21</span> Натальная карта VIN</a><p class="note">Таблицы модернизаций из штурмана, упакованные в гороскоп.</p><span class="dep">растёт из <a href="#idea-7">07 Штурман осмотра</a></span></li><li><a class="lchip" href="#idea-6"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg><span class="mono">06</span> Договор с зубами</a><p class="note">Факты для ДКП уже лежат в протоколе и суфлёре. Нужен юрист-партнёр.</p><span class="dep">растёт из <a href="#idea-22">22 Протокол допроса</a>, <a href="#idea-1">01 Суфлёр торга</a></span></li><li><a class="lchip" href="#idea-15"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg><span class="mono">15</span> Медкарта машины</a><p class="note">Появится после первых финальных виньеток. Нужен Telegram-бот.</p><span class="dep">растёт из <a href="#idea-2">02 Синоптик владения</a></span></li><li><a class="lchip" href="#idea-23"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg><span class="mono">23</span> Аудио-ЭКГ пуска</a><p class="note">Записи пуска собираем с MVP как необязательное вложение, разметку добавляем здесь.</p><span class="dep">растёт из <a href="#idea-10">10 Чёрный ящик осмотра</a></span></li><li><a class="lchip" href="#idea-9"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg><span class="mono">09</span> Режим мороза</a><p class="note">Когда маршрут обхода обкатан, переносим его в поле: Bluetooth, голос, офлайн.</p><span class="dep">растёт из <a href="#idea-7">07 Штурман осмотра</a>, <a href="#idea-10">10 Чёрный ящик осмотра</a></span></li><li><a class="lchip" href="#idea-18"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg><span class="mono">18</span> Руки в другом городе</a><p class="note">Нужны мастера хотя бы в Москве, Петербурге и паре городов-миллионников.</p></li></ul>
+</li>
+<li class="step s2">
+  <div class="step-h"><p class="eyebrow">Ступень 3</p><h3 class="step-t">До 12 месяцев</h3><p class="small soft">Ставки на накопленные данные и партнёров: страховщики, банки, B2B.</p><p class="step-n mono">5 идей</p></div>
+  <ul class="step-l"><li><a class="lchip" href="#idea-20"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14.5 14H1.5Z"/></svg><span class="mono">20</span> Кладбище VIN</a><p class="note">К этому моменту в базе полгода отказов. Реестр открывается, когда VIN начинают повторяться.</p><span class="dep">растёт из <a href="#idea-13">13 Отказы бесплатно</a></span></li><li><a class="lchip" href="#idea-11"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg><span class="mono">11</span> Провенанс деталей</a><p class="note">Компьютерное зрение по датам на стёклах, ремнях и шинах плюс SA-коды по VIN.</p><span class="dep">растёт из <a href="#idea-7">07 Штурман осмотра</a></span></li><li><a class="lchip" href="#idea-16"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg><span class="mono">16</span> Застрахованный вердикт</a><p class="note">Страховщику нужна статистика вердиктов мастеров за 6–12 месяцев.</p><span class="dep">растёт из <a href="#idea-10">10 Чёрный ящик осмотра</a>, <a href="#idea-5">05 Пробег-криминалистика</a></span></li><li><a class="lchip" href="#idea-12"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11"/></svg><span class="mono">12</span> Детектор вмешательства</a><p class="note">Нужны логи диагностики и эталонные версии ПО. Растёт из кодов ошибок.</p><span class="dep">растёт из <a href="#idea-8">08 Коды ошибок в рубли</a>, <a href="#idea-5">05 Пробег-криминалистика</a></span></li><li><a class="lchip" href="#idea-19"><svg class="shp" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z"/></svg><span class="mono">19</span> Финансирование в отчёте</a><p class="note">Цена сделки уже известна из суфлёра. Нужны партнёры-банки и агентский договор.</p><span class="dep">растёт из <a href="#idea-1">01 Суфлёр торга</a></span></li></ul>
+</li>
+  </ol>
+  <div class="stock">
+    <p class="eyebrow">С первого дня</p>
+    <h3>Что копить, даже если функции ещё нет</h3>
+    <p class="small soft">Данные нельзя собрать задним числом. Эти поля пишем в базу с первой отказной виньетки.</p>
+    <ul>
+      <li>VIN, дата, пробег и толщины по панелям из каждой отказной. Сырьё для кладбища VIN и процентилей.</li>
+      <li>Показания всех свидетелей пробега: блоки, ключ, ТО, объявления. Нужны детектору вмешательства и страховщику.</li>
+      <li>Экспорт кодов ошибок с мотором и пробегом. Из него растут цены «шум / история / деньги» и вероятности.</li>
+      <li>Цена сделки и сторгованная сумма. Это метрика «сторговано клиентам» и база для финансирования.</li>
+      <li>Длительность осмотра, число замеров и фото. Основа чёрного ящика и рейтинга субподрядчиков.</li>
+      <li>Записи холодного пуска, если мастер их сделал. Библиотека для аудио-ЭКГ.</li>
+    </ul>
+  </div>
+</section>
+
+<svg class="gband" id="g3" viewBox="0 0 1200 55" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+<!-- 5. Деньги -->
+<section class="sec" id="s5" aria-labelledby="h-s5">
+  <div class="shead">
+    <p class="num">05 · Экономика</p>
+    <div class="ht">
+      <h2 class="h2" id="h-s5">Деньги</h2>
+      <p class="lead" style="margin-top:13px">Мастер платит за машину, которую клиент купил. Отказы бесплатны и копят данные. Сверху — потоки, где отчёт работает второй раз. <span class="hyp">гипотезы</span></p>
+    </div>
+  </div>
+  <div class="body b13">
+    <div class="tiers">
+      <div class="tier free"><p class="tn">Отказная</p><p class="tp">0 ₽</p><p>Всегда, с полным брендингом мастера. На одну покупку приходится 4–8 таких осмотров.</p></div>
+      <div class="tier"><p class="tn">Финальная</p><p class="tp">1 490 ₽<small>за машину</small></p><p>Виньетка по купленной машине: суфлёр торга, лист продавца, трофейная карточка.</p></div>
+      <div class="tier"><p class="tn">Про</p><p class="tp">3 900 ₽<small>в мес.</small></p><p>10 финальных в месяц, свой домен, без подписи сервиса. Стена трофеев.</p></div>
+      <div class="tier"><p class="tn">Бюро</p><p class="tp">9 900 ₽<small>в мес.</small></p><p>До 5 мастеров. Общий стиль студии и личная розетка у каждого.</p></div>
+    </div>
+
+    <div class="calc">
+      <div class="ci">
+        <h3>Прикидка выручки с мастеров</h3>
+        <div class="rng"><label for="c-m">Активных мастеров <output id="o-m" for="c-m">1 000</output></label><input id="c-m" type="range" min="50" max="3000" step="50" value="1000"></div>
+        <div class="rng"><label for="c-f">Финальных виньеток на мастера в месяц <output id="o-f" for="c-f">3</output></label><input id="c-f" type="range" min="1" max="12" step="1" value="3"></div>
+        <div class="rng"><label for="c-p">Доля мастеров на «Про» <output id="o-p" for="c-p">20%</output></label><input id="c-p" type="range" min="0" max="100" step="5" value="20"></div>
+      </div>
+      <div class="co" aria-live="polite">
+        <div class="calc-out">
+          <div><span>Финальные по 1 490 ₽</span><b id="r-fin">3 576 000 ₽</b></div>
+          <div><span>Подписки «Про»</span><b id="r-pro">780 000 ₽</b></div>
+          <div class="tot"><span>В месяц</span><b id="r-tot">4 356 000 ₽</b></div>
+          <div><span>В год</span><b id="r-year">52 272 000 ₽</b></div>
+        </div>
+        <p class="calc-note" id="r-note"></p>
+      </div>
+    </div>
+
+    <h3 class="streams-h">Дополнительные потоки</h3>
+    <p class="small soft" style="margin-top:4px">Ставки из брифа. Ни одна не подтверждена договором.</p>
+    <div class="tbl-wrap" tabindex="0" role="region" aria-label="Таблица дополнительных потоков">
+      <table>
+        <thead><tr><th scope="col">Поток</th><th scope="col">Кто платит</th><th scope="col">Ставка</th><th scope="col">Идея</th></tr></thead>
+        <tbody>
+          <tr><td>Отчёт продавцу: бейдж «Проверено» и QR в объявление</td><td>Продавец, перекуп</td><td class="n">3 900 ₽, сервису 20–30%</td><td><a href="#idea-17">17</a></td></tr>
+          <tr><td>Пакеты перекупам и трейд-ин SaaS для дилеров</td><td>Перекупы, дилеры</td><td class="n">пакет 35–60 тыс. ₽/мес, трейд-ин 25–60 тыс. ₽/мес за точку</td><td><a href="#idea-17">17</a></td></tr>
+          <tr><td>Застрахованный вердикт на мотор и АКПП</td><td>Клиент через страховщика</td><td class="n">полис 15–45 тыс. ₽, комиссия 15–35%</td><td><a href="#idea-16">16</a></td></tr>
+          <tr><td>Автокредит и лизинг в финальной виньетке</td><td>Банк</td><td class="n">30–125 тыс. ₽ со сделки, мастеру 30–40%</td><td><a href="#idea-19">19</a></td></tr>
+          <tr><td>КАСКО и ОСАГО по фактическому состоянию</td><td>Страховщик</td><td class="n">10–20% премии</td><td><a href="#idea-19">19</a></td></tr>
+          <tr><td>Субподряд «руки в другом городе»</td><td>Мастер-заказчик</td><td class="n">клиринг 12–15%, срочно +30%</td><td><a href="#idea-18">18</a></td></tr>
+          <tr><td>Лиды из базы знаний</td><td>Мастер</td><td class="n">600–2 000 ₽ за лид</td><td><a href="#idea-14">14</a></td></tr>
+          <tr><td>Кладбище VIN по API</td><td>Лизинг, банки, выкупщики</td><td class="n">190–990 ₽ за запрос</td><td><a href="#idea-20">20</a></td></tr>
+          <tr><td>Медкарта машины</td><td>Владелец</td><td class="n">290–490 ₽/мес</td><td><a href="#idea-15">15</a></td></tr>
+          <tr><td>Плата за успех торга</td><td>Клиент мастеру</td><td class="n">1–2%, сервису 20% от неё</td><td><a href="#idea-1">01</a></td></tr>
+          <tr><td>Экспертиза пробега отдельно</td><td>Перекупы, трейд-ин</td><td class="n">990 ₽</td><td><a href="#idea-5">05</a></td></tr>
+          <tr><td>Полис ответственности мастера</td><td>Мастер</td><td class="n">300–500 ₽ за осмотр</td><td><a href="#idea-10">10</a></td></tr>
+          <tr><td>Запись в партнёрские СТО</td><td>СТО</td><td class="n">5–10%</td><td><a href="#idea-2">02</a></td></tr>
+          <tr><td>Лид с «Натальной карты VIN»</td><td>Мастер</td><td class="n">700–1 500 ₽ за лид</td><td><a href="#idea-21">21</a></td></tr>
+          <tr><td>Диагноз по звуку для частников</td><td>Владелец</td><td class="n">199–490 ₽</td><td><a href="#idea-23">23</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="perf" aria-hidden="true"></div>
+
+<!-- 6. Крючки -->
+<section class="sec" id="s6" aria-labelledby="h-s6">
+  <div class="shead">
+    <p class="num">06 · Первый экран</p>
+    <div class="ht">
+      <h2 class="h2" id="h-s6">Идеи для лендинга</h2>
+      <p class="lead" style="margin-top:13px">Сейчас лендинг открывается именем и розеткой. Ниже шесть других крючков для A/B-теста первого экрана.</p>
+    </div>
+  </div>
+  <ol class="hooks">
+    <li class="hook cur">
+      <span class="hk">Сейчас</span>
+      <div class="hl"><p class="hh">Ваш цвет спрятан в вашем имени</p><p class="screen">Поле ФИО → 12 hex-ячеек → розетка из 51 нити</p></div>
+      <div class="hr"><p class="why"><b>Сильная сторона:</b> мастер видит свой стиль за три секунды, ещё до регистрации.</p><p class="risk"><b>Риск:</b> про пользу для клиента на первом экране ни слова.</p></div>
+    </li>
+    <li class="hook">
+      <span class="hk">A · скрутка</span>
+      <div class="hl"><p class="hh">Клиент видит скрутку раньше, чем вы объясните</p><p class="screen">Строка барабанов 111 111 км, один барабан встаёт на полцифры мимо</p></div>
+      <div class="hr"><p class="why"><b>Может сработать:</b> на первом экране сразу данные. Главная боль мастера — доказать клиенту находку.</p><p class="risk"><b>Риск:</b> без подписи жест непонятен. Нужна одна строка пояснения.</p></div>
+    </li>
+    <li class="hook">
+      <span class="hk">B · торг</span>
+      <div class="hl"><p class="hh">Сторговано 180 000 ₽. Подбор окупился ×6</p><p class="screen">Три числа: якорь, цель, точка ухода. Кнопка «Показать продавцу»</p></div>
+      <div class="hr"><p class="why"><b>Может сработать:</b> деньги клиента — лучший аргумент за цену мастера.</p><p class="risk"><b>Риск:</b> цифра примерная, мастер может принять её за обещание.</p></div>
+    </li>
+    <li class="hook">
+      <span class="hk">C · тариф</span>
+      <div class="hl"><p class="hh">Отказы бесплатно. Всегда.</p><p class="screen">Счётчик «4–8 осмотров на одну покупку» и ценник 0 ₽</p></div>
+      <div class="hr"><p class="why"><b>Может сработать:</b> снимает риск попробовать. Мастер платит, только когда клиент купил.</p><p class="risk"><b>Риск:</b> звучит как дешёвый сервис, теряется «ценная бумага».</p></div>
+    </li>
+    <li class="hook">
+      <span class="hk">D · штурман</span>
+      <div class="hl"><p class="hh">Вставьте VIN — получите маршрут осмотра</p><p class="screen">Поле VIN и ссылка на объявление → чек-лист под B57 и ZF 8HP</p></div>
+      <div class="hr"><p class="why"><b>Может сработать:</b> польза в первый же день, до всякого отчёта. Мастер возвращается перед каждым выездом.</p><p class="risk"><b>Риск:</b> нужен рабочий VIN-декодер уже на лендинге.</p></div>
+    </li>
+    <li class="hook">
+      <span class="hk">E · кладбище</span>
+      <div class="hl"><p class="hh">Этот VIN уже хоронили</p><p class="screen">Демо-некролог: «Химки, 12.03.2026: пробег 184 тыс., в объявлении 121 тыс.»</p></div>
+      <div class="hr"><p class="why"><b>Может сработать:</b> страх и любопытство. Сетевой эффект виден с первого экрана.</p><p class="risk"><b>Риск:</b> реальных данных не будет минимум полгода. До тех пор только с пометкой «демо».</p></div>
+    </li>
+    <li class="hook">
+      <span class="hk">F · переписка</span>
+      <div class="hl"><p class="hh">40 фото и 12 голосовых → одна ссылка</p><p class="screen">Слева лента мессенджера, справа одна виньетка</p></div>
+      <div class="hr"><p class="why"><b>Может сработать:</b> мастер узнаёт свою работу. Сейчас это второй экран лендинга, его можно поднять наверх.</p><p class="risk"><b>Риск:</b> типичный приём «до и после», не запоминается.</p></div>
+    </li>
+  </ol>
+</section>
+
+<footer class="foot">
+  <div class="foot-seal">
+    <div class="rose" id="rose-foot" aria-hidden="true"></div>
+    <a class="logo" href="./"><span class="v">ВИН</span><span class="t">ЬЕТКА</span></a>
+  </div>
+  <div class="ln"><a href="./">← Лендинг</a><a href="report.html">Демо-отчёт</a><a href="#main">Наверх</a></div>
+  <p>Независимый сервис, не связан с автопроизводителями. Марки и модели упомянуты только как названия. Все люди и машины в примерах вымышлены, кроме Подборкина (пример владельца). Денежные цифры — гипотезы брифа.</p>
+  <p class="micro" aria-hidden="true">ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·ВИНЬЕТКА·17·</p>
+</footer>
+</main>
+
+<script src="vignette.js"></script>
+<script>
+(function () {
+  'use strict';
+  var IDEAS = [{"t": "Суфлёр торга и лист для продавца", "s": "Суфлёр торга", "g": "rep", "gn": "В отчёте", "e": "M", "w": 9, "mvp": true, "st": 0}, {"t": "Синоптик владения: прогноз погоды на 365 дней → 36 месяцев", "s": "Синоптик владения", "g": "rep", "gn": "В отчёте", "e": "M", "w": 8, "mvp": true, "st": 0}, {"t": "Режим «Для своих»", "s": "Режим «Для своих»", "g": "rep", "gn": "В отчёте", "e": "S", "w": 7, "mvp": true, "st": 0}, {"t": "Журнал охоты: турнир осмотренных машин и шевроны", "s": "Журнал охоты", "g": "rep", "gn": "В отчёте", "e": "S", "w": 8, "mvp": true, "st": 0}, {"t": "Пробег-криминалистика → биография машины", "s": "Пробег-криминалистика", "g": "rep", "gn": "В отчёте", "e": "M", "w": 9, "mvp": true, "st": 0}, {"t": "Договор с зубами и тест подписью", "s": "Договор с зубами", "g": "rep", "gn": "В отчёте", "e": "S", "w": 8, "mvp": false, "st": 1}, {"t": "Штурман осмотра: VIN + объявление = маршрут", "s": "Штурман осмотра", "g": "fld", "gn": "Для специалиста в поле", "e": "M", "w": 8, "mvp": true, "st": 0}, {"t": "Коды ошибок в рубли", "s": "Коды ошибок в рубли", "g": "fld", "gn": "Для специалиста в поле", "e": "M", "w": 7, "mvp": true, "st": 0}, {"t": "Режим мороза: осмотр одной рукой", "s": "Режим мороза", "g": "fld", "gn": "Для специалиста в поле", "e": "M", "w": 7, "mvp": false, "st": 1}, {"t": "Чёрный ящик осмотра и отрицательный протокол", "s": "Чёрный ящик осмотра", "g": "fld", "gn": "Для специалиста в поле", "e": "S", "w": 7, "mvp": true, "st": 0}, {"t": "Провенанс: даты на деталях и заводская метрика против нынешнего тела", "s": "Провенанс деталей", "g": "fld", "gn": "Для специалиста в поле", "e": "M", "w": 9, "mvp": false, "st": 2}, {"t": "Детектор вмешательства в «мозги»", "s": "Детектор вмешательства", "g": "fld", "gn": "Для специалиста в поле", "e": "L", "w": 8, "mvp": false, "st": 2}, {"t": "Отказы бесплатно, платишь только за «ту самую»", "s": "Отказы бесплатно", "g": "mon", "gn": "Деньги и рост", "e": "S", "w": 8, "mvp": true, "st": 0}, {"t": "База знаний как поставщик покупателей", "s": "База знаний даёт покупателей", "g": "mon", "gn": "Деньги и рост", "e": "S", "w": 7, "mvp": true, "st": 0}, {"t": "Выписной эпикриз → медкарта машины", "s": "Медкарта машины", "g": "mon", "gn": "Деньги и рост", "e": "M", "w": 8, "mvp": false, "st": 1}, {"t": "Застрахованный вердикт", "s": "Застрахованный вердикт", "g": "mon", "gn": "Деньги и рост", "e": "L", "w": 9, "mvp": false, "st": 2}, {"t": "Вторая сторона рынка: отчёт продаётся дважды", "s": "Отчёт продаётся дважды", "g": "mon", "gn": "Деньги и рост", "e": "M", "w": 9, "mvp": false, "st": 1}, {"t": "Руки в другом городе: субподряд под брендом заказчика", "s": "Руки в другом городе", "g": "mon", "gn": "Деньги и рост", "e": "M", "w": 7, "mvp": false, "st": 1}, {"t": "Финансирование прямо в отчёте", "s": "Финансирование в отчёте", "g": "mon", "gn": "Деньги и рост", "e": "L", "w": 8, "mvp": false, "st": 2}, {"t": "Кладбище VIN: коллективная память осмотров", "s": "Кладбище VIN", "g": "wld", "gn": "Безумные, но настоящие", "e": "L", "w": 10, "mvp": false, "st": 2}, {"t": "Натальная карта VIN: гороскоп сборки", "s": "Натальная карта VIN", "g": "wld", "gn": "Безумные, но настоящие", "e": "M", "w": 9, "mvp": false, "st": 1}, {"t": "Протокол допроса продавца", "s": "Протокол допроса", "g": "wld", "gn": "Безумные, но настоящие", "e": "M", "w": 9, "mvp": true, "st": 0}, {"t": "Аудио-ЭКГ холодного пуска", "s": "Аудио-ЭКГ пуска", "g": "wld", "gn": "Безумные, но настоящие", "e": "M", "w": 8, "mvp": false, "st": 1}, {"t": "Карточка игрока с процентилем среди собратьев", "s": "Карточка игрока", "g": "wld", "gn": "Безумные, но настоящие", "e": "S", "w": 8, "mvp": true, "st": 0}];
+  var $ = function (id) { return document.getElementById(id); };
+  var V = window.Vignette;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ABC = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function wsum(w) { var t = 0; w = w.toLowerCase(); for (var i = 0; i < w.length; i++) { var k = ABC.indexOf(w[i]); if (k >= 0) t += k + 1; } return t; }
+  function phraseSum(p) { return p.split(/\s+/).reduce(function (a, w) { return a + wsum(w); }, 0); }
+  function fmt(n) { return Math.round(n).toLocaleString('ru-RU').replace(/[\u202f\u00a0 ]/g, '\u00a0'); }
+
+  /* ---- гильош-полосы ---- */
+  function gband(svg, seed) {
+    if (!svg) return;
+    var W = 1200, H = 55, paths = '';
+    for (var k = 0; k < 17; k++) {
+      var d = '', ph = k * 137.5 * Math.PI / 180 + seed;
+      for (var x = 0; x <= W; x += 8) {
+        var y = H / 2 + 17 * Math.sin(x / 34 + ph) * Math.cos(x / 144 + seed) + 6 * Math.sin(x / 13 - ph * 2);
+        d += (x ? 'L' : 'M') + x + ' ' + y.toFixed(1);
+      }
+      paths += '<path d="' + d + '" style="stroke:var(--rosette-' + (k % 3 + 1) + ')"/>';
+    }
+    svg.innerHTML = paths;
+  }
+  ['g1', 'g2', 'g3'].forEach(function (id, n) { gband($(id), n * 1.7); });
+
+  /* ---- 17 ячеек «Алексей Андреевич» ---- */
+  (function () {
+    var s = 'АЛЕКСЕЙ АНДРЕЕВИЧ', h = '';
+    for (var i = 0; i < s.length; i++) h += '<span class="' + (i === 9 ? 'h' : s[i] === ' ' ? 'sp' : '') + '">' + (s[i] === ' ' ? '·' : s[i]) + '</span>';
+    $('c17').innerHTML = h;
+  })();
+
+  /* ---- проверка сумм в паттернах ---- */
+  document.querySelectorAll('[data-sum]').forEach(function (el) { el.textContent = phraseSum(el.getAttribute('data-sum')); });
+  document.querySelectorAll('[data-check]').forEach(function (el) {
+    var want = el.getAttribute('data-check').split(',').map(Number);
+    var box = el.closest('.from'); var got = [].map.call(box.querySelectorAll('[data-sum]'), function (x) { return +x.textContent; });
+    var ok = want.every(function (v, i) { return got[i] === v; });
+    el.textContent = ok ? 'сверено скриптом: ' + got.join(' · ') : 'расхождение: ' + got.join(' · ');
+  });
+
+  /* ---- стиль мастера и розетки ---- */
+  var style = null;
+  if (V) {
+    try {
+      style = V.fromName('Алексей Андреевич Подборкин');
+      V.apply(style);
+      $('rose-hero').innerHTML = V.rosetteSVG(style, { size: 320, idPrefix: 'rh' });
+      $('rose-foot').innerHTML = V.rosetteSVG(style, { size: 55, threads: 9, stroke: 0.5, idPrefix: 'rf' });
+      $('seal-code').textContent = style.styleCode;
+    } catch (e) { style = null; }
+  }
+
+  /* ---- разбор имени ---- */
+  // номер буквы: кириллица по алфавиту, латиница a=1…z=26 (как в движке)
+  function lv(ch) { var lo = ch.toLowerCase(), k = ABC.indexOf(lo); if (k >= 0) return k + 1; var c = lo.charCodeAt(0); return c >= 97 && c <= 122 ? c - 96 : 0; }
+  function plural(n, one, few, many) { var a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; }
+  function renderName() {
+    var s = V ? V.fromName($('nm').value) : null;
+    if (!s || !s.words.length) {
+      $('words').innerHTML = '<p class="soft">Введите имя буквами, например «Злата Сергеевна Нуриева».</p>';
+      $('derive').innerHTML = ''; return;
+    }
+    // гомоглифы берём из движка: слово + позиция среди букв и цифр
+    var gl = {}; s.glyphs.forEach(function (g, n) { gl[g.word + ':' + g.pos] = n; });
+    var h = '';
+    s.words.forEach(function (w, wi) {
+      var lt = '', pos = 0;
+      for (var j = 0; j < w.length; j++) {
+        var ch = w[j], v = lv(ch), counted = v > 0 || /[0-9]/.test(ch);
+        var n = counted ? gl[wi + ':' + pos] : undefined; if (counted) pos++;
+        var cls = n === undefined ? '' : n < 6 ? ' ga' : ' gb';
+        lt += '<span class="lt' + cls + '"><span class="g">' + (n === undefined ? '' : n + 1) + '</span><span class="c">' + esc(ch) + '</span><span class="n">' + (v || '') + '</span></span>';
+      }
+      var nl = s.letters[wi];
+      h += '<div class="word"><div class="letters">' + lt + '</div><p class="wsum">Σ <b>' + s.sums[wi] + '</b> · ' + nl + ' ' + plural(nl, 'буква', 'буквы', 'букв') + '</p></div>';
+    });
+    $('words').innerHTML = h;
+    var code = s.styleCode, codeH = esc(code.slice(0, 8)) + '<i>' + esc(code[8]) + '</i>' + esc(code.slice(9));
+    $('derive').innerHTML =
+      '<div><dt class="k">Суммы</dt><dd style="margin:0"><b>' + s.sums.join(' · ') + '</b> = <b>' + s.total + '</b></dd></div>' +
+      '<div><dt class="k">hex12</dt><dd style="margin:0"><b>' + esc(s.hex12) + '</b>' + (s.padded ? ' (добито суммами)' : '') + ' → <i class="sw" style="background:' + s.colorA.raw + '"></i>' + s.colorA.raw + ' · <i class="sw" style="background:' + s.colorB.raw + '"></i>' + s.colorB.raw + '</dd></div>' +
+      '<div><dt class="k">Сетка</dt><dd style="margin:0">' + s.total + ' mod 7 = <b>' + s.template + '</b> → шаблон <b>' + s.templateSpec.join('·') + '</b>, рельс ' + (s.railSide === 'left' ? 'слева' : 'справа') + '</dd></div>' +
+      '<div><dt class="k">Шрифты</dt><dd style="margin:0">FLAR <b>' + s.flar + '</b> · VOLM <b>' + s.volm + '</b> · ELSH <b>' + s.elsh + '</b> · ELGR <b>' + s.elgr + '</b></dd></div>' +
+      '<div><dt class="k">Розетка</dt><dd style="margin:0">лепестки <b>' + s.layers.map(function (l) { return l.petals; }).join(' / ') + '</b> · ' + s.layers.length * 17 + ' ' + plural(s.layers.length * 17, 'нить', 'нити', 'нитей') + '</dd></div>' +
+      '<div><dt class="k">VIN мастера</dt><dd style="margin:0" class="code"><b>' + codeH + '</b></dd></div>';
+  }
+  var nmT;
+  $('nm').addEventListener('input', function () { clearTimeout(nmT); nmT = setTimeout(renderName, 120); });
+  renderName();
+
+  /* ---- фильтры и сортировка ---- */
+  var st = { g: 'all', mvp: false, sort: 'brief' };
+  var list = $('ideas');
+  var rows = [].slice.call(list.querySelectorAll('.idea'));
+  function visible(i) { var d = IDEAS[i]; return (st.g === 'all' || d.g === st.g) && (!st.mvp || d.mvp); }
+  function applyList() {
+    var order = rows.slice();
+    var E = { S: 0, M: 1, L: 2 };
+    if (st.sort === 'wow') order.sort(function (a, b) { var x = IDEAS[a.dataset.i], y = IDEAS[b.dataset.i]; return y.w - x.w || E[x.e] - E[y.e] || a.dataset.i - b.dataset.i; });
+    if (st.sort === 'eff') order.sort(function (a, b) { var x = IDEAS[a.dataset.i], y = IDEAS[b.dataset.i]; return E[x.e] - E[y.e] || y.w - x.w || a.dataset.i - b.dataset.i; });
+    var n = 0;
+    order.forEach(function (r) { list.appendChild(r); var v = visible(+r.dataset.i); r.hidden = !v; if (v) n++; });
+    $('count').innerHTML = 'Показано <b>' + n + '</b> из 24';
+    $('empty').hidden = n > 0;
+    document.querySelectorAll('.pt').forEach(function (p) { p.classList.toggle('dim', !visible(+p.dataset.i)); });
+  }
+  function press(sel, btn) { document.querySelectorAll(sel).forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); }); }
+  document.querySelectorAll('.chip[data-g]').forEach(function (b) { b.addEventListener('click', function () { st.g = b.dataset.g; press('.chip[data-g]', b); applyList(); }); });
+  document.querySelectorAll('.chip[data-sort]').forEach(function (b) { b.addEventListener('click', function () { st.sort = b.dataset.sort; press('.chip[data-sort]', b); applyList(); }); });
+  $('f-mvp').addEventListener('click', function () { st.mvp = !st.mvp; this.setAttribute('aria-pressed', st.mvp); applyList(); });
+  $('f-brief').addEventListener('click', function () { var on = this.getAttribute('aria-pressed') !== 'true'; this.setAttribute('aria-pressed', on); list.classList.toggle('brief', on); });
+
+  function goIdea(i) {
+    var r = $('idea-' + (i + 1)); if (!r) return;
+    if (r.hidden) { st.g = 'all'; st.mvp = false; press('.chip[data-g]', document.querySelector('.chip[data-g="all"]')); $('f-mvp').setAttribute('aria-pressed', 'false'); applyList(); }
+    r.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    r.classList.add('flash'); setTimeout(function () { r.classList.remove('flash'); }, 1600);
+    var h = r.querySelector('h3'); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#idea-"]');
+    if (!a) return; e.preventDefault(); goIdea(+a.getAttribute('href').slice(6) - 1);
+  });
+
+  /* ---- карта усилие × wow ---- */
+  var STAGE = ['MVP, первые 3 месяца', 'позже, до 6 месяцев', 'позже, до 12 месяцев'];
+  var GN = { rep: 'В отчёте', fld: 'В поле', mon: 'Деньги и рост', wld: 'Безумные' };
+  function shape(g, r) {
+    if (g === 'rep') return '<circle class="m" r="' + r + '"/>';
+    if (g === 'fld') { var a = r * 0.86; return '<rect class="m" x="' + (-a) + '" y="' + (-a) + '" width="' + 2 * a + '" height="' + 2 * a + '"/>'; }
+    if (g === 'mon') { var d = r * 1.18; return '<path class="m" d="M0 ' + (-d) + 'L' + d + ' 0L0 ' + d + 'L' + (-d) + ' 0Z"/>'; }
+    var t = r * 1.25; return '<path class="m" d="M0 ' + (-t) + 'L' + (t * 0.95) + ' ' + (t * 0.72) + 'L' + (-t * 0.95) + ' ' + (t * 0.72) + 'Z"/>';
+  }
+  function drawChart() {
+    var wrap = $('chart'); var W = Math.max(300, wrap.clientWidth);
+    var small = W < 560, r = small ? 11 : 13;
+    var H = small ? 560 : 440, mL = small ? 30 : 44, mR = 8, mT = 21, mB = 55;
+    var pw = W - mL - mR, ph = H - mT - mB, cw = pw / 3;
+    var y = function (w) { return mT + (10 - w) / 9 * ph; };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" aria-hidden="false"><g class="grid">';
+    for (var w = 1; w <= 10; w++) s += '<line x1="' + mL + '" x2="' + (W - mR) + '" y1="' + y(w) + '" y2="' + y(w) + '"' + (w === 1 ? ' class="base"' : '') + '/><text class="ax" x="' + (mL - 8) + '" y="' + (y(w) + 4) + '" text-anchor="end">' + w + '</text>';
+    for (var c = 1; c < 3; c++) s += '<line x1="' + (mL + c * cw) + '" x2="' + (mL + c * cw) + '" y1="' + mT + '" y2="' + y(1) + '"/>';
+    s += '</g>';
+    var EL = ['S', 'M', 'L'], EW = ['малое', 'среднее', 'большое'];
+    EL.forEach(function (e, i) { var cx = mL + (i + 0.5) * cw; s += '<text class="axb" x="' + cx + '" y="' + (y(1) + 21) + '" text-anchor="middle">' + e + '</text><text class="ax" x="' + cx + '" y="' + (y(1) + 38) + '" text-anchor="middle">' + EW[i] + '</text>'; });
+    s += '<text class="ax" x="' + mL + '" y="' + (mT - 8) + '">wow</text>';
+    // пустая зона ниже 7
+    var vy1 = y(6.5), vy2 = y(1.5);
+    s += '<rect class="voidbox" x="' + (mL + 8) + '" y="' + vy1 + '" width="' + (pw - 16) + '" height="' + (vy2 - vy1) + '"/>';
+    var lines = small ? ['Ниже 7 пусто.', 'Слабые идеи отсеяны', 'до этого списка.'] : ['Ниже 7 пусто. Слабые идеи отсеяны ещё до этого списка.'];
+    lines.forEach(function (t, k) { s += '<text class="void" x="' + (mL + pw / 2) + '" y="' + ((vy1 + vy2) / 2 + (k - (lines.length - 1) / 2) * 17 + 4) + '" text-anchor="middle">' + t + '</text>'; });
+    // раскладка точек по ячейкам без наложений
+    var cells = {};
+    IDEAS.forEach(function (d, i) { var k = d.e + d.w; (cells[k] = cells[k] || []).push(i); });
+    var step = 2 * r + (small ? 3 : 8);
+    Object.keys(cells).forEach(function (k) {
+      var ids = cells[k], d0 = IDEAS[ids[0]], ci = EL.indexOf(d0.e);
+      var maxC = Math.max(1, Math.floor((cw - (small ? 2 : 12)) / step)), cols = Math.min(ids.length, maxC), rowsN = Math.ceil(ids.length / cols);
+      ids.forEach(function (i, n) {
+        var row = Math.floor(n / cols), inRow = Math.min(cols, ids.length - row * cols), col = n % cols;
+        var cx = mL + (ci + 0.5) * cw + (col - (inRow - 1) / 2) * step;
+        var cy = y(d0.w) + (row - (rowsN - 1) / 2) * step;
+        var d = IDEAS[i];
+        var lbl = (i + 1) + '. ' + d.t + '. ' + GN[d.g] + '. Усилие ' + d.e + ', wow ' + d.w + ', ' + STAGE[d.st] + '.';
+        s += '<g class="pt' + (d.mvp ? ' mvp' : '') + '" data-i="' + i + '" transform="translate(' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ')" tabindex="0" role="link" aria-label="' + esc(lbl) + '">' +
+          '<circle class="hl" r="' + (r + 5) + '"/>' + shape(d.g, r) + '<text' + (d.g === 'wld' ? ' y="2"' : '') + '>' + (i + 1) + '</text></g>';
+      });
+    });
+    s += '</svg>';
+    wrap.innerHTML = s;
+    wrap.querySelectorAll('.pt').forEach(function (p) {
+      p.addEventListener('pointerenter', function () { showTip(p); });
+      p.addEventListener('pointerleave', hideTip);
+      p.addEventListener('focus', function () { showTip(p); });
+      p.addEventListener('blur', hideTip);
+      p.addEventListener('click', function () { goIdea(+p.dataset.i); });
+      p.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goIdea(+p.dataset.i); } if (e.key === 'Escape') hideTip(); });
+    });
+    applyList();
+  }
+  function showTip(p) {
+    var i = +p.dataset.i, d = IDEAS[i], tip = $('tip');
+    tip.innerHTML = '<b>' + (i + 1) + '. ' + esc(d.t) + '</b><p class="mono">' + esc(GN[d.g]) + ' · усилие ' + d.e + ' · wow ' + d.w + '<br>' + STAGE[d.st] + '</p>';
+    tip.hidden = false;
+    var wr = $('chart-wrap').getBoundingClientRect(), pr = p.getBoundingClientRect();
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    var x = pr.left - wr.left + pr.width / 2 - tw / 2; x = Math.max(0, Math.min(x, wr.width - tw));
+    var yy = pr.top - wr.top - th - 8; if (yy < 0) yy = pr.bottom - wr.top + 8;
+    tip.style.left = x + 'px'; tip.style.top = yy + 'px';
+  }
+  function hideTip() { $('tip').hidden = true; }
+  drawChart();
+  var lastW = 0;
+  if (window.ResizeObserver) new ResizeObserver(function () { var w = $('chart').clientWidth; if (Math.abs(w - lastW) > 4) { lastW = w; drawChart(); } }).observe($('chart'));
+
+  /* ---- выводы под картой ---- */
+  (function () {
+    var SH = {}; document.querySelectorAll('.chip[data-g] svg').forEach(function (svg) { SH[svg.parentNode.dataset.g] = svg.outerHTML; });
+    function chips(f) { return IDEAS.map(function (d, i) { return [d, i]; }).filter(function (x) { return f(x[0]); }).sort(function (a, b) { return b[0].w - a[0].w || a[1] - b[1]; }).map(function (x) { var d = x[0], i = x[1]; return '<a class="lchip" href="#idea-' + (i + 1) + '">' + (SH[d.g] || '') + '<span class="mono">' + (i + 1 < 10 ? '0' : '') + (i + 1) + '</span>' + esc(d.s) + '</a>'; }).join(''); }
+    $('quads').innerHTML =
+      '<div class="quad"><h3>Быстрые победы</h3><p>Усилие S, wow 8. Дёшево сделать, заметно клиенту.</p><div class="lchips">' + chips(function (d) { return d.e === 'S' && d.w >= 8; }) + '</div></div>' +
+      '<div class="quad"><h3>Ядро продукта</h3><p>Усилие M, wow 9. Самые сильные идеи за разумный срок.</p><div class="lchips">' + chips(function (d) { return d.e === 'M' && d.w >= 9; }) + '</div></div>' +
+      '<div class="quad"><h3>Ставки на год</h3><p>Усилие L. Нужны накопленные данные и партнёры.</p><div class="lchips">' + chips(function (d) { return d.e === 'L'; }) + '</div></div>';
+  })();
+
+  /* ---- калькулятор ---- */
+  function calc() {
+    var m = +$('c-m').value, f = +$('c-f').value, p = +$('c-p').value / 100;
+    $('o-m').textContent = fmt(m); $('o-f').textContent = f; $('o-p').textContent = Math.round(p * 100) + '%';
+    var fin = m * (1 - p) * f * 1490 + m * p * Math.max(0, f - 10) * 1490;
+    var pro = m * p * 3900, tot = fin + pro;
+    $('r-fin').textContent = fmt(fin) + '\u00a0₽'; $('r-pro').textContent = fmt(pro) + '\u00a0₽';
+    $('r-tot').textContent = fmt(tot) + '\u00a0₽'; $('r-year').textContent = fmt(tot * 12) + '\u00a0₽';
+    var payPer = f * 1490, proCost = 3900 + Math.max(0, f - 10) * 1490, note;
+    var atF = 'При ' + f + ' ' + (f % 10 === 1 && f % 100 !== 11 ? 'финальной' : 'финальных') + ' в месяц';
+    if (p === 0) note = 'Без подписок: ' + fmt(m) + ' × ' + f + ' × 1\u00a0490\u00a0₽. В брифе тот же расчёт для 1\u00a0000 мастеров и 3 покупок: ≈4,5\u00a0млн\u00a0₽ в месяц.';
+    else if (payPer > proCost) note = atF + ' мастер без подписки платит ' + fmt(payPer) + '\u00a0₽, с «Про» ' + fmt(proCost) + '\u00a0₽. Каждый переход на «Про» снижает выручку на ' + fmt(payPer - proCost) + '\u00a0₽ в месяц. Подписка окупается, только если удерживает мастера или приводит новых.';
+    else note = atF + ' «Про» дороже поштучной оплаты на ' + fmt(proCost - payPer) + '\u00a0₽. Мастер возьмёт его ради своего домена и стены трофеев.';
+    $('r-note').textContent = note;
+  }
+  ['c-m', 'c-f', 'c-p'].forEach(function (id) { $(id).addEventListener('input', calc); });
+  calc();
+
+  /* ---- подсветка раздела в шапке ---- */
+  var tocA = [].slice.call(document.querySelectorAll('#toc a'));
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { var id = e.target.id; tocA.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + id); }); } });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    ['s1', 's2', 's3', 's4', 's5', 's6'].forEach(function (id) { io.observe($(id)); });
+  }
+})();
+</script>
+</body>
+</html>

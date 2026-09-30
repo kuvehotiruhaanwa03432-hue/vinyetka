@@ -1,0 +1,1258 @@
+<title>Виньетка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:FLAR,VOLM,wght@0..100,0..100,100..900&family=Handjet:ELGR,ELSH,wght@1..2,0..16,100..900&family=Martian+Mono:wdth,wght@75..112.5,100..800&family=Onest:wght@100..900&display=swap">
+<style>
+/* Сетка «VIN-17»: 17 колонок. 17 простое, пополам не делится, центральной симметрии нет.
+   Ширины блоков только из ряда Фибоначчи, в сумме 17: 1·8·8, 13·3·1, 8·5·3·1, 5·5·5·2, 3·13·1, 8·5·2·2, 1·3·13.
+   Колонка шириной 1 — корешок (рельс). На телефоне одна колонка со сдвигом 1/17 и липкий рельс из 17 ячеек.
+   Кегли 13/17/21/34/55/89, отступы 8/13/21/34/55/89. */
+:root{
+  /* бумага и чернила: фиксированы для всех мастеров */
+  --paper:#EDF3EE; --paper-raised:#F9FCF9; --paper-sunken:#DCE7DF;
+  --ink:#111111; --ink-soft:#3F5B5B; --ink-ghost:#11111177;
+  --guilloche:#779999; --action:#226688; --on-action:#FFFFFF;
+  --marker:#CBCA6A; --on-marker:#111111;
+  /* системные цвета данных */
+  --verdict-ok:#246A0F; --verdict-clean:#1A6B40; --verdict-doubt:#0A6590; --danger:#BD0D09;
+  /* цвета мастера. Vignette.apply() переписывает -l/-d; до запуска скрипта стоит Подборкин */
+  --spec-a-l:#AECEAE; --spec-a-d:#003631; --spec-a-text-l:#00736A; --spec-a-text-d:#3BC2B4;
+  --spec-b-l:#EDACDE; --spec-b-d:#48183F; --spec-b-text-l:#9B418B; --spec-b-text-d:#E484D0;
+  --rosette-1-l:#779999; --rosette-1-d:#779999; --rosette-2-l:#009488; --rosette-2-d:#42C2B4; --rosette-3-l:#EB4060; --rosette-3-d:#E781D2;
+  --flar:68; --volm:89; --elsh:13; --elgr:1; --rake-angle:275.29deg;
+  /* шрифты */
+  --f-display:"Commissioner", "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-body:"Onest", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"Martian Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --f-board:"Handjet", "Martian Mono", ui-monospace, monospace;
+  --gut:16px; --gap:13px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E171B; --paper-raised:#15232A; --paper-sunken:#0A1114;
+    --ink:#E4EFE6; --ink-soft:#9DB6B6; --ink-ghost:#E4EFE677;
+    --guilloche:#779999; --action:#6FB4D8; --on-action:#0E171B;
+    --marker:#CBCA6A; --on-marker:#0E171B;
+    --verdict-ok:#72C95A; --verdict-clean:#4FC48C; --verdict-doubt:#4CC3EE; --danger:#FF6152;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E171B; --paper-raised:#15232A; --paper-sunken:#0A1114;
+  --ink:#E4EFE6; --ink-soft:#9DB6B6; --ink-ghost:#E4EFE677;
+  --guilloche:#779999; --action:#6FB4D8; --on-action:#0E171B;
+  --marker:#CBCA6A; --on-marker:#0E171B;
+  --verdict-ok:#72C95A; --verdict-clean:#4FC48C; --verdict-doubt:#4CC3EE; --danger:#FF6152;
+  color-scheme:dark;
+}
+/* маппинг переменных движка на тему: на корне и на каждом элементе, куда вызван Vignette.apply */
+:root,[data-vignette]{
+  --spec-a:var(--spec-a-l); --spec-a-text:var(--spec-a-text-l);
+  --spec-b:var(--spec-b-l); --spec-b-text:var(--spec-b-text-l);
+  --rosette-1:var(--rosette-1-l); --rosette-2:var(--rosette-2-l); --rosette-3:var(--rosette-3-l);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]),:root:not([data-theme="light"]) [data-vignette]{
+    --spec-a:var(--spec-a-d); --spec-a-text:var(--spec-a-text-d);
+    --spec-b:var(--spec-b-d); --spec-b-text:var(--spec-b-text-d);
+    --rosette-1:var(--rosette-1-d); --rosette-2:var(--rosette-2-d); --rosette-3:var(--rosette-3-d);
+  }
+}
+:root[data-theme="dark"],:root[data-theme="dark"] [data-vignette]{
+  --spec-a:var(--spec-a-d); --spec-a-text:var(--spec-a-text-d);
+  --spec-b:var(--spec-b-d); --spec-b-text:var(--spec-b-text-d);
+  --rosette-1:var(--rosette-1-d); --rosette-2:var(--rosette-2-d); --rosette-3:var(--rosette-3-d);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/25px var(--f-body);-webkit-text-size-adjust:100%}
+.site{min-width:0}
+a{color:var(--action);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--action);outline-offset:3px}
+p{margin:0}
+h1,h2,h3{margin:0;text-wrap:balance}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:var(--gut);top:-100px;background:var(--action);color:var(--on-action);padding:8px 13px;z-index:30}
+.skip:focus{top:8px}
+
+/* типографика */
+.disp{font-family:var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.wide{font-variation-settings:"wdth" 112.5}
+.eyebrow{font:500 13px/21px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--spec-a-text)}
+.h2{font:700 34px/1.08 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm);letter-spacing:-.01em}
+.lead{color:var(--ink-soft);max-width:34em}
+.small{font-size:13px;line-height:21px}
+.soft{color:var(--ink-soft)}
+.hand{font-family:var(--f-board);font-variation-settings:"ELSH" var(--elsh),"ELGR" var(--elgr);font-weight:500}
+.mark{background:linear-gradient(transparent 58%,var(--marker) 58% 92%,transparent 92%);color:inherit}
+
+/* шапка и рельс */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--guilloche)}
+.top-in{max-width:1280px;margin:0 auto;padding-inline:var(--gut);padding-block:8px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 21px}
+.logo{display:flex;align-items:baseline;text-decoration:none;color:var(--ink);font-size:21px;line-height:1}
+.logo .v{font:800 19px/1 var(--f-mono);font-variation-settings:"wdth" 112.5;letter-spacing:.02em}
+.logo .t{font:700 21px/1 var(--f-display);font-variation-settings:"FLAR" 100,"VOLM" 0}
+.nav{display:flex;gap:13px;margin-left:auto;font:500 13px/21px var(--f-mono)}
+.nav a{white-space:nowrap}
+.rail-wrap{order:3;flex:1 1 100%;display:flex;align-items:center;gap:8px;min-width:0}
+.rail-cap{font:500 11px/13px var(--f-mono);color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.rail{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(17,minmax(0,1fr));gap:2px;flex:1;min-width:0}
+.rail li{height:21px;display:grid;place-items:center;background:var(--paper-sunken);color:var(--ink-soft);font:600 11px/1 var(--f-mono);transition:background-color .3s,color .3s}
+.rail li.on{background:var(--spec-a);color:var(--ink)}
+.rail li.cd{box-shadow:inset 0 -2px 0 var(--spec-b-text)}
+@media (min-width:960px){
+  .rail-wrap{order:0;flex:1 1 auto;max-width:560px}
+  .nav{margin-left:0}
+}
+@media (max-width:959px){ .rail-cap{display:none} .top-in{gap:6px 10px} .nav{gap:10px;font-size:12px} .logo .v{font-size:17px} .logo .t{font-size:19px} }
+
+/* страница и сетка VIN-17 */
+.page{max-width:1280px;margin:0 auto;padding-inline:var(--gut);padding-block:0 34px}
+.sec{padding-block:55px;scroll-margin-top:89px}
+.row{display:grid;gap:34px}
+.row>*{min-width:0}
+.off{margin-left:calc(100% / 17)}
+.stub{display:none}
+@media (min-width:960px){
+  :root{--gut:34px}
+  .row{grid-template-columns:repeat(17,minmax(0,1fr));column-gap:var(--gap);row-gap:34px}
+  .s1{grid-column:span 1}.s2{grid-column:span 2}.s3{grid-column:span 3}.s5{grid-column:span 5}.s8{grid-column:span 8}.s13{grid-column:span 13}.s16{grid-column:span 16}.s17{grid-column:1/-1}
+  .off{margin-left:0}
+  .h2{font-size:55px}
+  .sec{padding-block:89px}
+  .stub{display:flex;flex-direction:column;align-items:center;gap:13px;padding-block:8px;border-inline:1px dashed var(--guilloche);background:
+      radial-gradient(circle,var(--paper) 0 3px,transparent 3.5px) center top/13px 13px repeat-y;
+    }
+  .stub .v{writing-mode:vertical-rl;transform:rotate(180deg);font:500 11px/1 var(--f-mono);letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper);padding-block:8px}
+  .stub .n{font:700 13px/1 var(--f-mono);color:var(--spec-a-text);background:var(--paper);padding:4px 0}
+}
+
+/* разделители: перфорация, гильош-полоса, микротекст */
+.perf{height:13px;margin-inline:calc(var(--gut) * -1);background:radial-gradient(circle,transparent 0 2.6px,var(--guilloche) 3px 3.8px,transparent 4.2px) 0 50%/13px 13px repeat-x}
+.gband{display:block;width:100%;height:55px;margin-block:0}
+.gband path{fill:none;vector-effect:non-scaling-stroke;stroke-width:.7}
+.micro{font:500 6px/8px var(--f-mono);letter-spacing:.14em;color:var(--ink-soft);white-space:nowrap;overflow:hidden;user-select:none}
+
+/* кнопки */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 21px;font:600 13px/1 var(--f-mono);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;border:1px solid var(--action);background:var(--action);color:var(--on-action);cursor:pointer}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--action)}
+.btn:disabled{border-color:var(--ink-ghost);color:var(--ink-soft);background:transparent;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+
+/* барабаны */
+.drum{display:inline-block;height:var(--dh,1.25em);overflow:hidden;vertical-align:bottom;background:var(--paper-sunken)}
+.drum+.drum{margin-left:1px}
+.strip{display:flex;flex-direction:column;transform:translateY(calc(var(--n,0) * var(--dh,1.25em) * -1));transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.strip>span{display:block;height:var(--dh,1.25em);line-height:var(--dh,1.25em);text-align:center;padding-inline:.12em}
+.dsp{display:inline-block;width:.35em}
+@media (prefers-reduced-motion: reduce){.strip{transition:none}}
+
+/* ---------- 1. Шильд ---------- */
+.hero{padding-block:34px 55px}
+.vrail{display:none}
+@media (min-width:960px){
+  .hero{padding-block:55px 89px}
+  .vrail{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding-block:13px;background:var(--paper-sunken);border-inline:1px solid var(--guilloche)}
+  .vrail span{font:800 21px/1.25 var(--f-mono);font-variation-settings:"wdth" 112.5;color:var(--ink)}
+  .vrail span:nth-child(-n+3){color:var(--spec-a-text)}
+  :root[data-rail="right"] .hero .vrail{order:3}
+}
+.h1{font:800 48px/.98 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm);letter-spacing:-.02em;margin-block:13px 21px}
+.h1 em{font-style:normal;color:var(--spec-a-text);background:linear-gradient(var(--rake-angle),var(--spec-a),var(--spec-b)) 0 88%/100% .12em no-repeat}
+@media (min-width:600px){.h1{font-size:68px}}
+@media (min-width:1200px){.h1{font-size:89px}}
+.hero-copy{display:flex;flex-direction:column;gap:21px}
+.field label{display:block;font:500 13px/21px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+.field input{width:100%;font:500 21px/1.3 var(--f-body);color:var(--ink);background:var(--paper-raised);border:1px solid var(--guilloche);border-bottom:3px solid var(--spec-a-text);padding:13px;border-radius:0}
+.field input:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+@media (max-width:420px){.final-form .field input{font-size:19px;padding-inline:10px}}
+.namestrip{display:flex;flex-wrap:wrap;gap:8px 0;font:500 17px/1 var(--f-mono);min-height:34px;align-items:flex-end}
+.namestrip .w{display:inline-flex;align-items:flex-end;white-space:nowrap}
+.namestrip .w>span{display:inline-flex;flex-direction:column;align-items:center;min-width:.72em;padding-bottom:3px;color:var(--ink-soft)}
+.namestrip span.g{color:var(--ink);border-bottom:2px solid var(--guilloche);padding-inline:2px}
+.namestrip span.g b{font:700 9px/1 var(--f-mono);font-variation-settings:"wdth" 75;letter-spacing:-.02em;color:var(--spec-a-text);margin-bottom:2px}
+.namestrip span.g.b2 b{color:var(--spec-b-text)}
+.namestrip span.g.taken{border-bottom-color:var(--spec-a-text)}
+.namestrip span.g.b2.taken{border-bottom-color:var(--spec-b-text)}
+.namestrip .sp{display:inline-block;width:.6em}
+.hexes{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.hexg{display:flex;flex-direction:column;gap:8px}
+.hexg .cap{font:500 11px/13px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.hexcells{display:flex;gap:2px;font:700 21px/1 var(--f-mono);--dh:34px}
+.hexcells .drum{flex:1;min-width:0;border-bottom:2px solid var(--guilloche)}
+.hexcells .strip>span{padding-inline:0}
+.swatch{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px;border:1px solid var(--guilloche);background:var(--paper-raised);font:500 11px/13px var(--f-mono)}
+.swatch i{display:block;width:34px;height:21px;flex:none}
+.swatch .ta{color:var(--spec-a-text);font-weight:700}
+.swatch .tb{color:var(--spec-b-text);font-weight:700}
+.patterns{display:flex;flex-direction:column;gap:4px;padding-left:13px;border-left:3px solid var(--spec-b-text);font-size:15px;line-height:21px;color:var(--ink-soft)}
+.patterns .hit{color:var(--ink);font-weight:600}
+.fly{position:fixed;z-index:40;font:700 21px/1 var(--f-mono);color:var(--spec-a-text);pointer-events:none}
+.turns{font:500 13px/21px var(--f-mono);color:var(--ink-soft)}
+.mini{display:grid;grid-template-columns:110px minmax(0,1fr);gap:13px;align-items:center}
+.mini .rose svg{max-width:110px}
+@media (min-width:960px){.mini{display:none}}
+.plate-col{display:flex;flex-direction:column;gap:21px;align-items:stretch}
+.rose{display:grid;place-items:center}
+.rose svg{width:100%;height:auto;max-width:440px;display:block}
+.plate{border:2px solid var(--ink);padding:3px;background:var(--paper-raised);position:relative}
+.plate::before{content:"";position:absolute;inset:-7px;border:1px solid var(--guilloche);pointer-events:none}
+.plate .pr{display:grid;grid-template-columns:repeat(17,minmax(0,1fr));gap:2px}
+.plate .pr+.pr{margin-top:2px}
+.plate .pr span{aspect-ratio:3/4;max-width:100%;display:grid;place-items:center;background:var(--spec-a);color:var(--ink);font:700 clamp(10px,2.6vw,17px)/1 var(--f-mono);font-variation-settings:"wdth" 112.5;transition:background-color .4s}
+.plate .pr span.e{background:var(--paper-sunken);color:var(--ink-soft)}
+.plate-cap{display:flex;justify-content:space-between;gap:8px;font:500 11px/13px var(--f-mono);color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;margin-top:8px}
+.code{font:700 17px/21px var(--f-mono);font-variation-settings:"wdth" 112.5;letter-spacing:.08em;word-break:break-all}
+.code b{color:var(--spec-b-text)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 13px;font:400 11px/17px var(--f-mono);color:var(--ink-soft);margin:8px 0 0;padding:0;list-style:none}
+.legend b{color:var(--ink);font-weight:700}
+.tpl{display:grid;grid-template-columns:repeat(17,minmax(0,1fr));gap:2px;margin-top:8px}
+.tpl span{height:13px;display:grid;place-items:center;font:600 9px/1 var(--f-mono);color:var(--ink);border:1px solid var(--guilloche);background:var(--paper-raised)}
+.tpl span.r{background:var(--spec-b);}
+
+/* ---------- 2. Переписка ---------- */
+.chat{display:flex;flex-direction:column;gap:6px;padding:21px 13px;background:var(--paper-sunken);border:1px solid var(--guilloche);max-height:420px;overflow:hidden;position:relative;margin-top:34px}
+.chat::after{content:"";position:absolute;left:0;right:0;bottom:0;height:89px;background:linear-gradient(transparent,var(--paper-sunken))}
+.msg{align-self:flex-start;max-width:78%;padding:6px 10px;background:var(--paper-raised);border:1px solid var(--ink-ghost);font-size:15px;line-height:21px}
+.msg.me{align-self:flex-end}
+.msg.f{font:500 12px/21px var(--f-mono)}
+.msg:nth-child(3n){transform:rotate(-1deg)}.msg:nth-child(4n){transform:rotate(.8deg)}
+.msg.v{display:flex;align-items:center;gap:8px;font:500 12px/21px var(--f-mono)}
+.msg.v::before{content:"";width:0;height:0;border-left:8px solid var(--ink-soft);border-block:5px solid transparent}
+.msg.v svg{width:89px;height:17px}
+.msg.v svg rect{fill:var(--ink-soft)}
+.msg .t{color:var(--ink-soft);font:400 10px/1 var(--f-mono);margin-left:6px}
+.ticket{display:flex;flex-direction:column;gap:13px;padding:21px;background:var(--paper-raised);border:1px solid var(--guilloche);position:relative;text-decoration:none;color:var(--ink)}
+.ticket::before{content:"";position:absolute;left:-1px;right:-1px;top:-7px;height:13px;background:radial-gradient(circle,var(--paper) 0 3.5px,transparent 4px) 0 50%/13px 13px repeat-x}
+.ticket .rose svg{max-width:144px}
+.ticket .tn{font:700 21px/1 var(--f-mono);font-variation-settings:"wdth" 112.5;color:var(--spec-a-text)}
+.ticket .url{font:500 12px/17px var(--f-mono);color:var(--action);word-break:break-all}
+.big-n{font:800 89px/.9 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm);color:var(--spec-b-text)}
+
+/* ---------- 3. Анатомия ---------- */
+.modes{display:flex;flex-wrap:wrap;border:1px solid var(--action);width:max-content;max-width:100%}
+.modes input{position:absolute;opacity:0;pointer-events:none}
+.modes label{padding:8px 13px;font:600 12px/21px var(--f-mono);color:var(--action);cursor:pointer}
+.modes input:checked+label{background:var(--action);color:var(--on-action)}
+.modes input:focus-visible+label{outline:2px solid var(--action);outline-offset:2px}
+.m-pro,.m-own{display:none}
+[data-mode="pro"] .m-client,[data-mode="own"] .m-client{display:none}
+[data-mode="pro"] .m-pro,[data-mode="own"] .m-own{display:block}
+.bigl{display:inline-flex;flex-direction:column;gap:4px;text-decoration:none;padding:21px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--guilloche);color:var(--ink)}
+.bigl .a{font:700 34px/1.05 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm);color:var(--action);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
+.bigl:hover .a{text-decoration-thickness:4px}
+.anat{display:grid;gap:34px}
+@media (min-width:960px){.anat{grid-template-columns:5fr 5fr 3fr;gap:var(--gap)}}
+.panel{display:flex;flex-direction:column;gap:13px;padding:21px;background:var(--paper-raised);border-top:3px solid var(--ink);min-width:0}
+.panel .ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:600 11px/13px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}
+.panel .ph b{color:var(--spec-a-text);font-weight:700}
+.cap{font-size:15px;line-height:21px;color:var(--ink)}
+.ladder{display:flex;align-items:flex-end;gap:1px;font-family:var(--f-mono);font-weight:700;color:var(--spec-b-text);line-height:.8}
+.cover-top{display:grid;grid-template-columns:1fr auto;gap:13px;align-items:center}
+.cover-top .rose svg{max-width:110px}
+.car{font:700 21px/1.15 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.verdict{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 13px;padding-top:13px;border-top:1px dashed var(--guilloche)}
+.verdict .w{font:800 21px/1 var(--f-mono);font-variation-settings:"wdth" 112.5;letter-spacing:.06em}
+.verdict .sum{font:600 17px/1 var(--f-mono)}
+.demo-tag{align-self:flex-start;justify-self:start;font:600 10px/1 var(--f-mono);text-transform:uppercase;letter-spacing:.1em;padding:4px 6px;border:1px dashed var(--ink-soft);color:var(--ink-soft)}
+.odo{display:flex;flex-direction:column;gap:6px}
+.odo .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.odo .l{font:500 12px/17px var(--f-mono);color:var(--ink-soft)}
+.odo .d{font-size:26px;--dh:30px;color:var(--ink);white-space:nowrap}
+.odo .r.sus .d .drum:last-child{box-shadow:inset 0 0 0 1px var(--verdict-doubt)}
+.odo .r.sus .l{color:var(--verdict-doubt);font-weight:700}
+.ring{display:flex;align-items:center;gap:13px;padding-top:8px;border-top:1px dashed var(--guilloche)}
+.ring svg{width:55px;height:55px;flex:none}
+.ring .t{font:600 13px/17px var(--f-mono);color:var(--verdict-doubt)}
+.body-svg{width:100%;height:auto;max-width:220px;display:block;margin-inline:auto}
+
+/* ---------- 4. Суфлёр ---------- */
+.scale{position:relative;height:120px;margin-top:21px}
+.scale .track{position:absolute;left:0;right:0;top:59px;height:2px;background:var(--ink)}
+.scale .seg{position:absolute;top:56px;height:8px;background:var(--spec-a)}
+.pin{position:absolute;top:52px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center}
+.pin svg{width:16px;height:16px;display:block}
+.pin .lb{position:absolute;white-space:nowrap;font:500 11px/15px var(--f-mono);color:var(--ink-soft);text-align:center}
+.pin .lb b{display:block;color:var(--ink);font-size:13px}
+.pin.up .lb{bottom:21px}.pin.dn .lb{top:21px}
+.pin.edge .lb{right:0;text-align:right}
+.pin.start .lb{left:-8px;text-align:left}
+.args{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.args li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 13px;padding-block:13px;border-bottom:1px solid var(--guilloche)}
+.args .w{font-weight:600}
+.args .s{font:600 15px/25px var(--f-mono);white-space:nowrap}
+.args .q{grid-column:1/-1;font-size:15px;line-height:21px;color:var(--ink-soft)}
+.args li.tot{border-bottom:2px solid var(--ink)}
+.payback{display:flex;flex-direction:column;gap:13px;padding:21px;border:1px solid var(--guilloche);background:var(--paper-raised)}
+.payback .x{font:800 55px/1 var(--f-mono);--dh:60px;color:var(--spec-b-text)}
+
+/* ---------- 5. Именник ---------- */
+.names{display:flex;gap:2px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;margin-top:34px}
+.names button{flex:0 0 150px;scroll-snap-align:start;display:flex;flex-direction:column;gap:6px;align-items:stretch;text-align:left;padding:13px;background:var(--paper-raised);border:1px solid var(--guilloche);border-top:3px solid var(--spec-a);color:var(--ink);font:inherit;cursor:pointer}
+.names button[aria-pressed="true"]{background:var(--paper-sunken);border-color:var(--ink);border-top-color:var(--spec-a-text)}
+.names button .rose svg{max-width:110px}
+.names .nm{font:700 15px/19px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;color:var(--spec-a-text)}
+.names .hx{font:500 10px/15px var(--f-mono);color:var(--ink-soft)}
+@media (min-width:960px){.names{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));overflow:visible}.names button{flex:none}}
+.detail{margin-top:34px}
+.detail .rose svg{max-width:340px}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 13px;margin:0;font-size:15px;line-height:21px}
+.kv dt{font:500 11px/21px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
+.kv dd{margin:0;min-width:0}
+.flar-sample{font:700 34px/1 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" var(--volm)}
+.pix{font-size:34px;line-height:1;color:var(--spec-a-text)}
+.rule{font:500 13px/21px var(--f-mono);color:var(--ink-soft);padding:13px;border:1px dashed var(--guilloche)}
+.rule b{color:var(--ink)}
+.status{font:500 13px/21px var(--f-mono);color:var(--ink-soft)}
+.status b{color:var(--spec-a-text)}
+.gl{font:500 15px/25px var(--f-mono)}
+.gl u{text-decoration:none;border-bottom:2px solid var(--spec-a-text);color:var(--ink);font-weight:700}
+.gl u.b2{border-bottom-color:var(--spec-b-text)}
+
+/* ---------- 6. База знаний ---------- */
+.kb{display:grid;gap:34px}
+.kb>*{min-width:0}
+@media (min-width:720px){.kb{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:34px var(--gap)}}
+.kb article{display:flex;flex-direction:column;gap:8px;padding-top:13px;border-top:1px solid var(--ink)}
+.kb h3{font:700 21px/25px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.kb sup{font:600 10px/1 var(--f-mono);color:var(--action)}
+.ai-tag{align-self:flex-start;font:500 11px/17px var(--f-mono);padding:2px 8px;background:var(--marker);color:var(--on-marker)}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:15px;line-height:21px}
+.checks li{display:grid;grid-template-columns:17px minmax(0,1fr) auto;gap:8px;align-items:center}
+.checks svg{width:13px;height:13px}
+.checks .st{font:500 11px/17px var(--f-mono);color:var(--ink-soft)}
+.route{margin:0;padding-left:21px;font-size:15px;line-height:21px;display:flex;flex-direction:column;gap:4px}
+.route li::marker{font:700 13px var(--f-mono);color:var(--spec-a-text)}
+.wx{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}
+.wx div{display:flex;flex-direction:column;gap:4px;padding:8px;min-width:0;overflow-wrap:anywhere;hyphens:manual;background:var(--paper-raised);border-bottom:3px solid var(--guilloche);font-size:13px;line-height:17px}
+.wx .p{font:700 21px/1 var(--f-mono)}
+.wx .bar{height:5px;background:var(--paper-sunken);position:relative}
+.wx .bar i{position:absolute;inset:0 auto 0 0;background:var(--verdict-doubt)}
+.natal{margin-top:34px;display:grid;gap:13px;padding:21px;border:1px dashed var(--ink-soft);position:relative;background:var(--paper-raised)}
+@media (min-width:720px){.natal{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:21px}}
+.natal q{font:600 21px/1.25 var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0;quotes:"«" "»"}
+
+/* ---------- 7. Упускали ---------- */
+.idea{padding-block:21px;border-bottom:1px solid var(--guilloche)}
+.idea .tag{display:block;font:600 11px/21px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--spec-a-text)}
+.idea .num{display:none}
+.idea h3{font:700 21px/25px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.idea p{color:var(--ink-soft)}
+.idea .row{row-gap:4px}
+@media (min-width:960px){
+  .idea .num{display:block;padding-top:21px;font:700 13px/25px var(--f-mono);color:var(--ink-soft)}
+  .idea.ib .num{text-align:right}
+  .idea p{padding-top:21px}
+}
+.more{display:flex;justify-content:flex-end;padding-top:34px}
+@media (min-width:960px){.s3 .h2{font-size:34px}.s3 .bigl .a{font-size:21px}.s3 .modes{flex-direction:column;width:100%}}
+
+/* ---------- 8. Тарифы ---------- */
+.tar{border-top:2px solid var(--ink)}
+.tar .t{padding-block:21px;border-bottom:1px solid var(--guilloche);align-items:center}
+.tar h3{font:700 21px/25px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.tar .price{font:700 34px/1 var(--f-mono);--dh:40px;white-space:nowrap}
+.tar .price .cur{font-size:21px;margin-left:6px;color:var(--ink-soft)}
+.tar .per{font:500 13px/17px var(--f-mono);color:var(--ink-soft)}
+.tar .q{font:600 13px/17px var(--f-mono);padding:4px 8px;border:1px solid var(--guilloche);justify-self:start;width:max-content;max-width:100%}
+.tar .t.hl{background:linear-gradient(90deg,var(--spec-a) 0 8px,transparent 8px)}
+.tar .t.hl h3{padding-left:0}
+@media (max-width:959px){
+  .tar .t{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 13px}
+  .tar .t>.nm{grid-column:1/-1}
+  .tar .t.hl{padding-left:21px}
+}
+@media (min-width:960px){.tar .t.hl .nm{padding-left:21px}}
+
+/* ---------- 9. Сверка ---------- */
+.faq details{border-bottom:1px solid var(--guilloche)}
+.faq details:first-child{border-top:2px solid var(--ink)}
+.faq summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:minmax(0,1fr) 21px;gap:13px;align-items:center;padding-block:17px;font:600 19px/25px var(--f-display);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";width:13px;height:13px;border-right:2px solid var(--action);border-bottom:2px solid var(--action);transform:rotate(45deg) translate(-3px,-3px);justify-self:center}
+.faq details[open] summary::after{transform:rotate(-135deg)}
+.faq .a{padding-bottom:21px;max-width:40em;display:flex;flex-direction:column;gap:8px}
+
+/* ---------- 10. Финал ---------- */
+.final-form{display:flex;flex-direction:column;gap:21px;margin-top:34px}
+.done{padding:13px;border-left:3px solid var(--spec-a-text);background:var(--paper-raised);font-weight:600}
+
+/* подвал */
+.foot{padding-block:34px 55px;display:flex;flex-direction:column;gap:13px;border-top:2px solid var(--ink)}
+.foot .ln{display:flex;flex-wrap:wrap;gap:8px 21px;font:500 13px/21px var(--f-mono)}
+.foot p{font-size:13px;line-height:21px;color:var(--ink-soft);max-width:60em}
+</style>
+
+<div class="site" lang="ru">
+<a class="skip" href="#main">К содержанию</a>
+<header class="top">
+  <div class="top-in">
+    <a class="logo" href="./" aria-label="Виньетка, на главную"><span class="v">ВИН</span><span class="t">ЬЕТКА</span></a>
+    <div class="rail-wrap">
+      <span class="rail-cap">VIN мастера</span>
+      <ol class="rail" id="rail" aria-label="VIN мастера: код стиля из 17 знаков, ячейки загораются по мере чтения"></ol>
+    </div>
+    <nav class="nav" aria-label="Разделы">
+      <a href="report.html">Демо-отчёт</a>
+      <a href="#tarify">Тарифы</a>
+      <a href="ideas.html">24 идеи</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page" id="main">
+
+<!-- 1. Шильд · 1·8·8 -->
+<section class="sec hero" id="shild" aria-labelledby="h-hero">
+  <div class="row">
+    <div class="vrail s1" aria-hidden="true"><span>В</span><span>И</span><span>Н</span><span>Ь</span><span>Е</span><span>Т</span><span>К</span><span>А</span></div>
+    <div class="hero-copy s8">
+      <p class="eyebrow">Отчёты для специалистов автоподбора BMW и Mercedes</p>
+      <h1 class="h1" id="h-hero">Ваш цвет спрятан в&nbsp;вашем <em>имени</em></h1>
+      <p class="lead">Виньетка выпускает клиенту интерактивный отчёт по машине. Рамку, розетку и цвета движок берёт из вашего ФИО. Двух одинаковых не бывает.</p>
+      <form id="hero-form" class="field" autocomplete="off">
+        <label for="fio">Ваше ФИО</label>
+        <input id="fio" name="fio" type="text" value="Алексей Андреевич Подборкин" spellcheck="false" autocomplete="name" aria-describedby="patterns">
+      </form>
+      <div>
+        <div class="namestrip" id="namestrip" aria-hidden="true"></div>
+      </div>
+      <div class="hexes" aria-label="Два цвета из 12 знаков имени">
+        <div class="hexg">
+          <span class="cap">Цвет А · знаки 1–6</span>
+          <div class="hexcells" id="hexA"></div>
+          <div class="swatch"><i style="background:var(--spec-a)"></i><span class="ta">А</span><span id="rawA">#AECEAE</span></div>
+        </div>
+        <div class="hexg">
+          <span class="cap">Цвет Б · знаки 7–12</span>
+          <div class="hexcells" id="hexB"></div>
+          <div class="swatch"><i style="background:var(--spec-b)"></i><span class="tb">Б</span><span id="rawB">#EB4060</span></div>
+        </div>
+      </div>
+      <div class="mini" aria-hidden="true">
+        <div class="rose" id="rose-mini"></div>
+        <div><p class="eyebrow">VIN мастера</p><p class="code" id="code-mini" style="font-size:13px">AAP2L68D<b>X</b>T1890268</p></div>
+      </div>
+      <div class="patterns" id="patterns" aria-live="polite">
+        <p class="hit">Алексей Андреевич — ровно 17 знаков. Как VIN.</p>
+        <p>Суммы букв по словам: 68 · 89 · 111, всего 268. 68 = 4×17, 89 — число Фибоначчи.</p>
+        <p>Гомоглифов 12: АесеАе → #AECEAE, евчобо → #EB4060.</p>
+        <p>Шаблон сетки № 2 (1·8·8), рельс слева, пиксель табло 13.</p>
+      </div>
+      <div class="btns">
+        <button type="button" class="btn ghost" id="rotate">Повернуть палитру на 137,5°</button>
+        <button type="button" class="btn ghost" id="reset">Сбросить</button>
+      </div>
+      <p class="turns" id="turns">Поворотов: 0 из 2. Выбрать цвет вручную нельзя.</p>
+      <div class="btns"><a class="btn" href="#start">Выпустить первую виньетку</a></div>
+    </div>
+    <div class="plate-col s8">
+      <div class="rose" id="rose-hero" aria-live="off"></div>
+      <div>
+        <div class="plate" id="plate-hero" aria-label="Шильд мастера"></div>
+        <div class="plate-cap"><span>Шильд мастера</span><span id="plate-note">17 × 2</span></div>
+      </div>
+      <div>
+        <p class="eyebrow">VIN мастера</p>
+        <p class="code" id="code-hero">AAP2L68D<b>X</b>T1890268</p>
+        <ul class="legend" id="legend-hero"></ul>
+      </div>
+      <div>
+        <p class="eyebrow">Шаблон сетки</p>
+        <div class="tpl" id="tpl-hero" aria-hidden="true"></div>
+        <p class="small soft" id="tpl-note">№ 2: 1·8·8. Этот лендинг собран на тех же семи шаблонах.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<svg class="gband" id="g1" viewBox="0 0 1200 55" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+<!-- 2. 40 фото и 12 голосовых · 13·3·1 -->
+<section class="sec" id="chaos" aria-labelledby="h-chaos">
+  <div class="row">
+    <div class="s13">
+      <p class="eyebrow">Как отчёт выглядит сейчас</p>
+      <h2 class="h2" id="h-chaos">40 фото и 12 голосовых</h2>
+      <div class="off">
+        <p class="lead" style="margin-top:21px">Клиент листает переписку, ищет замеры и переспрашивает. Продавцу такое не покажешь, жене тоже.</p>
+        <div class="chat" aria-label="Пример переписки после осмотра">
+          <div class="msg f me">IMG_4411.jpg</div>
+          <div class="msg f me">IMG_4412.jpg</div>
+          <div class="msg v me"><svg viewBox="0 0 89 17" aria-hidden="true"><rect x="0" y="6" width="3" height="5"/><rect x="6" y="3" width="3" height="11"/><rect x="12" y="5" width="3" height="7"/><rect x="18" y="1" width="3" height="15"/><rect x="24" y="4" width="3" height="9"/><rect x="30" y="6" width="3" height="5"/><rect x="36" y="2" width="3" height="13"/><rect x="42" y="5" width="3" height="7"/><rect x="48" y="3" width="3" height="11"/><rect x="54" y="6" width="3" height="5"/><rect x="60" y="4" width="3" height="9"/><rect x="66" y="7" width="3" height="3"/></svg>0:47</div>
+          <div class="msg me">правое крыло 240 там, дверь 310</div>
+          <div class="msg">а это много?<span class="t">21:14</span></div>
+          <div class="msg v me"><svg viewBox="0 0 89 17" aria-hidden="true"><rect x="0" y="4" width="3" height="9"/><rect x="6" y="1" width="3" height="15"/><rect x="12" y="6" width="3" height="5"/><rect x="18" y="3" width="3" height="11"/><rect x="24" y="5" width="3" height="7"/><rect x="30" y="2" width="3" height="13"/><rect x="36" y="6" width="3" height="5"/><rect x="42" y="4" width="3" height="9"/><rect x="48" y="1" width="3" height="15"/><rect x="54" y="5" width="3" height="7"/></svg>1:12</div>
+          <div class="msg">скинь ещё раз толщины, я потерялся<span class="t">21:31</span></div>
+          <div class="msg f me">IMG_4419.jpg … ещё 31 фото</div>
+          <div class="msg">жена спрашивает, брать или нет<span class="t">22:02</span></div>
+          <div class="msg v me"><svg viewBox="0 0 89 17" aria-hidden="true"><rect x="0" y="5" width="3" height="7"/><rect x="6" y="2" width="3" height="13"/><rect x="12" y="4" width="3" height="9"/><rect x="18" y="6" width="3" height="5"/><rect x="24" y="1" width="3" height="15"/><rect x="30" y="3" width="3" height="11"/></svg>2:03</div>
+          <div class="msg">а продавцу это можно показать?<span class="t">22:40</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="s3">
+      <a class="ticket" href="report.html" aria-label="Одна ссылка вместо переписки: демо-виньетка Т-000417">
+        <span class="big-n" aria-hidden="true">1</span>
+        <span class="eyebrow">ссылка вместо переписки</span>
+        <span class="rose" id="rose-ticket"></span>
+        <span class="tn">Т-000417</span>
+        <span class="url">vinetka/t-000417</span>
+        <span class="small">Клиент перешлёт её жене, другу и продавцу. Везде будет ваш почерк.</span>
+      </a>
+    </div>
+    <div class="stub s1" aria-hidden="true"><span class="n">02</span><span class="v">переписка</span></div>
+  </div>
+</section>
+
+<div class="perf" aria-hidden="true"></div>
+
+<!-- 3. Анатомия виньетки · 3·13·1 (внутри 5·5·3) -->
+<section class="sec" id="anatomy" aria-labelledby="h-anat" data-mode="client">
+  <div class="row">
+    <div class="s3" style="display:flex;flex-direction:column;gap:21px">
+      <p class="eyebrow">Демо-виньетка</p>
+      <h2 class="h2" id="h-anat">Анатомия виньетки</h2>
+      <p class="soft">BMW 530d xDrive G30, одометр 111 111 км. Три акта, десять блоков. Здесь три из них.</p>
+      <fieldset class="modes" style="margin:0;padding:0">
+        <legend class="sr">Кто читает отчёт</legend>
+        <input type="radio" name="mode" id="mode-client" value="client" checked><label for="mode-client">Для клиента</label>
+        <input type="radio" name="mode" id="mode-pro" value="pro"><label for="mode-pro">Для профи</label>
+        <input type="radio" name="mode" id="mode-own" value="own"><label for="mode-own">Для своих</label>
+      </fieldset>
+      <a class="bigl" href="report.html"><span class="small soft">вымышленная машина, настоящий формат</span><span class="a">Открыть демо-виньетку Т-000417</span></a>
+    </div>
+    <div class="s13 off anat">
+      <!-- обложка -->
+      <article class="panel" id="cover-demo" aria-label="Обложка и вердикт">
+        <div class="ph"><span>Акт I · обложка</span><b>1–3 WMI</b></div>
+        <div class="cover-top">
+          <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+            <span class="demo-tag">демо-виньетка</span>
+            <div class="ladder" aria-label="Номер Т-000417" id="ladder"></div>
+          </div>
+          <div class="rose" id="rose-cover"></div>
+        </div>
+        <div class="plate" id="plate-cover" aria-label="Шильд: Алексей Андреевич Подборкин"></div>
+        <p class="car">BMW 530d xDrive · G30<br><span class="small soft mono">B57D30 · ZF 8HP · 11.2018 · Москва, Химки</span></p>
+        <div class="verdict"><span class="w" style="color:var(--verdict-doubt)">ТОРГОВАТЬСЯ</span><span class="sum">−300 000 ₽</span></div>
+        <p class="cap m-client">Брать можно, если продавец уступит 300 000 ₽.</p>
+        <p class="cap m-pro">Якорь 4 250 000, цель 4 390 000, уход 4 520 000 ₽. Цены по Москве.</p>
+        <p class="cap m-own">Машина хорошая. Дверь и коробку обсудим с продавцом, потом решаем.</p>
+      </article>
+      <!-- пробег -->
+      <article class="panel" aria-label="Пробег: свидетели">
+        <div class="ph"><span>Акт I · пробег</span><b>поз. 9</b></div>
+        <div class="odo hand" id="odo">
+          <div class="r"><span class="l">Приборка</span><span class="d" data-drums="111 111">111 111</span></div>
+          <div class="r"><span class="l">Блок FRM</span><span class="d" data-drums="111 090">111 090</span></div>
+          <div class="r"><span class="l">Ключ</span><span class="d" data-drums="111 104">111 104</span></div>
+          <div class="r"><span class="l">ТО, 06.2021</span><span class="d" data-drums="058 200">058 200</span></div>
+          <div class="r"><span class="l">Объявление, 2023</span><span class="d" data-drums="096 000">096 000</span></div>
+          <div class="r sus"><span class="l">Блок АКПП EGS ?</span><span class="d" data-drums="124 300" data-half="1">124 300</span></div>
+        </div>
+        <div class="ring">
+          <svg viewBox="0 0 55 55" aria-hidden="true"><circle cx="27.5" cy="27.5" r="22" fill="none" stroke="var(--paper-sunken)" stroke-width="5"/><path d="M27.5 5.5 A22 22 0 1 1 9.7 40.4" fill="none" stroke="var(--verdict-doubt)" stroke-width="5" stroke-dasharray="3 3"/></svg>
+          <span class="t">есть сомнения<br>история сходится на 88%</span>
+        </div>
+        <p class="cap m-client">Шесть мест, где машина назвала свой пробег. Пять сходятся, коробка помнит больше.</p>
+        <p class="cap m-pro">EGS 124 300 при KOMBI 111 111. Блок АКПП могли переставить, нужен заказ-наряд.</p>
+        <p class="cap m-own">Пробег похож на честный. Про коробку спросим у продавца.</p>
+      </article>
+      <!-- кузов -->
+      <article class="panel" aria-label="Кузов: правый бок">
+        <div class="ph"><span>II · B кузов</span><b>4–8</b></div>
+        <svg class="body-svg" viewBox="0 0 160 300" role="img" aria-label="Развёртка правого бока: капот 128 мкм завод, крыло 240 мкм один слой, передняя дверь 310 мкм, задняя дверь 620 мкм шпаклёвка">
+          <defs>
+            <pattern id="h1p" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" style="stroke:var(--ink-soft)" stroke-width="1"/></pattern>
+            <pattern id="h2p" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" style="stroke:var(--ink-soft)" stroke-width="1.2"/></pattern>
+            <pattern id="h3p" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M0 0L5 5M5 0L0 5" style="stroke:var(--danger)" stroke-width="1"/></pattern>
+          </defs>
+          <g font-family="Martian Mono, ui-monospace, monospace" font-size="10">
+            <rect x="10" y="6" width="140" height="52" style="fill:var(--paper-raised);stroke:var(--ink)" stroke-width="0.6"/>
+            <text x="18" y="26" style="fill:var(--ink-soft)">капот · NFe</text><text x="18" y="46" style="fill:var(--ink)" font-weight="700" font-size="13">128 мкм</text>
+            <rect x="13" y="75" width="134" height="52" style="fill:url(#h1p);stroke:var(--ink)" stroke-width="4"/>
+            <rect x="24" y="84" width="96" height="34" style="fill:var(--paper-raised)"/>
+            <text x="28" y="98" style="fill:var(--ink-soft)">крыло пп</text><text x="28" y="113" style="fill:var(--ink)" font-weight="700" font-size="13">240 мкм</text>
+            <rect x="14" y="146" width="132" height="60" style="fill:url(#h2p);stroke:var(--ink)" stroke-width="5.5"/>
+            <rect x="24" y="158" width="96" height="36" style="fill:var(--paper-raised)"/>
+            <text x="28" y="172" style="fill:var(--ink-soft)">дверь пп</text><text x="28" y="188" style="fill:var(--ink)" font-weight="700" font-size="13">310 мкм</text>
+            <rect x="17" y="228" width="126" height="64" style="fill:url(#h3p);stroke:var(--danger)" stroke-width="12"/>
+            <rect x="28" y="241" width="96" height="38" style="fill:var(--paper-raised)"/>
+            <text x="32" y="256" style="fill:var(--ink-soft)">дверь зп</text><text x="32" y="272" style="fill:var(--danger)" font-weight="700" font-size="13">620 мкм</text>
+          </g>
+        </svg>
+        <p class="small soft">Ширина шва растёт с толщиной. 620 мкм ≈ стопка из 6 листов бумаги.</p>
+        <p class="cap m-client">Три детали крашены, задняя дверь со шпаклёвкой.</p>
+        <p class="cap m-pro">Шаг штриховки 170 мкм. Алюминий мерили в режиме NFe.</p>
+        <p class="cap m-own">Правый бок чинили. Ездить можно, при продаже это всплывёт.</p>
+      </article>
+    </div>
+    <div class="stub s1" aria-hidden="true"><span class="n">03</span><span class="v">анатомия</span></div>
+  </div>
+</section>
+
+<div class="perf" aria-hidden="true"></div>
+
+<!-- 4. Суфлёр торга · 8·5·3·1 -->
+<section class="sec" id="torg" aria-labelledby="h-torg">
+  <div class="row">
+    <div class="s8">
+      <p class="eyebrow">Отчёт работает на сделке</p>
+      <h2 class="h2" id="h-torg">Суфлёр торга</h2>
+      <div class="off">
+        <p class="lead" style="margin-top:21px">Находки складываются в скидку с обоснованием. Сверху три цифры: якорь, цель и точка ухода. Клиенту не надо спорить своими словами.</p>
+        <div class="scale" role="img" aria-label="Шкала торга: якорь 4 250 000, цель 4 390 000, точка ухода 4 520 000, цена продавца 4 690 000 рублей">
+          <div class="track"></div>
+          <div class="seg" style="left:10%;width:54%"></div>
+          <div class="pin dn start" style="left:10%"><svg viewBox="0 0 16 16"><path d="M8 2L15 14H1Z" style="fill:var(--ink)"/></svg><span class="lb"><b>4 250 000</b>якорь</span></div>
+          <div class="pin up" style="left:38%"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" style="fill:var(--spec-a-text)"/></svg><span class="lb"><b>4 390 000</b>цель</span></div>
+          <div class="pin dn" style="left:64%"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" style="fill:var(--ink)"/></svg><span class="lb"><b>4 520 000</b>уход</span></div>
+          <div class="pin up edge" style="left:97%"><svg viewBox="0 0 16 16"><path d="M8 1L15 8L8 15L1 8Z" style="fill:var(--danger)"/></svg><span class="lb"><b>4 690 000</b>продавец</span></div>
+        </div>
+        <p class="small soft">Демо-цифры по BMW 530d G30, Москва. Медиана аналогов минус дефекты.</p>
+      </div>
+    </div>
+    <div class="s5">
+      <ul class="args" aria-label="Аргументы, от сильных к слабым">
+        <li><span class="w">Покраска двух элементов</span><span class="s">−120 000</span><span class="q">«Задняя дверь шпаклёвана, 620 микрон. Вот замер.»</span></li>
+        <li><span class="w">Клапан EGR, ошибка P0401</span><span class="s">−62 000</span><span class="q">«Ошибка активная. Клапан под замену или чистку.»</span></li>
+        <li><span class="w">Передние рычаги и развал</span><span class="s">−48 000</span><span class="q">«Люфт в шаровых, видно на подъёмнике.»</span></li>
+        <li><span class="w">Масло ZF 8HP с адаптацией</span><span class="s">−30 000</span><span class="q">«Замены по истории нет.»</span></li>
+        <li><span class="w">Опора и подогрев сиденья</span><span class="s">−40 000</span><span class="q">«Стучит опора слева, подогрев сзади справа не греет.»</span></li>
+        <li class="tot"><span class="w">Обоснованный дисконт</span><span class="s">−300 000</span></li>
+      </ul>
+    </div>
+    <div class="s3">
+      <div class="payback">
+        <span class="eyebrow">после сделки</span>
+        <span class="x" data-drums="×20" aria-label="Подбор окупился в 20 раз">×20</span>
+        <p class="small">Подбор за 15 000 ₽, сторговали 300 000 ₽. Подбор окупился в ×20. Демо-цифры.</p>
+        <a class="btn ghost" href="report.html#h-prompter">Показать продавцу</a>
+        <p class="small soft">Лист продавца: только факты, фото и суммы. Бюджет клиента не виден.</p>
+      </div>
+    </div>
+    <div class="stub s1" aria-hidden="true"><span class="n">04</span><span class="v">торг</span></div>
+  </div>
+</section>
+
+<svg class="gband" id="g2" viewBox="0 0 1200 55" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+<!-- 5. Именник · 5·5·5·2 -->
+<section class="sec" id="imennik" aria-labelledby="h-imen">
+  <div class="row">
+    <div class="s13">
+      <p class="eyebrow">Семь мастеров, семь розеток</p>
+      <h2 class="h2" id="h-imen">Именник</h2>
+      <p class="lead off" style="margin-top:21px">Никто из них не выбирал цвета. Движок прочитал их из имён. Шесть мастеров придуманы для примера, седьмой — Подборкин. Нажмите на любого, и лендинг перекрасится в его стиль.</p>
+    </div>
+    <div class="s3 rule" style="align-self:end"><b>Правило управляемого хаоса.</b> Палитру нельзя выбрать вручную. Её можно повернуть на 137,5°, не больше двух раз.</div>
+    <div class="stub s1" aria-hidden="true"><span class="n">05</span><span class="v">именник</span></div>
+  </div>
+  <div class="names" id="names" role="group" aria-label="Мастера"></div>
+  <p class="status" id="imen-status" aria-live="polite" style="margin-top:13px"></p>
+  <div class="row detail" id="detail">
+    <div class="s5"><div class="rose" id="rose-detail"></div></div>
+    <div class="s5" style="display:flex;flex-direction:column;gap:13px">
+      <p class="eyebrow">Что нашлось в имени</p>
+      <h3 class="flar-sample" id="d-name" style="color:var(--spec-a-text)"></h3>
+      <p class="gl" id="d-glyphs"></p>
+      <p class="small soft" id="d-sums"></p>
+      <div class="hexes">
+        <div class="swatch"><i style="background:var(--spec-a)"></i><span class="ta">А</span><span id="d-a"></span></div>
+        <div class="swatch"><i style="background:var(--spec-b)"></i><span class="tb">Б</span><span id="d-b"></span></div>
+      </div>
+    </div>
+    <div class="s5">
+      <dl class="kv">
+        <dt>Шаблон</dt><dd id="d-tpl"></dd>
+        <dt>Рельс</dt><dd id="d-rail"></dd>
+        <dt>Окончания</dt><dd><span id="d-flar"></span><br><span class="flar-sample" style="font-size:21px">Виньетка</span></dd>
+        <dt>Пиксель</dt><dd><span class="hand pix">P0401</span><br><span id="d-pix" class="small soft"></span></dd>
+        <dt>Розетка</dt><dd id="d-rose"></dd>
+        <dt>VIN мастера</dt><dd class="code" id="d-code" style="font-size:13px"></dd>
+      </dl>
+    </div>
+    <div class="s2" style="display:flex;flex-direction:column;gap:13px;align-items:flex-start">
+      <button type="button" class="btn" id="d-apply" style="width:100%;padding-inline:8px">Применить</button>
+      <p class="small soft">Стиль ляжет на весь лендинг и на поле ФИО.</p>
+    </div>
+  </div>
+</section>
+
+<div class="perf" aria-hidden="true"></div>
+
+<!-- 6. База знаний · 1·3·13 -->
+<section class="sec" id="kb" aria-labelledby="h-kb">
+  <div class="row">
+    <div class="stub s1" aria-hidden="true"><span class="n">06</span><span class="v">база знаний</span></div>
+    <div class="s3" style="display:flex;flex-direction:column;gap:21px">
+      <p class="eyebrow">Под капотом</p>
+      <h2 class="h2" id="h-kb">База знаний</h2>
+      <p class="soft">Статьи про моторы, коробки и болячки BMW и Mercedes. ИИ собирает из них обзор, мастер проверяет и подписывает.</p>
+    </div>
+    <div class="s13 off">
+      <div class="kb">
+        <article>
+          <h3>ИИ-обзор со сносками</h3>
+          <p>B57D30 в G30 тянет ровно и живёт долго<sup>1</sup>. Слабое место этой серии: радиатор EGR, по нему был отзыв<sup>2</sup>. Цепь ГРМ сзади, проверяется на холодную<sup>3</sup>.</p>
+          <span class="ai-tag">составлено ИИ по 6 статьям, проверено мастером</span>
+        </article>
+        <article>
+          <h3>Калька типовых болячек</h3>
+          <p class="small soft">Типовые места мотора ложатся поверх находок мастера. Совпадения видно сразу.</p>
+          <ul class="checks">
+            <li><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5.5" style="fill:var(--verdict-ok)"/></svg><span>Радиатор EGR, отзыв</span><span class="st">заменён</span></li>
+            <li><svg viewBox="0 0 13 13" aria-hidden="true"><path d="M2 2L11 11M11 2L2 11" style="stroke:var(--danger)" stroke-width="2.4"/></svg><span>Клапан EGR</span><span class="st">нагар</span></li>
+            <li><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5.5" style="fill:var(--verdict-ok)"/></svg><span>Цепь ГРМ на холодную</span><span class="st">тихо</span></li>
+            <li><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:none;stroke:var(--ink-soft)" stroke-width="1.5"/></svg><span>Сервопривод турбины</span><span class="st">не проверялось</span></li>
+          </ul>
+        </article>
+        <article>
+          <h3>Штурман осмотра</h3>
+          <p class="small soft">VIN и ссылка на объявление дают маршрут обхода под этот мотор и слова продавца.</p>
+          <ol class="route">
+            <li>Холодный пуск: слушать цепь сзади.</li>
+            <li>Моторный отсек: следы замены радиатора EGR.</li>
+            <li>Кузов по часовой от капота, алюминий в NFe.</li>
+            <li>Диагностика: адаптации EGS и пробег в блоках.</li>
+          </ol>
+        </article>
+        <article>
+          <h3>Синоптик на 365 дней</h3>
+          <p class="small soft">Что вероятно сломается на +20 000 км и сколько отложить в месяц.</p>
+          <div class="wx">
+            <div><span>Осень</span><span class="p">ясно</span><span class="bar"><i style="width:8%"></i></span><span>ТО 45 тыс. ₽</span></div>
+            <div><span>Зима</span><span class="p">60%</span><span class="bar"><i style="width:60%"></i></span><span>свечи и EGR 35–70 тыс.</span></div>
+            <div><span>Весна, лето</span><span class="p">30%</span><span class="bar"><i style="width:30%"></i></span><span>масло&shy;охладитель 40–65 тыс.</span></div>
+          </div>
+          <p class="small"><b>Резерв ≈ 11 500 ₽ в месяц.</b></p>
+        </article>
+      </div>
+      <div class="natal">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span class="eyebrow">Бесплатно для ваших клиентов</span>
+          <q>Рождён в ноябре 2018 в Дингольфинге. Асцендент: радиатор EGR.</q>
+          <p class="small soft">Натальная карта VIN. Клиент вставляет VIN и получает гороскоп сборки. Каждое предсказание оказывается реальной модернизацией узла, а заявка приходит вам.</p>
+        </div>
+        <span class="demo-tag">пример</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="perf" aria-hidden="true"></div>
+
+<!-- 7. Что вы упускали · строки меняют шаблон -->
+<section class="sec" id="miss" aria-labelledby="h-miss">
+  <div class="row">
+    <div class="s13">
+      <p class="eyebrow">Идеи, которых нет в обычном отчёте</p>
+      <h2 class="h2" id="h-miss">Что вы упускали</h2>
+    </div>
+    <div class="stub s1" aria-hidden="true" style="grid-column:17"><span class="n">07</span><span class="v">идеи</span></div>
+  </div>
+  <div class="off" id="ideas" style="margin-top:34px"></div>
+  <div class="more"><a class="bigl" href="ideas.html"><span class="small soft">отчёт, поле, деньги и безумные</span><span class="a">Все 24 идеи →</span></a></div>
+</section>
+
+<svg class="gband" id="g3" viewBox="0 0 1200 55" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+<!-- 8. Тарифы · 8·5·2·2 -->
+<section class="sec" id="tarify" aria-labelledby="h-tar">
+  <div class="row">
+    <div class="s13">
+      <p class="eyebrow">Платите за купленные машины</p>
+      <h2 class="h2" id="h-tar">Тарифы</h2>
+      <p class="lead off" style="margin-top:21px">На одну покупку приходится 4–8 осмотров. За отказы вы не платите.</p>
+    </div>
+  </div>
+  <div class="tar off" id="tar" style="margin-top:34px">
+    <div class="row t"><div class="s8 nm"><h3>Отказные виньетки</h3><p class="small soft">По машинам, которые клиент не взял. Полный брендинг, без лимита.</p></div><div class="s5 price" data-drums="0" aria-label="0 рублей">0<span class="cur">₽</span></div><div class="s2 per">всегда</div><div class="s2 q">без лимита</div></div>
+    <div class="row t hl"><div class="s8 nm"><h3>Финальная виньетка</h3><p class="small soft">По купленной машине. Суфлёр торга, лист продавца, трофейная карточка.</p></div><div class="s5 price" data-drums="1 490" aria-label="1 490 рублей">1 490<span class="cur">₽</span></div><div class="s2 per">за машину</div><div class="s2 q">1 машина</div></div>
+    <div class="row t"><div class="s8 nm"><h3>Про</h3><p class="small soft">10 финальных в месяц, свой домен, без подписи сервиса.</p></div><div class="s5 price" data-drums="3 900" aria-label="3 900 рублей в месяц">3 900<span class="cur">₽</span></div><div class="s2 per">в месяц</div><div class="s2 q">10 финальных</div></div>
+    <div class="row t"><div class="s8 nm"><h3>Бюро</h3><p class="small soft">До пяти мастеров. Общий стиль студии и личные розетки.</p></div><div class="s5 price" data-drums="9 900" aria-label="9 900 рублей в месяц">9 900<span class="cur">₽</span></div><div class="s2 per">в месяц</div><div class="s2 q">5 мастеров</div></div>
+  </div>
+</section>
+
+<div class="perf" aria-hidden="true"></div>
+
+<!-- 9. Сверка · 3·13·1 -->
+<section class="sec" id="sverka" aria-labelledby="h-faq">
+  <div class="row">
+    <div class="s3" style="display:flex;flex-direction:column;gap:21px">
+      <p class="eyebrow">Вопросы и доверие</p>
+      <h2 class="h2" id="h-faq">Сверка</h2>
+    </div>
+    <div class="s13 off faq">
+      <details open>
+        <summary>Как вы обходитесь с данными клиента по 152-ФЗ?</summary>
+        <div class="a"><p>Клиент даёт согласие на обработку данных при первом открытии виньетки. Имя и телефон клиента в отчёт не попадают. В отчёте только машина и вы.</p><p>В «Кладбище VIN» уходят только VIN, пробег, замеры и причины отказа. Данных продавца и клиента там нет.</p></div>
+      </details>
+      <details>
+        <summary>Что увидит продавец?</summary>
+        <div class="a"><p>Только лист продавца: факты, замеры, фото и суммы. Бюджет клиента, точка ухода и семейное голосование остаются приватными.</p></div>
+      </details>
+      <details>
+        <summary>Откуда берётся ИИ-обзор?</summary>
+        <div class="a"><p>Из статей нашей базы знаний по BMW и Mercedes. У каждого утверждения есть сноска на статью. Мастер читает обзор и подтверждает его перед выпуском. На плашке видно, по скольким статьям он собран.</p></div>
+      </details>
+      <details>
+        <summary>А если я что-то не проверил?</summary>
+        <div class="a"><p>Так и напишите. Отрицательный протокол перечисляет, что не проверялось и почему, например «подъёмник, трасса 120+». Клиент подтверждает его тапом.</p><p>Чёрный ящик осмотра хранит время, число замеров и фото: «1 ч 17 мин, 41 замер, 126 фото». После выдачи отчёт запечатан, подлинность проверяется по номеру «Т-» и QR.</p></div>
+      </details>
+      <details>
+        <summary>Можно выбрать цвета самому?</summary>
+        <div class="a"><p>Нет. Стиль берётся из ФИО, и его можно повернуть на 137,5° не больше двух раз. Поэтому двух одинаковых виньеток не бывает. Цвета мастера достаются только рамке: обложке, заголовкам, розетке. Замеры и вердикты у всех нарисованы одинаково.</p></div>
+      </details>
+      <details>
+        <summary>Сервис связан с BMW или Mercedes-Benz?</summary>
+        <div class="a"><p>Нет. Это независимый сервис. Марки названы, чтобы было понятно, по каким машинам собрана база знаний.</p></div>
+      </details>
+    </div>
+    <div class="stub s1" aria-hidden="true"><span class="n">09</span><span class="v">сверка</span></div>
+  </div>
+</section>
+
+<svg class="gband" id="g4" viewBox="0 0 1200 55" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+<!-- 10. Финал · 8·8·1 -->
+<section class="sec" id="start" aria-labelledby="h-final">
+  <div class="row">
+    <div class="s8">
+      <p class="eyebrow">Первая виньетка</p>
+      <h2 class="h2" id="h-final">Получите свою виньетку</h2>
+      <form class="final-form off" id="final-form" novalidate>
+        <div class="field">
+          <label for="fio2">Ваше ФИО</label>
+          <input id="fio2" name="fio2" type="text" value="Алексей Андреевич Подборкин" spellcheck="false" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="contact">Telegram или телефон</label>
+          <input id="contact" name="contact" type="text" placeholder="@username" autocomplete="tel">
+        </div>
+        <div class="btns"><button type="submit" class="btn">Получить свою виньетку</button></div>
+        <p class="done" id="final-msg" role="status" hidden>Демо: регистрация появится при запуске.</p>
+        <p class="small soft">Отказные виньетки бесплатны всегда. Карта не нужна.</p>
+      </form>
+    </div>
+    <div class="s8 plate-col">
+      <div class="rose" id="rose-final"></div>
+      <div class="plate" id="plate-final" aria-label="Шильд мастера"></div>
+      <p class="code" id="code-final" style="font-size:13px"></p>
+    </div>
+    <div class="stub s1" aria-hidden="true"><span class="n">10</span><span class="v">финал</span></div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="micro" aria-hidden="true" id="micro1"></div>
+  <a class="logo" href="./"><span class="v">ВИН</span><span class="t">ЬЕТКА</span></a>
+  <div class="ln"><a href="report.html">Демо-виньетка Т-000417</a><a href="ideas.html">24 идеи</a><a href="#shild">Наверх</a></div>
+  <p>Независимый сервис, не связан с автопроизводителями. BMW и Mercedes-Benz названы как марки машин, которые проверяют мастера.</p>
+  <p>Мастера в Именнике, машина и цифры в демо-виньетке вымышлены. А. А. Подборкин показан как пример владельца стиля.</p>
+  <div class="micro" aria-hidden="true" id="micro2"></div>
+</footer>
+</main>
+</div>
+
+<script src="vignette.js"></script>
+<script>
+(function () {
+  'use strict';
+  var V = window.Vignette;
+  var root = document.documentElement;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (id) { return document.getElementById(id); };
+  var DEFAULT = 'Алексей Андреевич Подборкин';
+  var HEXS = '0123456789ABCDEF', DEC = '0123456789';
+  var FIB = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377];
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  function plural(n, a, b, c) { var m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? a : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? b : c; }
+
+  /* ---- микротекст ---- */
+  var mt = new Array(60).join('ВИНЬЕТКА·17·');
+  $('micro1').textContent = mt; $('micro2').textContent = mt;
+
+  /* ---- номер лесенкой ---- */
+  (function () {
+    var s = 'Т-000417', h = '';
+    for (var i = 0; i < s.length; i++) h += '<span aria-hidden="true" style="font-size:' + (13 + i * 3) + 'px">' + s[i] + '</span>';
+    $('ladder').innerHTML = h;
+  })();
+
+  /* ---- барабаны ---- */
+  function makeDrum(ch, base) {
+    var digits = base === 16 ? HEXS : DEC;
+    var d = document.createElement('span'); d.className = 'drum'; d.dataset.base = base; d.setAttribute('aria-hidden', 'true');
+    var st = document.createElement('span'); st.className = 'strip';
+    var h = ''; for (var r = 0; r < 2; r++) for (var i = 0; i < digits.length; i++) h += '<span>' + digits[i] + '</span>';
+    st.innerHTML = h; d.appendChild(st);
+    setDrum(d, ch, false, 0);
+    return d;
+  }
+  function setDrum(d, ch, roll, off) {
+    var digits = d.dataset.base === '16' ? HEXS : DEC, L = digits.length;
+    var idx = Math.max(0, digits.indexOf(String(ch).toUpperCase()));
+    var st = d.firstChild, target = L + idx + (off || 0);
+    if (roll && !reduce) {
+      var cur = parseFloat(st.style.getPropertyValue('--n'));
+      if (isNaN(cur)) cur = target;
+      st.style.transition = 'none';
+      st.style.setProperty('--n', String(cur - L));
+      void st.offsetHeight;
+      st.style.transition = '';
+    }
+    st.style.setProperty('--n', String(target));
+  }
+  function buildDrums(el) {
+    var val = el.getAttribute('data-drums'), half = el.hasAttribute('data-half');
+    var tail = el.querySelector('.cur'); if (tail) tail.remove();
+    el.textContent = '';
+    var sr = document.createElement('span'); sr.className = 'sr'; sr.textContent = val; el.appendChild(sr);
+    var digs = [];
+    for (var i = 0; i < val.length; i++) {
+      var c = val[i];
+      if (/[0-9]/.test(c)) { var d = makeDrum(c, 10); digs.push(d); el.appendChild(d); }
+      else if (c === ' ' || c === '\u00A0') { var s = document.createElement('span'); s.className = 'dsp'; s.setAttribute('aria-hidden', 'true'); el.appendChild(s); }
+      else { var t = document.createElement('span'); t.textContent = c; t.setAttribute('aria-hidden', 'true'); el.appendChild(t); }
+    }
+    if (half && digs.length) { var last = digs[digs.length - 1]; setDrum(last, val.replace(/\D/g, '').slice(-1), false, 0.5); last.dataset.half = '1'; }
+    if (tail) el.appendChild(tail);
+    el._drums = digs; el._val = val.replace(/\D/g, '');
+  }
+  var drumSets = [].slice.call(document.querySelectorAll('[data-drums]'));
+  drumSets.forEach(buildDrums);
+  function overturn(el) {
+    (el._drums || []).forEach(function (d, i) {
+      setTimeout(function () { setDrum(d, el._val[i], true, d.dataset.half ? 0.5 : 0); }, i * 90);
+    });
+  }
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (e) { if (e.isIntersecting) { overturn(e.target); io.unobserve(e.target); } });
+    }, { threshold: 0.6 });
+    drumSets.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ---- hex-ячейки ---- */
+  var hexA = [], hexB = [];
+  for (var i = 0; i < 6; i++) { hexA.push(makeDrum('A', 16)); $('hexA').appendChild(hexA[i]); }
+  for (i = 0; i < 6; i++) { hexB.push(makeDrum('E', 16)); $('hexB').appendChild(hexB[i]); }
+  var hexCells = hexA.concat(hexB);
+
+  /* ---- гильош-полосы ---- */
+  function gband(svg, seed) {
+    var W = 1200, H = 55, paths = '';
+    for (var k = 0; k < 17; k++) {
+      var d = '', ph = k * 137.5 * Math.PI / 180 + seed;
+      for (var x = 0; x <= W; x += 6) {
+        var y = H / 2 + 17 * Math.sin(x / 34 + ph) * Math.cos(x / 144 + seed) + 6 * Math.sin(x / 13 - ph * 2);
+        d += (x ? 'L' : 'M') + x + ' ' + y.toFixed(1);
+      }
+      paths += '<path d="' + d + '" style="stroke:var(--rosette-' + (k % 3 + 1) + ')"/>';
+    }
+    svg.innerHTML = paths;
+  }
+  ['g1', 'g2', 'g3', 'g4'].forEach(function (id, n) { gband($(id), n * 1.7); });
+
+  if (!V) return;
+
+  /* ---- разбор имени: какие знаки стали гомоглифами ---- */
+  var HOMO = { 'а': 'A', 'в': 'B', 'с': 'C', 'е': 'E', 'ё': 'E', 'б': '6', 'ч': '4', 'з': '3', 'о': '0', 'ь': 'B' };
+  function hexOf(ch) { var lo = ch.toLowerCase(); if (HOMO[lo]) return HOMO[lo]; if (/[a-f0-9]/.test(lo)) return lo.toUpperCase(); return null; }
+  function glyphMap(s) {
+    var map = {}, cursor = 0, n = 0, name = s.name;
+    s.words.forEach(function (w) {
+      var at = name.indexOf(w, cursor); if (at < 0) return; cursor = at + w.length;
+      for (var j = 0; j < w.length; j++) {
+        var ch = w[j];
+        if (!/[a-zа-яё0-9]/i.test(ch)) continue;
+        var hx = hexOf(ch);
+        if (hx && n < 12) { map[at + j] = n; n++; }
+      }
+    });
+    return map;
+  }
+  function renderNameStrip(s) {
+    var map = glyphMap(s), h = '', name = s.name || '';
+    var open = false;
+    for (var i = 0; i < name.length; i++) {
+      var ch = name[i];
+      if (ch === ' ') { if (open) { h += '</span>'; open = false; } h += '<span class="sp"></span>'; continue; }
+      if (!open) { h += '<span class="w">'; open = true; }
+      if (map[i] !== undefined) h += '<span class="g' + (map[i] >= 6 ? ' b2' : '') + '" data-k="' + map[i] + '"><b>' + (map[i] + 1) + '</b>' + esc(ch) + '</span>';
+      else h += '<span>' + esc(ch) + '</span>';
+    }
+    if (open) h += '</span>';
+    $('namestrip').innerHTML = h;
+  }
+  function glyphLine(s, cls) {
+    var map = glyphMap(s), h = '', name = s.name || '';
+    for (var i = 0; i < name.length; i++) {
+      var k = map[i];
+      h += k !== undefined ? '<u class="' + (k >= 6 ? 'b2' : '') + '">' + esc(name[i]) + '</u>' : esc(name[i]);
+    }
+    return h;
+  }
+
+  /* ---- шильд 17×2 ---- */
+  function plateHTML(s) {
+    var w = s.words.map(function (x) { return x.toUpperCase(); });
+    var r1 = w.length > 1 ? w[0] + '·' + w[1] : (w[0] || 'ВИНЬЕТКА');
+    var r2 = w.length > 2 ? w.slice(2).join('·') : (w.length === 1 ? '' : (w.length ? '' : 'ОБРАЗЕЦ'));
+    if (w.length === 2) { r1 = w[0]; r2 = w[1]; }
+    function row(t) {
+      var h = '<div class="pr">';
+      for (var i = 0; i < 17; i++) h += i < t.length ? '<span>' + esc(t[i]) + '</span>' : '<span class="e">·</span>';
+      return h + '</div>';
+    }
+    return row(r1.slice(0, 17)) + row(r2.slice(0, 17));
+  }
+  function tplHTML(s) {
+    var h = '';
+    s.templateSpec.forEach(function (w) {
+      for (var j = 0; j < w; j++) h += '<span class="' + (w === 1 ? 'r' : '') + '" style="' + (j === 0 ? '' : 'border-left-color:transparent') + '">' + (j === 0 ? w : '') + '</span>';
+    });
+    return h;
+  }
+  function codeHTML(s) { var c = s.styleCode; return esc(c.slice(0, 8)) + '<b>' + esc(c[8]) + '</b>' + esc(c.slice(9)); }
+  function legendHTML(s) {
+    var c = s.styleCode;
+    var parts = [[c.slice(0, 3), 'инициалы'], [c[3], 'шаблон'], [c[4], 'рельс'], [c.slice(5, 7), 'FLAR'], [c[7], 'пиксель'], [c[8], 'контрольный знак'], [c[9], '2026'], [c[10], 'ELGR'], [c.slice(11, 13), 'VOLM'], [c.slice(13), 'сумма']];
+    return parts.map(function (p) { return '<li><b>' + esc(p[0]) + '</b> ' + p[1] + '</li>'; }).join('');
+  }
+
+  /* ---- найденные паттерны ---- */
+  function patternsHTML(s) {
+    if (s.stub) return '<p class="hit">Введите имя. Пока стоит заглушка #799 · #268.</p>';
+    var out = [], w = s.words;
+    if (w.length >= 2) {
+      var two = w[0] + ' ' + w[1];
+      if (two.length === 17) out.push('<p class="hit">' + esc(two) + ' — ровно 17 знаков. Как VIN.</p>');
+      else out.push('<p class="hit">В «' + esc(two) + '» ' + two.length + ' ' + plural(two.length, 'знак', 'знака', 'знаков') + ', в VIN их 17.</p>');
+    } else {
+      out.push('<p class="hit">Одно слово, ' + s.letters[0] + ' ' + plural(s.letters[0], 'буква', 'буквы', 'букв') + '. Два недостающих слоя розетки движок достроит из суммы.</p>');
+    }
+    var facts = [];
+    s.sums.forEach(function (x) {
+      if (x % 17 === 0 && facts.length < 2) facts.push(x + ' = ' + (x / 17) + '×17');
+      else if (FIB.indexOf(x) >= 0 && facts.length < 2) facts.push(x + ' — число Фибоначчи');
+    });
+    if (s.total % 17 === 0 && facts.length < 2) facts.push('сумма делится на 17');
+    out.push('<p>Суммы букв по словам: ' + s.sums.join(' · ') + (s.sums.length > 1 ? ', всего ' + s.total : '') + '.' + (facts.length ? ' ' + facts.join(', ').replace(/^./, function (c) { return c.toUpperCase(); }) + '.' : '') + '</p>');
+    var g = s.glyphs, gA = g.slice(0, 6).map(function (x) { return x.ch; }).join(''), gB = g.slice(6).map(function (x) { return x.ch; }).join('');
+    if (!s.padded) out.push('<p>Гомоглифов ' + g.length + ': ' + esc(gA) + ' → #' + s.hex12.slice(0, 6) + ', ' + esc(gB) + ' → #' + s.hex12.slice(6) + '.</p>');
+    else out.push('<p>Гомоглифов ' + g.length + (g.length ? ' (' + esc(gA + gB) + ')' : '') + '. Остальные знаки цвета движок добил суммами слов в hex: #' + s.hex12.slice(0, 6) + ' · #' + s.hex12.slice(6) + '.</p>');
+    out.push('<p>Шаблон сетки № ' + s.template + ' (' + s.templateSpec.join('·') + '), рельс ' + (s.railSide === 'left' ? 'слева' : 'справа') + ', пиксель табло ' + s.elsh + '.</p>');
+    if (s.turns) out.push('<p>Палитра повёрнута на ' + (s.turns === 1 ? '137,5°' : '275°') + '.</p>');
+    return out.join('');
+  }
+
+  /* ---- рельс ---- */
+  var railCells = [];
+  (function () { var r = $('rail'); for (var i = 0; i < 17; i++) { var li = document.createElement('li'); if (i === 8) li.className = 'cd'; r.appendChild(li); railCells.push(li); } })();
+  function renderRail(s) { for (var i = 0; i < 17; i++) railCells[i].textContent = s.styleCode[i] || '·'; }
+  var railTick = false;
+  function railProgress() {
+    railTick = false;
+    var max = document.documentElement.scrollHeight - innerHeight;
+    var p = max > 0 ? scrollY / max : 1;
+    var lit = Math.max(1, Math.ceil(p * 17 - 0.001));
+    for (var i = 0; i < 17; i++) railCells[i].classList.toggle('on', i < lit);
+  }
+  addEventListener('scroll', function () { if (!railTick) { railTick = true; requestAnimationFrame(railProgress); } }, { passive: true });
+  addEventListener('resize', railProgress);
+
+  /* ---- общий рендер «моего» стиля ---- */
+  var state = { name: DEFAULT, turns: 0, style: null };
+  var rid = 0;
+  function rosette(el, s, size, animate) { el.innerHTML = V.rosetteSVG(s, { size: size, animate: !!animate && !reduce, idPrefix: 'vr' + (++rid) }); }
+  function renderStatic(s, animateRose) {
+    V.apply(s);
+    renderRail(s);
+    $('plate-hero').innerHTML = plateHTML(s);
+    $('plate-final').innerHTML = plateHTML(s);
+    $('code-hero').innerHTML = codeHTML(s);
+    $('code-final').innerHTML = 'VIN мастера ' + codeHTML(s);
+    $('legend-hero').innerHTML = legendHTML(s);
+    $('tpl-hero').innerHTML = tplHTML(s);
+    $('tpl-note').textContent = '№ ' + s.template + ': ' + s.templateSpec.join('·') + '. Этот лендинг собран на тех же семи шаблонах.';
+    $('rawA').textContent = '#' + s.hex12.slice(0, 6);
+    $('rawB').textContent = '#' + s.hex12.slice(6);
+    $('patterns').innerHTML = patternsHTML(s);
+    rosette($('rose-hero'), s, 440, animateRose);
+    rosette($('rose-mini'), s, 110, animateRose);
+    $('code-mini').innerHTML = codeHTML(s);
+    rosette($('rose-final'), s, 360, false);
+    rosette($('rose-ticket'), s, 144, false);
+    updateTurns();
+  }
+  function updateTurns() {
+    var t = state.turns;
+    $('turns').textContent = 'Поворотов: ' + t + ' из 2. Выбрать цвет вручную нельзя.';
+    var b = $('rotate');
+    b.disabled = t >= 2;
+    b.textContent = t >= 2 ? 'Поворотов больше нет' : 'Повернуть палитру на 137,5°';
+  }
+
+  /* ---- главный момент: выпадение гомоглифов ---- */
+  var timers = [], flies = [], seq = 0;
+  function cancelSeq() {
+    seq++;
+    timers.forEach(clearTimeout); timers = [];
+    flies.forEach(function (f) { if (f._an) { f._an.onfinish = null; f._an.cancel(); } f.remove(); }); flies = [];
+  }
+  function setColorA(s) {
+    root.style.setProperty('--spec-a-l', s.colorA.fillL); root.style.setProperty('--spec-a-d', s.colorA.fillD);
+    root.style.setProperty('--spec-a-text-l', s.colorA.textL); root.style.setProperty('--spec-a-text-d', s.colorA.textD);
+  }
+  function run(animate) {
+    cancelSeq();
+    var s = V.fromName(state.name, { turns: state.turns });
+    state.style = s;
+    renderNameStrip(s);
+    var hx = s.hex12;
+    if (!animate || reduce) {
+      for (var i = 0; i < 12; i++) setDrum(hexCells[i], hx[i], false, 0);
+      [].forEach.call(document.querySelectorAll('#namestrip .g'), function (el) { el.classList.add('taken'); });
+      renderStatic(s, false);
+      return;
+    }
+    var letters = {};
+    [].forEach.call(document.querySelectorAll('#namestrip .g'), function (el) { letters[el.getAttribute('data-k')] = el; });
+    // до финала обновляются только текстовые части
+    $('patterns').innerHTML = patternsHTML(s);
+    $('rawA').textContent = '#' + hx.slice(0, 6);
+    $('rawB').textContent = '#' + hx.slice(6);
+    var step = 150, my = seq;
+    for (var k = 0; k < 12; k++) (function (k) {
+      timers.push(setTimeout(function () {
+        if (my !== seq) return;
+        var src = letters[k], cell = hexCells[k];
+        var done = function () {
+          if (my !== seq) return;
+          setDrum(cell, hx[k], true, 0);
+          if (k === 5) setColorA(s);
+          if (k === 11) timers.push(setTimeout(function () { renderStatic(s, true); }, 350));
+        };
+        if (src && cell.animate) {
+          src.classList.add('taken');
+          var a = src.getBoundingClientRect(), b = cell.getBoundingClientRect();
+          var f = document.createElement('span'); f.className = 'fly'; f.textContent = src.lastChild.textContent;
+          f.style.left = a.left + 'px'; f.style.top = a.top + 'px'; f.setAttribute('aria-hidden', 'true');
+          if (k >= 6) f.style.color = 'var(--spec-b-text)';
+          document.body.appendChild(f); flies.push(f);
+          var dx = b.left + b.width / 2 - a.left - a.width / 2, dy = b.top - a.top + 6;
+          var an = f.animate([{ transform: 'translate(0,0)', opacity: 1 }, { transform: 'translate(' + dx + 'px,' + dy + 'px)', opacity: .15 }], { duration: 420, easing: 'cubic-bezier(.5,0,.85,.35)' });
+          f._an = an;
+          an.onfinish = function () { f.remove(); done(); };
+        } else done();
+      }, k * step));
+    })(k);
+  }
+
+  /* ---- ввод ФИО, синхронизация двух полей ---- */
+  var fio = $('fio'), fio2 = $('fio2'), deb;
+  function onName(e) {
+    var v = e.target.value;
+    if (e.target === fio) fio2.value = v; else fio.value = v;
+    clearTimeout(deb);
+    deb = setTimeout(function () { state.name = v; state.turns = 0; run(true); markPreset(); }, 250);
+  }
+  fio.addEventListener('input', onName);
+  fio2.addEventListener('input', onName);
+  $('hero-form').addEventListener('submit', function (e) { e.preventDefault(); clearTimeout(deb); state.name = fio.value; state.turns = 0; run(true); markPreset(); });
+  $('rotate').addEventListener('click', function () { clearTimeout(deb); if (state.turns >= 2) return; state.turns++; state.name = fio.value; run(true); });
+  $('reset').addEventListener('click', function () { clearTimeout(deb); fio.value = fio2.value = DEFAULT; state.name = DEFAULT; state.turns = 0; run(true); markPreset(); });
+  $('final-form').addEventListener('submit', function (e) { e.preventDefault(); $('final-msg').hidden = false; });
+
+  /* ---- режимы чтения ---- */
+  [].forEach.call(document.querySelectorAll('input[name="mode"]'), function (r) {
+    r.addEventListener('change', function () { if (r.checked) $('anatomy').setAttribute('data-mode', r.value); });
+  });
+
+  /* ---- обложка демо: всегда стиль Подборкина ---- */
+  var pod = V.PRESETS[0];
+  V.apply(pod, $('cover-demo'));
+  rosette($('rose-cover'), pod, 110, false);
+  $('plate-cover').innerHTML = plateHTML(pod);
+
+  /* ---- Именник ---- */
+  var names = $('names'), btns = [], sel = 0;
+  V.PRESETS.forEach(function (s, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.id = 'master-' + i;
+    V.apply(s, b);
+    b.innerHTML = '<span class="rose">' + V.rosetteSVG(s, { size: 110, threads: 13, idPrefix: 'pm' + i }) + '</span>' +
+      '<span class="nm">' + esc(s.name) + '</span>' +
+      '<span class="hx">#' + s.hex12.slice(0, 6) + ' · #' + s.hex12.slice(6) + '<br>шаблон ' + s.templateSpec.join('·') + ' · пиксель ' + s.elsh + '</span>';
+    b.addEventListener('click', function () { select(i, true); });
+    names.appendChild(b); btns.push(b);
+  });
+  function markPreset() {
+    var n = (state.name || '').replace(/\s+/g, ' ').trim();
+    btns.forEach(function (b, i) { b.setAttribute('aria-pressed', String(V.PRESET_NAMES[i] === n && state.turns === 0 && i === sel)); });
+    var who = state.style ? state.style.name : n;
+    $('imen-status').innerHTML = 'Лендинг сейчас в стиле: <b>' + esc(who || 'заглушка') + '</b>';
+  }
+  function detail(i) {
+    var s = V.PRESETS[i], d = $('detail');
+    V.apply(s, d);
+    d.removeAttribute('data-template'); d.removeAttribute('data-rail');
+    rosette($('rose-detail'), s, 340, true);
+    $('d-name').textContent = s.name;
+    $('d-glyphs').innerHTML = glyphLine(s);
+    $('d-sums').textContent = 'Суммы ' + s.sums.join(' · ') + ', всего ' + s.total + '. ' + (s.padded ? 'Гомоглифов ' + s.glyphs.length + ', остальное добито суммами.' : '12 гомоглифов дали два цвета.');
+    $('d-a').textContent = '#' + s.hex12.slice(0, 6);
+    $('d-b').textContent = '#' + s.hex12.slice(6);
+    $('d-tpl').textContent = '№ ' + s.template + ': ' + s.templateSpec.join('·');
+    $('d-rail').textContent = s.railSide === 'left' ? 'слева' : 'справа';
+    $('d-flar').textContent = 'FLAR ' + s.flar + ', VOLM ' + s.volm;
+    $('d-pix').textContent = 'Handjet, форма элемента ' + s.elsh + ', сетка ' + s.elgr;
+    $('d-rose').textContent = 'лепестки ' + s.layers.map(function (l) { return l.petals; }).join(' / ') + ', 51 нить';
+    $('d-code').innerHTML = codeHTML(s);
+  }
+  function select(i, applyPage) {
+    sel = i;
+    detail(i);
+    if (applyPage) {
+      clearTimeout(deb);
+      var n = V.PRESET_NAMES[i];
+      fio.value = fio2.value = n; state.name = n; state.turns = 0;
+      run(false);
+    }
+    markPreset();
+  }
+  $('d-apply').addEventListener('click', function () { select(sel, true); });
+
+  /* ---- «Что вы упускали» ---- */
+  var IDEAS = [
+    ['деньги', 'Отказы бесплатно', 'Отказные виньетки ничего не стоят и выходят с вашим брендом. Платите только за машину, которую клиент купил.'],
+    ['безумное', 'Кладбище VIN', 'Забракованная машина получает некролог в закрытом реестре. Всплывёт на Авито со свежей краской, следующий мастер увидит разницу.'],
+    ['отчёт', 'Проверка подлинности', 'У каждой виньетки номер «Т-» и QR. Клиент за секунду проверит, что отчёт ваш и в нём ничего не правили.'],
+    ['отчёт', 'Журнал охоты и шевроны', 'Клиент видит всю охоту: 38 объявлений, 9 звонков, 4 выезда. За подтверждённые находки вам начисляются шевроны.'],
+    ['деньги', 'Медкарта после покупки', 'Виньетка становится медкартой машины: назначения на 90 дней, напоминания, журнал ТО.'],
+    ['деньги', 'Лиды из базы знаний', 'Кто читает про B57 или M276, уже присматривает машину. Под статьёй появляетесь вы, в своём стиле.'],
+    ['деньги', 'Руки в другом городе', 'Машина нашлась в другом городе. Смотрит местный коллега, а виньетка выходит в вашем стиле с пометкой «выезд партнёра».']
+  ];
+  var ROWS = [['s1', 's8', 's8'], ['s3', 's13', 's1'], ['s1', 's3', 's13']];
+  $('ideas').innerHTML = IDEAS.map(function (d, i) {
+    var r = ROWS[i % 3], ib = i % 3 === 1;
+    var num = '<span class="num ' + (ib ? r[2] : r[0]) + '" aria-hidden="true">0' + (i + 1) + '</span>';
+    var head = '<div class="' + (ib ? r[0] : r[1]) + '"><span class="tag">' + d[0] + '</span><h3>' + d[1] + '</h3></div>';
+    var p = '<p class="' + (ib ? r[1] : r[2]) + '">' + d[2] + '</p>';
+    return '<div class="idea' + (ib ? ' ib' : '') + '"><div class="row">' + (ib ? head + p + num : num + head + p) + '</div></div>';
+  }).join('');
+
+  /* ---- старт ---- */
+  run(false);
+  select(0, false);
+  railProgress();
+})();
+</script>

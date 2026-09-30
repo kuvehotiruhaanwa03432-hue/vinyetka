@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Именник · движок</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Commissioner:FLAR,VOLM,wght@0..100,0..100,100..900&family=Martian+Mono:wdth,wght@75..112.5,100..800&family=Onest:wght@100..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDF3EE; --paper-raised:#F9FCF9; --paper-sunken:#DCE7DF;
+  --ink:#111111; --ink-soft:#3F5B5B; --guilloche:#779999; --action:#226688;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E171B; --paper-raised:#15232A; --paper-sunken:#0A1114;
+    --ink:#E4EFE6; --ink-soft:#9DB6B6; --action:#6FB4D8; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E171B; --paper-raised:#15232A; --paper-sunken:#0A1114;
+  --ink:#E4EFE6; --ink-soft:#9DB6B6; --action:#6FB4D8; color-scheme:dark;
+}
+/* маппинг переменных движка на тему — на том же элементе, куда их ставит Vignette.apply */
+[data-vignette]{
+  --spec-a:var(--spec-a-l); --spec-b:var(--spec-b-l);
+  --spec-a-text:var(--spec-a-text-l); --spec-b-text:var(--spec-b-text-l);
+  --rosette-1:var(--rosette-1-l); --rosette-2:var(--rosette-2-l); --rosette-3:var(--rosette-3-l);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) [data-vignette]{
+    --spec-a:var(--spec-a-d); --spec-b:var(--spec-b-d);
+    --spec-a-text:var(--spec-a-text-d); --spec-b-text:var(--spec-b-text-d);
+    --rosette-1:var(--rosette-1-d); --rosette-2:var(--rosette-2-d); --rosette-3:var(--rosette-3-d);
+  }
+}
+:root[data-theme="dark"] [data-vignette]{
+  --spec-a:var(--spec-a-d); --spec-b:var(--spec-b-d);
+  --spec-a-text:var(--spec-a-text-d); --spec-b-text:var(--spec-b-text-d);
+  --rosette-1:var(--rosette-1-d); --rosette-2:var(--rosette-2-d); --rosette-3:var(--rosette-3-d);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/25px Onest,system-ui,sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:34px 16px 55px}
+header{display:flex;flex-wrap:wrap;gap:13px 34px;align-items:end;justify-content:space-between;margin-bottom:34px}
+h1{font:600 34px/1.1 Commissioner,sans-serif;font-variation-settings:"FLAR" 68,"VOLM" 0;margin:0;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);margin:8px 0 0;max-width:60ch}
+.mono{font-family:"Martian Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+button{font:500 13px/1 "Martian Mono",monospace;color:var(--action);background:transparent;border:1px solid currentColor;padding:10px 13px;cursor:pointer}
+button:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:0;border-top:1px solid var(--guilloche)}
+.card{padding:21px 21px 34px;border-bottom:1px solid var(--guilloche);position:relative}
+@media (min-width:760px){.card{border-right:1px solid var(--guilloche)}}
+.rose{display:flex;justify-content:center;margin:0 0 21px}
+.rose svg{width:100%;max-width:320px;height:auto}
+.name{font:600 21px/1.2 Commissioner,sans-serif;margin:0 0 8px;color:var(--spec-a-text);font-variation-settings:"FLAR" var(--flar),"VOLM" 0}
+.meta{font-size:13px;line-height:21px;color:var(--ink-soft);margin:0}
+.chips{display:flex;gap:8px;margin:13px 0}
+.chip{flex:1;border:1px solid var(--guilloche);background:var(--paper-raised);padding:8px}
+.chip .sw{height:34px;display:flex;align-items:center;padding:0 8px;font:500 12px "Martian Mono",monospace;color:var(--ink)}
+.chip .t{font:600 13px/21px "Martian Mono",monospace;margin-top:5px}
+.code{font:500 13px/21px "Martian Mono",monospace;letter-spacing:.06em;font-variation-settings:"wdth" 112.5}
+.code b{color:var(--spec-b-text);font-weight:800}
+.tpl{display:grid;grid-template-columns:repeat(17,1fr);gap:2px;margin-top:8px;height:8px}
+.tpl span{background:var(--spec-a)}
+.tpl span.rail{background:var(--spec-b-text)}
+.perf{margin-top:34px;font-size:13px;color:var(--ink-soft)}
+.big{display:grid;grid-template-columns:1fr;gap:21px;margin:0 0 34px}
+.big .rose svg{max-width:560px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Именник: 7 мастеров, 7 розеток</h1>
+      <p class="lede">Каждый стиль собран движком <span class="mono">vignette.js</span> только из ФИО. Цвета A/Б — гомоглифы имени, прочитанные как hex.</p>
+    </div>
+    <button type="button" id="theme">Сменить тему</button>
+  </header>
+  <section class="big" id="big"></section>
+  <section class="grid" id="grid"></section>
+  <p class="perf mono" id="perf"></p>
+</div>
+<script src="../site/vignette.js"></script>
+<script>
+(function(){
+  var V = window.Vignette, grid = document.getElementById('grid');
+  var t0 = performance.now(), times = [];
+  V.PRESETS.forEach(function(s, i){
+    var card = document.createElement('article');
+    card.className = 'card';
+    V.apply(s, card);
+    var a = performance.now();
+    var svg = V.rosetteSVG(s, { size: 320, idPrefix: 'r' + i });
+    times.push(performance.now() - a);
+    var spec = s.templateSpec, cells = '';
+    spec.forEach(function(w, k){ for (var j = 0; j < w; j++) cells += '<span' + (w === 1 ? ' class="rail"' : '') + ' style="opacity:' + (1 - k * 0.18) + '"></span>'; });
+    var code = s.styleCode.slice(0, 8) + '<b>' + s.styleCode[8] + '</b>' + s.styleCode.slice(9);
+    card.innerHTML =
+      '<div class="rose">' + svg + '</div>' +
+      '<h2 class="name">' + s.name + '</h2>' +
+      '<p class="meta mono">суммы ' + s.sums.join('·') + ' = ' + s.total + ' · шаблон ' + s.template + ' (' + spec.join('·') + ') · рельс ' + (s.railSide === 'left' ? 'слева' : 'справа') + '</p>' +
+      '<div class="tpl" aria-hidden="true">' + cells + '</div>' +
+      '<div class="chips">' +
+        '<div class="chip"><div class="sw" style="background:var(--spec-a)">#' + s.hex12.slice(0,6) + '</div><div class="t" style="color:var(--spec-a-text)">A · текст</div></div>' +
+        '<div class="chip"><div class="sw" style="background:var(--spec-b)">#' + s.hex12.slice(6) + '</div><div class="t" style="color:var(--spec-b-text)">Б · текст</div></div>' +
+      '</div>' +
+      '<p class="code">' + code + '</p>' +
+      '<p class="meta mono">FLAR ' + s.flar + ' · VOLM ' + s.volm + ' · ELSH ' + s.elsh + ' · ELGR ' + s.elgr + ' · лепестки ' + s.layers.map(function(l){return l.petals}).join('/') + (s.padded ? ' · добивка суммами' : '') + '</p>';
+    grid.appendChild(card);
+  });
+  var big = document.getElementById('big');
+  var bs = V.PRESETS[0];
+  var holder = document.createElement('div'); holder.className = 'rose'; V.apply(bs, holder);
+  holder.innerHTML = V.rosetteSVG(bs, { size: 560, stroke: 0.55, idPrefix: 'big' });
+  big.appendChild(holder);
+  document.getElementById('perf').textContent = 'rosetteSVG 320px: ' + times.map(function(t){return t.toFixed(1)}).join(' / ') + ' мс; всего ' + (performance.now() - t0).toFixed(1) + ' мс';
+  document.getElementById('theme').addEventListener('click', function(){
+    var r = document.documentElement, dark = r.getAttribute('data-theme') ? r.getAttribute('data-theme') === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    r.setAttribute('data-theme', dark ? 'light' : 'dark');
+  });
+})();
+</script>
+</body>
+</html>
